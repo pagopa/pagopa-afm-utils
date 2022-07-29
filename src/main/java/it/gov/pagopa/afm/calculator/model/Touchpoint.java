@@ -1,4 +1,4 @@
-package it.gov.pagopa.afm.calculator.model.bundle;
+package it.gov.pagopa.afm.calculator.model;
 
 import it.gov.pagopa.afm.calculator.exception.AppException;
 import lombok.Getter;
