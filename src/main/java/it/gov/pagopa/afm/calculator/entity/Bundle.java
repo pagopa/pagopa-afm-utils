@@ -30,7 +30,6 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Bundle {
 
-    @JsonProperty(value = "idBundle")
     @Id
     private String id;
 
