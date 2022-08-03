@@ -19,14 +19,16 @@ public class BundleSpecification implements Specification<Bundle> {
         Object value = criteria.getValue();
 
         // ignore null values
-        if (value == null) {
+        if (Boolean.TRUE.equals(criteria.getIgnoreNull()) && value == null) {
             return null;
         }
-
+        query.distinct(true);
         switch (criteria.getOperation()) {
             case EQUAL:
                 return builder.equal(key, value);
-            case EQUAL_OR_NULL:
+            case NULL:
+                return builder.isNull(key);
+            case NULL_OR_EQUAL:
                 var spec1 = builder.equal(key, value);
                 var spec2 = builder.isNull(key);
                 return builder.or(spec1, spec2);
@@ -65,7 +67,8 @@ public class BundleSpecification implements Specification<Bundle> {
     private Path<Object> getNestedKey(From<?, ?> root, String key) {
         if (key.contains(".")) {
             int i = key.indexOf(".");
-            var groupJoin = root.join(key.substring(0, i));
+            // we need always left join
+            var groupJoin = root.join(key.substring(0, i), JoinType.LEFT);
             return getNestedKey(groupJoin, key.substring(i + 1));
         } else {
             return root.get(key);

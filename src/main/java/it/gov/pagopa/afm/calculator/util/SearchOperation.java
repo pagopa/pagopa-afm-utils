@@ -7,7 +7,8 @@ public enum SearchOperation {
     LESS_THAN_EQUAL,
     NOT_EQUAL,
     EQUAL,
-    EQUAL_OR_NULL,
+    NULL,
+    NULL_OR_EQUAL, // if value is null or equal to expected
     LIKE,
     LIKE_START,
     LIKE_END,
