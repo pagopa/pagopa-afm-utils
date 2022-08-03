@@ -21,11 +21,14 @@ public class BundleSpecification implements Specification<Bundle> {
             key = root.get(criteria.getKey());
         }
         Object value = criteria.getValue();
+        if (value == null) {
+            return null;
+        }
         switch (criteria.getOperation()) {
             case EQUAL:
-                return builder.equal(key, value != null ? value.toString() : null);
+                return builder.equal(key, value);
             case EQUAL_OR_NULL:
-                var spec1 = builder.equal(key, value != null ? value.toString() : null);
+                var spec1 = builder.equal(key, value);
                 var spec2 = builder.isNull(key);
                 return builder.or(spec1, spec2);
             case IN:

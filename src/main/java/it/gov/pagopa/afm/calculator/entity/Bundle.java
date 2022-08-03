@@ -29,8 +29,13 @@ public class Bundle {
     private Long minPaymentAmount;
     private Long maxPaymentAmount;
 
+    @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
+
+    @Enumerated(EnumType.STRING)
     private Touchpoint touchpoint;
+
+    @Enumerated(EnumType.STRING)
     private BundleType type;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

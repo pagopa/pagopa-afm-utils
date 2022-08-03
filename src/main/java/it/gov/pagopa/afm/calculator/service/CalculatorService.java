@@ -24,15 +24,15 @@ public class CalculatorService {
 
 
     public List<Bundle> calculate(PaymentOption paymentOption) {
-        var touchpointFilter = new BundleSpecification(new SearchCriteria("touchpoint", SearchOperation.EQUAL_OR_NULL, paymentOption.getTouchPoint().ordinal()));
-//        var paymentMethodFilter = new BundleSpecification(new SearchCriteria("paymentMethod", SearchOperation.EQUAL_OR_NULL, paymentOption.getPaymentMethod()));
-//        var pspFilter = new BundleSpecification(new SearchCriteria("idPsp", SearchOperation.IN, paymentOption.getIdPspList()));
-//        var ecFilter = new BundleSpecification(new SearchCriteria("ciBundles.ciFiscalCode", SearchOperation.EQUAL, paymentOption.getPrimaryCreditorInstitution()));
+        var touchpointFilter = new BundleSpecification(new SearchCriteria("touchpoint", SearchOperation.EQUAL_OR_NULL, paymentOption.getTouchPoint()));
+        var paymentMethodFilter = new BundleSpecification(new SearchCriteria("paymentMethod", SearchOperation.EQUAL_OR_NULL, paymentOption.getPaymentMethod()));
+        var pspFilter = new BundleSpecification(new SearchCriteria("idPsp", SearchOperation.IN, paymentOption.getIdPspList()));
+        var ecFilter = new BundleSpecification(new SearchCriteria("ciBundles.ciFiscalCode", SearchOperation.EQUAL, paymentOption.getPrimaryCreditorInstitution()));
 
-        var specifications = Specification.where(touchpointFilter);
-//                .and(paymentMethodFilter)
-//                .and(pspFilter)
-//                .and(ecFilter);
+        var specifications = Specification.where(touchpointFilter)
+                .and(paymentMethodFilter)
+                .and(pspFilter)
+                .and(ecFilter);
 
         return bundleRepository.findAll(specifications);
     }
