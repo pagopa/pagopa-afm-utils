@@ -1,22 +1,13 @@
 package it.gov.pagopa.afm.calculator.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import it.gov.pagopa.afm.calculator.model.BundleType;
 import it.gov.pagopa.afm.calculator.model.PaymentMethod;
 import it.gov.pagopa.afm.calculator.model.Touchpoint;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.List;
 
 
@@ -32,7 +23,6 @@ public class Bundle {
 
     @Id
     private String id;
-
     private String idPsp;
 
     private Long paymentAmount;
@@ -40,12 +30,13 @@ public class Bundle {
     private Long maxPaymentAmount;
 
     private PaymentMethod paymentMethod;
-
     private Touchpoint touchpoint;
-
     private BundleType type;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<TransferCategory> transferCategoryList;
 
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bundle")
+    private List<CiBundle> ciBundles;
 }

@@ -34,7 +34,7 @@ public class ConfigurationController {
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema())),
             @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema())),
             @ApiResponse(responseCode = "500", description = "Service unavailable", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class)))})
-    @PostMapping(value = "configuration", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/configuration", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Void> configure(@RequestBody @Valid @NotNull Configuration configuration) {
         configurationService.save(configuration);
         return ResponseEntity.status(HttpStatus.CREATED).build();
