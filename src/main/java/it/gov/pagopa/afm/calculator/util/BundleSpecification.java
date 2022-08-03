@@ -13,17 +13,16 @@ public class BundleSpecification implements Specification<Bundle> {
 
     @Override
     public Predicate toPredicate(Root<Bundle> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
-
-        Path<Object> key;
-        if (criteria.getKey().contains(".")) {
-            key = getNestedKey(root, criteria.getKey());
-        } else {
-            key = root.get(criteria.getKey());
-        }
+        // get attribute reference
+        Path<Object> key = getNestedKey(root, criteria.getKey());
+        // get expected value
         Object value = criteria.getValue();
+
+        // ignore null values
         if (value == null) {
             return null;
         }
+
         switch (criteria.getOperation()) {
             case EQUAL:
                 return builder.equal(key, value);
@@ -39,6 +38,26 @@ public class BundleSpecification implements Specification<Bundle> {
         return null;
     }
 
+    /**
+     * This recursive function get the attribute reference, {@code key} is the name of the attribute of root.
+     * <pre>
+     * Example
+     *
+     * USER
+     *  - email: String
+     *  - role: Role
+     *
+     * ROLE:
+     *  - name: String
+     *
+     * You can access to basic attribute with key = "email"
+     * You can access to nested attribute with this syntax: "role.name"
+     * </pre>
+     *
+     * @param root Entity
+     * @param key  Attribute name
+     * @return path corresponding to the referenced attribute
+     */
     private Path<Object> getNestedKey(From<?, ?> root, String key) {
         if (key.contains(".")) {
             int i = key.indexOf(".");

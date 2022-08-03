@@ -24,6 +24,7 @@ public class CalculatorService {
 
 
     public List<Bundle> calculate(PaymentOption paymentOption) {
+        // create filters
         var touchpointFilter = new BundleSpecification(new SearchCriteria("touchpoint", SearchOperation.EQUAL_OR_NULL, paymentOption.getTouchPoint()));
         var paymentMethodFilter = new BundleSpecification(new SearchCriteria("paymentMethod", SearchOperation.EQUAL_OR_NULL, paymentOption.getPaymentMethod()));
         var pspFilter = new BundleSpecification(new SearchCriteria("idPsp", SearchOperation.IN, paymentOption.getIdPspList()));
