@@ -28,11 +28,15 @@ public class CalculatorService {
         var paymentMethodFilter = new BundleSpecification(new SearchCriteria("paymentMethod", SearchOperation.EQUAL_OR_NULL, paymentOption.getPaymentMethod()));
         var pspFilter = new BundleSpecification(new SearchCriteria("idPsp", SearchOperation.IN, paymentOption.getIdPspList()));
         var ecFilter = new BundleSpecification(new SearchCriteria("ciBundles.ciFiscalCode", SearchOperation.EQUAL, paymentOption.getPrimaryCreditorInstitution()));
+        var minPriceRangeFilter = new BundleSpecification(new SearchCriteria("minPaymentAmount", SearchOperation.LESS_THAN_EQUAL, paymentOption.getPaymentAmount()));
+        var maxPriceRangeFilter = new BundleSpecification(new SearchCriteria("maxPaymentAmount", SearchOperation.GREATER_THAN, paymentOption.getPaymentAmount()));
 
         var specifications = Specification.where(touchpointFilter)
                 .and(paymentMethodFilter)
                 .and(pspFilter)
-                .and(ecFilter);
+                .and(ecFilter)
+                .and(maxPriceRangeFilter)
+                .and(minPriceRangeFilter);
 
         return bundleRepository.findAll(specifications);
     }
