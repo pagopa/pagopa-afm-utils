@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class TransferList{
-    private int amount;
+    private Integer amount;
     private String creditorInstitution;
     private String transferCategory;
 }

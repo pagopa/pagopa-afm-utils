@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class PaymentOption {
-    private int paymentAmount;
+    private Integer paymentAmount;
     private String primaryCreditorInstitution;
     private PaymentMethod paymentMethod;
     private Touchpoint touchPoint;
