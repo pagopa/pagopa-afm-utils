@@ -47,6 +47,11 @@ public class SearchCriteria {
         this.value = value;
     }
 
+    public SearchCriteria(String key, SearchOperation operation) {
+        this.key = key;
+        this.operation = operation;
+    }
+
     /**
      * If ignoreNull is set to true then this criteria is ignored if the value is null
      *

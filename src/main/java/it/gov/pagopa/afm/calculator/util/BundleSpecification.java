@@ -34,6 +34,8 @@ public class BundleSpecification implements Specification<Bundle> {
                 return builder.or(spec1, spec2);
             case IN:
                 return builder.in(key).value(value);
+            case NOT_IN:
+                return builder.not(builder.in(key).value(value));
             case LESS_THAN:
                 return builder.lessThan(key.as(int.class), (int) value);
             case LESS_THAN_EQUAL:

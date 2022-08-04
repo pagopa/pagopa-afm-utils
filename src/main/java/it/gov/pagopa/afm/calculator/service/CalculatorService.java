@@ -9,6 +9,7 @@ import it.gov.pagopa.afm.calculator.repository.CiBundleRepository;
 import it.gov.pagopa.afm.calculator.util.BundleSpecification;
 import it.gov.pagopa.afm.calculator.util.SearchCriteria;
 import it.gov.pagopa.afm.calculator.util.SearchOperation;
+import it.gov.pagopa.afm.calculator.util.TaxBundleSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -33,18 +34,17 @@ public class CalculatorService {
         var pspFilter = new BundleSpecification(new SearchCriteria("idPsp", SearchOperation.IN, paymentOption.getIdPspList()));
         var ecFilter = new BundleSpecification(new SearchCriteria("ciBundles.ciFiscalCode", SearchOperation.EQUAL, paymentOption.getPrimaryCreditorInstitution()));
         var globalFilter = new BundleSpecification(new SearchCriteria("type", SearchOperation.EQUAL, BundleType.GLOBAL));
-        var minPriceRangeFilter = new BundleSpecification(new SearchCriteria("minPaymentAmount", SearchOperation.GREATER_THAN_EQUAL, paymentOption.getPaymentAmount()));
-        var maxPriceRangeFilter = new BundleSpecification(new SearchCriteria("maxPaymentAmount", SearchOperation.LESS_THAN, paymentOption.getPaymentAmount()));
-        var taxonomyFilter = new BundleSpecification(new SearchCriteria("transferCategoryList.name", SearchOperation.IN, getTaxonomyList(paymentOption)));
-
+        var minPriceRangeFilter = new BundleSpecification(new SearchCriteria("minPaymentAmount", SearchOperation.LESS_THAN_EQUAL, paymentOption.getPaymentAmount()));
+        var maxPriceRangeFilter = new BundleSpecification(new SearchCriteria("maxPaymentAmount", SearchOperation.GREATER_THAN, paymentOption.getPaymentAmount()));
+        var taxonomyFilter = new TaxBundleSpecification(getTaxonomyList(paymentOption));
 
         var specifications = Specification.where(touchpointFilter)
                 .and(paymentMethodFilter)
                 .and(pspFilter)
                 .and(maxPriceRangeFilter)
                 .and(minPriceRangeFilter)
-                .and(globalFilter.or(ecFilter))
-                .and(globalFilter.or(taxonomyFilter));
+                .and(ecFilter.or(globalFilter))
+                .and(taxonomyFilter);
 
         return bundleRepository.findAll(specifications);
     }
@@ -54,6 +54,7 @@ public class CalculatorService {
                 paymentOption.getTransferList()
                         .stream()
                         .map(TransferList::getTransferCategory)
+                        .distinct()
                         .collect(Collectors.toList())
                 : null;
     }
