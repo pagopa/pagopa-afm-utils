@@ -50,6 +50,7 @@ public class SearchCriteria {
     public SearchCriteria(String key, SearchOperation operation) {
         this.key = key;
         this.operation = operation;
+        this.ignoreNull = false;
     }
 
     /**
