@@ -1,33 +1,40 @@
 package it.gov.pagopa.afm.calculator.service;
 
 import it.gov.pagopa.afm.calculator.entity.Bundle;
+import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.model.BundleType;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
-import it.gov.pagopa.afm.calculator.model.TransferList;
+import it.gov.pagopa.afm.calculator.model.calculator.CalculatorElem;
+import it.gov.pagopa.afm.calculator.model.calculator.CalculatorResponse;
+import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.repository.BundleRepository;
-import it.gov.pagopa.afm.calculator.repository.CiBundleRepository;
 import it.gov.pagopa.afm.calculator.util.BundleSpecification;
 import it.gov.pagopa.afm.calculator.util.SearchCriteria;
 import it.gov.pagopa.afm.calculator.util.SearchOperation;
 import it.gov.pagopa.afm.calculator.util.TaxBundleSpecification;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class CalculatorService {
 
     @Autowired
     BundleRepository bundleRepository;
 
     @Autowired
-    CiBundleRepository ciBundleRepository;
+    UtilityComponent utilityComponent;
 
 
-    public List<Bundle> calculate(PaymentOption paymentOption) {
+    @Cacheable(value = "calculate")
+    public CalculatorResponse calculate(PaymentOption paymentOption) {
         // create filters
         var touchpointFilter = new BundleSpecification(new SearchCriteria("touchpoint", SearchOperation.NULL_OR_EQUAL, paymentOption.getTouchPoint()));
         var paymentMethodFilter = new BundleSpecification(new SearchCriteria("paymentMethod", SearchOperation.NULL_OR_EQUAL, paymentOption.getPaymentMethod()));
@@ -36,7 +43,7 @@ public class CalculatorService {
         var globalFilter = new BundleSpecification(new SearchCriteria("type", SearchOperation.EQUAL, BundleType.GLOBAL));
         var minPriceRangeFilter = new BundleSpecification(new SearchCriteria("minPaymentAmount", SearchOperation.LESS_THAN_EQUAL, paymentOption.getPaymentAmount()));
         var maxPriceRangeFilter = new BundleSpecification(new SearchCriteria("maxPaymentAmount", SearchOperation.GREATER_THAN, paymentOption.getPaymentAmount()));
-        var taxonomyFilter = new TaxBundleSpecification(getTaxonomyList(paymentOption));
+        var taxonomyFilter = new TaxBundleSpecification(utilityComponent.getTaxonomyList(paymentOption));
 
         var specifications = Specification.where(touchpointFilter)
                 .and(paymentMethodFilter)
@@ -46,16 +53,52 @@ public class CalculatorService {
                 .and(ecFilter.or(globalFilter))
                 .and(taxonomyFilter);
 
-        return bundleRepository.findAll(specifications);
+        // do the query
+        var bundles = bundleRepository.findAll(specifications);
+
+        // calculate the taxPayerFee
+        List<CalculatorElem> response = new ArrayList<>();
+        for (Bundle bundle : bundles) {
+            List<Transfer> transfers = new ArrayList<>();
+            for (CiBundle cibundle : bundle.getCiBundles()) {
+                transfers = cibundle.getAttributes().parallelStream()
+                        .map(attribute -> {
+                            Long fee = 0L;
+                            if (attribute.getTransferCategory() == null
+                                    || utilityComponent.getPrimaryTaxonomyList(paymentOption, paymentOption.getPrimaryCreditorInstitution())
+                                    .contains(attribute.getTransferCategory())) {
+                                fee = bundle.getPaymentAmount() > attribute.getMaxPaymentAmount() ?
+                                        attribute.getMaxPaymentAmount() :
+                                        bundle.getPaymentAmount();
+                            }
+
+                            return Transfer.builder()
+                                    .creditorInstitution(cibundle.getCiFiscalCode())
+                                    .incurredFee(fee)
+                                    .build();
+                        })
+                        .collect(Collectors.toList());
+            }
+
+            var sum = transfers.parallelStream()
+                    .map(Transfer::getIncurredFee)
+                    .filter(incurredFee -> incurredFee != 0L)
+                    .reduce(Long::sum)
+                    .orElse(0L);
+
+            Long taxPayerFee = bundle.getPaymentAmount() - sum;
+            var elem = CalculatorElem.builder()
+                    .taxPayerFee(taxPayerFee)
+                    .idPsp(bundle.getIdPsp())
+                    .transfer(transfers)
+                    .build();
+            response.add(elem);
+        }
+
+
+        return CalculatorResponse.builder()
+                .list(response)
+                .build();
     }
 
-    private List<String> getTaxonomyList(PaymentOption paymentOption) {
-        return paymentOption.getTransferList() != null ?
-                paymentOption.getTransferList()
-                        .stream()
-                        .map(TransferList::getTransferCategory)
-                        .distinct()
-                        .collect(Collectors.toList())
-                : null;
-    }
 }

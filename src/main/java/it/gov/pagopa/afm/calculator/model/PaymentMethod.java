@@ -1,6 +1,7 @@
 package it.gov.pagopa.afm.calculator.model;
 
 import it.gov.pagopa.afm.calculator.exception.AppException;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
