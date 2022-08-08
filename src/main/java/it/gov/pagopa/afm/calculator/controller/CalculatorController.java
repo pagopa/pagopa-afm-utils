@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.ProblemJson;
 import it.gov.pagopa.afm.calculator.model.calculator.CalculatorResponse;
-import it.gov.pagopa.afm.calculator.model.configuration.Configuration;
 import it.gov.pagopa.afm.calculator.service.CalculatorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

@@ -44,6 +44,7 @@ public class CalculatorService {
         // the payment amount should be in range [minPaymentAmount, maxPaymentAmount]
         var minPriceRangeFilter = new BundleSpecification(new SearchCriteria("minPaymentAmount", SearchOperation.LESS_THAN_EQUAL, paymentOption.getPaymentAmount()));
         var maxPriceRangeFilter = new BundleSpecification(new SearchCriteria("maxPaymentAmount", SearchOperation.GREATER_THAN_EQUAL, paymentOption.getPaymentAmount()));
+        // TODO evaluate equal/not_equal
         var taxonomyFilter = new TaxBundleSpecification(utilityComponent.getTaxonomyList(paymentOption));
 
         var specifications = Specification.where(touchpointFilter)
@@ -81,6 +82,7 @@ public class CalculatorService {
                         .collect(Collectors.toList());
             }
 
+            // TODO: if primaryCI not in transferList don't evaluate incurredFee!
             var sum = transfers.parallelStream()
                     .map(Transfer::getIncurredFee)
                     .filter(incurredFee -> incurredFee != 0L)
