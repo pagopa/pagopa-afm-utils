@@ -1,4 +1,4 @@
-package it.gov.pagopa.afm.calculator.model.bundle;
+package it.gov.pagopa.afm.calculator.model;
 
 import it.gov.pagopa.afm.calculator.exception.AppException;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import java.util.Arrays;
 public enum PaymentMethod {
     PPAL("PPAL"),
     BPAY("BPAY"),
-    PayBP("PayBP"),
+    PAYBP("PayBP"),
     BBT("BBT"),
     AD("AD"),
     CP("CP"),

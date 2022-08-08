@@ -1,22 +1,32 @@
-package it.gov.pagopa.afm.calculator.model.bundle;
+package it.gov.pagopa.afm.calculator.entity;
 
 import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.time.LocalDateTime;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
+@Entity
+@Table(name = "CIBUNDLEATTRIBUTE", schema = "AFM_CALCULATOR")
 public class CiBundleAttribute {
 
+    @Id
     private String id;
+
     private Long maxPaymentAmount;
+
     private String transferCategory;
+
     private TransferCategoryRelation transferCategoryRelation;
-    private LocalDateTime insertedDate;
+
 }
