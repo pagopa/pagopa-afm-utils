@@ -14,7 +14,7 @@ public class PaymentOption {
     private Integer paymentAmount;
     private String primaryCreditorInstitution;
     private PaymentMethod paymentMethod;
-    private Touchpoint touchPoint;
+    private Touchpoint touchpoint;
     private List<String> idPspList;
     private ArrayList<TransferList> transferList;
 }

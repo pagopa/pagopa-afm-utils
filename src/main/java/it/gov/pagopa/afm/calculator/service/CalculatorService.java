@@ -36,13 +36,14 @@ public class CalculatorService {
     @Cacheable(value = "calculate")
     public CalculatorResponse calculate(PaymentOption paymentOption) {
         // create filters
-        var touchpointFilter = new BundleSpecification(new SearchCriteria("touchpoint", SearchOperation.NULL_OR_EQUAL, paymentOption.getTouchPoint()));
+        var touchpointFilter = new BundleSpecification(new SearchCriteria("touchpoint", SearchOperation.NULL_OR_EQUAL, paymentOption.getTouchpoint()));
         var paymentMethodFilter = new BundleSpecification(new SearchCriteria("paymentMethod", SearchOperation.NULL_OR_EQUAL, paymentOption.getPaymentMethod()));
         var pspFilter = new BundleSpecification(new SearchCriteria("idPsp", SearchOperation.IN, paymentOption.getIdPspList()));
-        var ecFilter = new BundleSpecification(new SearchCriteria("ciBundles.ciFiscalCode", SearchOperation.EQUAL, paymentOption.getPrimaryCreditorInstitution()));
+        var ciFilter = new BundleSpecification(new SearchCriteria("ciBundles.ciFiscalCode", SearchOperation.EQUAL, paymentOption.getPrimaryCreditorInstitution()));
         var globalFilter = new BundleSpecification(new SearchCriteria("type", SearchOperation.EQUAL, BundleType.GLOBAL));
+        // the payment amount should be in range [minPaymentAmount, maxPaymentAmount]
         var minPriceRangeFilter = new BundleSpecification(new SearchCriteria("minPaymentAmount", SearchOperation.LESS_THAN_EQUAL, paymentOption.getPaymentAmount()));
-        var maxPriceRangeFilter = new BundleSpecification(new SearchCriteria("maxPaymentAmount", SearchOperation.GREATER_THAN, paymentOption.getPaymentAmount()));
+        var maxPriceRangeFilter = new BundleSpecification(new SearchCriteria("maxPaymentAmount", SearchOperation.GREATER_THAN_EQUAL, paymentOption.getPaymentAmount()));
         var taxonomyFilter = new TaxBundleSpecification(utilityComponent.getTaxonomyList(paymentOption));
 
         var specifications = Specification.where(touchpointFilter)
@@ -50,7 +51,7 @@ public class CalculatorService {
                 .and(pspFilter)
                 .and(maxPriceRangeFilter)
                 .and(minPriceRangeFilter)
-                .and(ecFilter.or(globalFilter))
+                .and(ciFilter.or(globalFilter))
                 .and(taxonomyFilter);
 
         // do the query
