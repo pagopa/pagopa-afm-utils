@@ -3,9 +3,11 @@ package it.gov.pagopa.afm.calculator.util;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
-public class SearchCriteria {
+public class SearchCriteria implements Serializable {
 
     /**
      * name of an attribute

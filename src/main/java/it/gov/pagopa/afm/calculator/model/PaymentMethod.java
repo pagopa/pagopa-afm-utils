@@ -10,7 +10,7 @@ import java.util.Arrays;
 public enum PaymentMethod {
     PPAL("PPAL"),
     BPAY("BPAY"),
-    PayBP("PayBP"),
+    PAYBP("PayBP"),
     BBT("BBT"),
     AD("AD"),
     CP("CP"),
