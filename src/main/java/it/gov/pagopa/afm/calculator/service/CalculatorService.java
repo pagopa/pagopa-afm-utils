@@ -85,7 +85,6 @@ public class CalculatorService {
                                 .map(attribute -> {
                                     long primaryCiIncurredFee = 0L;
 
-                                    // TODO check EQUAL / NOT_EQUAL
                                     if (attribute.getTransferCategory() == null ||
                                             (attribute.getTransferCategoryRelation().equals(TransferCategoryRelation.EQUAL) && primaryTransferCategoryList.contains(attribute.getTransferCategory()) ||
                                                     (attribute.getTransferCategoryRelation().equals(TransferCategoryRelation.NOT_EQUAL) && !primaryTransferCategoryList.contains(attribute.getTransferCategory()))
@@ -128,10 +127,9 @@ public class CalculatorService {
                 }
             }
             else {
-                long primaryCiIncurredFee = Math.min(paymentOption.getPaymentAmount(), bundle.getPaymentAmount());
                 Transfer transfer = Transfer.builder()
-                        .taxPayerFee(Math.max(0, paymentOption.getPaymentAmount() - primaryCiIncurredFee))
-                        .primaryCiIncurredFee(primaryCiIncurredFee)
+                        .taxPayerFee(paymentOption.getPaymentAmount())
+                        .primaryCiIncurredFee(0)
                         .paymentMethod(bundle.getPaymentMethod())
                         .touchpoint(bundle.getTouchpoint())
                         .idBundle(bundle.getId())
@@ -145,7 +143,8 @@ public class CalculatorService {
         // sort according taxpayer fee
         Collections.sort(transfers);
 
-        return transfers;
+        // TODO: limit to maxOccurrences
+        return transfers.subList(0, 10);
     }
 
     /**

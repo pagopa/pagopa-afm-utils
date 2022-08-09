@@ -43,13 +43,13 @@ public class BundleSpecification implements Specification<Bundle> {
             case NOT_IN:
                 return builder.not(builder.in(key).value(value));
             case LESS_THAN:
-                return builder.lessThan(key.as(int.class), (int) value);
+                return builder.lessThan(key.as(long.class), (long) value);
             case LESS_THAN_EQUAL:
-                return builder.lessThanOrEqualTo(key.as(int.class), (int) value);
+                return builder.lessThanOrEqualTo(key.as(long.class), (long) value);
             case GREATER_THAN:
-                return builder.greaterThan(key.as(int.class), (int) value);
+                return builder.greaterThan(key.as(long.class), (long) value);
             case GREATER_THAN_EQUAL:
-                return builder.greaterThanOrEqualTo(key.as(int.class), (int) value);
+                return builder.greaterThanOrEqualTo(key.as(long.class), (long) value);
             default:
                 break;
         }
