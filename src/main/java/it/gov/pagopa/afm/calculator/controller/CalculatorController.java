@@ -35,6 +35,6 @@ public class CalculatorController {
             @ApiResponse(responseCode = "500", description = "Service unavailable", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class)))})
     @PostMapping(value = "/calculate", produces = {MediaType.APPLICATION_JSON_VALUE})
     public List<Transfer> calculate(@RequestBody PaymentOption paymentOption, @RequestParam(required = false, defaultValue = "10") Integer limit) {
-        return calculatorService.calculate(paymentOption, limit != null ? limit : 100);
+        return calculatorService.calculate(paymentOption, limit);
     }
 }
