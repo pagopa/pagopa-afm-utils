@@ -1,7 +1,7 @@
 package it.gov.pagopa.afm.calculator.service;
 
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
-import it.gov.pagopa.afm.calculator.model.TransferList;
+import it.gov.pagopa.afm.calculator.model.TransferListItem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
@@ -17,26 +17,37 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UtilityComponent {
 
-    @Cacheable(value = "getTaxonomyList")
-    public List<String> getTaxonomyList(PaymentOption paymentOption) {
-        log.debug("getTaxonomyList");
+    /**
+     * Retrieve the transfer category list from the transfer list of payment option (OR of transfer categories)
+     * @param paymentOption
+     * @return list of string about transfer categories
+     */
+    @Cacheable(value = "getTransferCategoryList")
+    public List<String> getTransferCategoryList(PaymentOption paymentOption) {
+        log.debug("getTransferCategoryList");
         return paymentOption.getTransferList() != null ?
                 paymentOption.getTransferList()
                         .parallelStream()
-                        .map(TransferList::getTransferCategory)
+                        .map(TransferListItem::getTransferCategory)
                         .distinct()
                         .collect(Collectors.toList())
                 : null;
     }
 
-    @Cacheable(value = "getPrimaryTaxonomyList")
-    public List<String> getPrimaryTaxonomyList(PaymentOption paymentOption, String primaryFiscalCode) {
-        log.debug("getPrimaryTaxonomyList {} ", primaryFiscalCode);
+    /**
+     * Retrieve the transfer category list of primary creditor institution contained in the transfer list of payment option
+     * @param paymentOption
+     * @param primaryCreditorInstitution
+     * @return list of string about transfer categories of primary creditor institution
+     */
+    @Cacheable(value = "getPrimaryTransferCategoryList")
+    public List<String> getPrimaryTransferCategoryList(PaymentOption paymentOption, String primaryCreditorInstitution) {
+        log.debug("getPrimaryTransferCategoryList {} ", primaryCreditorInstitution);
         return paymentOption.getTransferList() != null ?
                 paymentOption.getTransferList()
                         .parallelStream()
-                        .filter(elem -> primaryFiscalCode.equals(elem.getCreditorInstitution()))
-                        .map(TransferList::getTransferCategory)
+                        .filter(elem -> primaryCreditorInstitution.equals(elem.getCreditorInstitution()))
+                        .map(TransferListItem::getTransferCategory)
                         .distinct()
                         .collect(Collectors.toList())
                 : new ArrayList<>();

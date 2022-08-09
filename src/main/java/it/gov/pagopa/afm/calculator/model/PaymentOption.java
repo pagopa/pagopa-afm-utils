@@ -16,7 +16,7 @@ public class PaymentOption {
     private PaymentMethod paymentMethod;
     private Touchpoint touchpoint;
     private List<String> idPspList;
-    private ArrayList<TransferList> transferList;
+    private ArrayList<TransferListItem> transferList;
 }
 
 

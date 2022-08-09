@@ -9,12 +9,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.ProblemJson;
 import it.gov.pagopa.afm.calculator.model.calculator.CalculatorResponse;
+import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.service.CalculatorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController()
 @Tag(name = "Calculator", description = "Everything about Calculator business logic")
@@ -25,13 +28,13 @@ public class CalculatorController {
 
     @Operation(summary = "Execute calculator logic", tags = {"Calculator"})
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = PaymentOption.class))),
+            @ApiResponse(responseCode = "200", description = "Ok", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = List.class))),
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema())),
             @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema())),
             @ApiResponse(responseCode = "500", description = "Service unavailable", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class)))})
     @PostMapping(value = "/calculate", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public CalculatorResponse calculate(@RequestBody PaymentOption paymentOption){
+    public List<Transfer> calculate(@RequestBody PaymentOption paymentOption){
         return calculatorService.calculate(paymentOption);
     }
 }
