@@ -35,7 +35,7 @@ public class CalculatorService {
     UtilityComponent utilityComponent;
 
     @Cacheable(value = "calculate")
-    public List<Transfer> calculate(PaymentOption paymentOption) {
+    public List<Transfer> calculate(PaymentOption paymentOption, int limit) {
         // create filters
         var touchpointFilter = new BundleSpecification(new SearchCriteria("touchpoint", SearchOperation.NULL_OR_EQUAL, paymentOption.getTouchpoint()));
 
@@ -145,7 +145,7 @@ public class CalculatorService {
         // sort according taxpayer fee
         Collections.sort(transfers);
 
-        return transfers;
+        return transfers.stream().limit(limit).collect(Collectors.toList());
     }
 
     /**
