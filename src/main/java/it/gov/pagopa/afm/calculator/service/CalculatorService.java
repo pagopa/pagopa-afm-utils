@@ -87,7 +87,8 @@ public class CalculatorService {
 
                                     // TODO check EQUAL / NOT_EQUAL
                                     if (attribute.getTransferCategory() == null ||
-                                            attribute.getTransferCategoryRelation().equals(TransferCategoryRelation.EQUAL) && primaryTransferCategoryList.contains(attribute.getTransferCategory()
+                                            (attribute.getTransferCategoryRelation().equals(TransferCategoryRelation.EQUAL) && primaryTransferCategoryList.contains(attribute.getTransferCategory()) ||
+                                                    (attribute.getTransferCategoryRelation().equals(TransferCategoryRelation.NOT_EQUAL) && !primaryTransferCategoryList.contains(attribute.getTransferCategory()))
                                             )
                                     ) {
                                         // primaryCiIncurredFee is the minimum value between the payment amount of debt position and
