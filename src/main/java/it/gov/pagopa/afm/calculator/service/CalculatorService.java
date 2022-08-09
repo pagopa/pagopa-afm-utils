@@ -97,15 +97,8 @@ public class CalculatorService {
                                         primaryCiIncurredFee = Math.min(paymentOption.getPaymentAmount(), Math.min(bundle.getPaymentAmount(), attribute.getMaxPaymentAmount()));
                                     }
 
-                                    return Transfer.builder()
-                                            .taxPayerFee(Math.max(0, paymentOption.getPaymentAmount() - primaryCiIncurredFee))
-                                            .primaryCiIncurredFee(primaryCiIncurredFee)
-                                            .paymentMethod(bundle.getPaymentMethod())
-                                            .touchpoint(bundle.getTouchpoint())
-                                            .idBundle(bundle.getId())
-                                            .idCiBundle(cibundle.getId())
-                                            .idPsp(bundle.getIdPsp())
-                                            .build();
+                                    return createTransfer(Math.max(0, paymentOption.getPaymentAmount() - primaryCiIncurredFee),
+                                            primaryCiIncurredFee, bundle, cibundle.getId());
                                 })
                                 .collect(Collectors.toList());
                     }
@@ -114,28 +107,13 @@ public class CalculatorService {
                 // analyze global bundles
                 if (bundle.getType().equals(BundleType.GLOBAL) && bundle.getCiBundles().size() == 0) {
                     long primaryCiIncurredFee = Math.min(paymentOption.getPaymentAmount(), bundle.getPaymentAmount());
-                    Transfer transfer = Transfer.builder()
-                            .taxPayerFee(Math.max(0, paymentOption.getPaymentAmount() - primaryCiIncurredFee))
-                            .primaryCiIncurredFee(primaryCiIncurredFee)
-                            .paymentMethod(bundle.getPaymentMethod())
-                            .touchpoint(bundle.getTouchpoint())
-                            .idBundle(bundle.getId())
-                            .idCiBundle(null)
-                            .idPsp(bundle.getIdPsp())
-                            .build();
+                    Transfer transfer = createTransfer(Math.max(0, paymentOption.getPaymentAmount() - primaryCiIncurredFee),
+                            primaryCiIncurredFee, bundle, null);
                     transfers.add(transfer);
                 }
             }
             else {
-                Transfer transfer = Transfer.builder()
-                        .taxPayerFee(paymentOption.getPaymentAmount())
-                        .primaryCiIncurredFee(0)
-                        .paymentMethod(bundle.getPaymentMethod())
-                        .touchpoint(bundle.getTouchpoint())
-                        .idBundle(bundle.getId())
-                        .idCiBundle(null)
-                        .idPsp(bundle.getIdPsp())
-                        .build();
+                Transfer transfer = createTransfer(paymentOption.getPaymentAmount(), 0, bundle, null);
                 transfers.add(transfer);
             }
         }
@@ -145,6 +123,26 @@ public class CalculatorService {
 
         // TODO: limit to maxOccurrences
         return transfers.subList(0, 10);
+    }
+
+    /**
+     * Create transfer item
+     * @param taxPayerFee
+     * @param primaryCiIncurredFee
+     * @param bundle
+     * @param idCiBundle
+     * @return
+     */
+    private Transfer createTransfer(long taxPayerFee, long primaryCiIncurredFee, Bundle bundle, String idCiBundle) {
+        return Transfer.builder()
+                .taxPayerFee(taxPayerFee)
+                .primaryCiIncurredFee(primaryCiIncurredFee)
+                .paymentMethod(bundle.getPaymentMethod())
+                .touchpoint(bundle.getTouchpoint())
+                .idBundle(bundle.getId())
+                .idCiBundle(idCiBundle)
+                .idPsp(bundle.getIdPsp())
+                .build();
     }
 
     /**
