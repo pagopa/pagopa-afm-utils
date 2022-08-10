@@ -4,7 +4,12 @@ import it.gov.pagopa.afm.calculator.entity.Bundle;
 import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 /**
@@ -15,7 +20,7 @@ import java.util.List;
  * or exists at least one transferCategory specified in the {@code value} field
  */
 @AllArgsConstructor
-public class TaxBundleSpecification implements Specification<Bundle> {
+public class BundleTransferCategoryListSpecification implements Specification<Bundle> {
 
     private List<String> value;
 

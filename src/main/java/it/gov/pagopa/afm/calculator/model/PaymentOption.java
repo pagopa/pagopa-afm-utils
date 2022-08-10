@@ -11,12 +11,12 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class PaymentOption {
-    private Integer paymentAmount;
+    private Long paymentAmount;
     private String primaryCreditorInstitution;
     private PaymentMethod paymentMethod;
-    private Touchpoint touchPoint;
+    private Touchpoint touchpoint;
     private List<String> idPspList;
-    private ArrayList<TransferList> transferList;
+    private ArrayList<TransferListItem> transferList;
 }
 
 

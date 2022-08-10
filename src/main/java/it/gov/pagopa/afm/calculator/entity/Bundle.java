@@ -5,9 +5,22 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import it.gov.pagopa.afm.calculator.model.BundleType;
 import it.gov.pagopa.afm.calculator.model.PaymentMethod;
 import it.gov.pagopa.afm.calculator.model.Touchpoint;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -42,6 +55,6 @@ public class Bundle {
     private List<TransferCategory> transferCategoryList;
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bundle")
-    private List<CiBundle> ciBundles;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bundle", cascade = CascadeType.REMOVE)
+    private List<CiBundle> ciBundles = new ArrayList<>();
 }

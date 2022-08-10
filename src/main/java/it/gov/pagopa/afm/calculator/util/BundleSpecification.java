@@ -4,7 +4,13 @@ import it.gov.pagopa.afm.calculator.entity.Bundle;
 import lombok.AllArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 @AllArgsConstructor
 public class BundleSpecification implements Specification<Bundle> {
@@ -37,13 +43,13 @@ public class BundleSpecification implements Specification<Bundle> {
             case NOT_IN:
                 return builder.not(builder.in(key).value(value));
             case LESS_THAN:
-                return builder.lessThan(key.as(int.class), (int) value);
+                return builder.lessThan(key.as(long.class), (long) value);
             case LESS_THAN_EQUAL:
-                return builder.lessThanOrEqualTo(key.as(int.class), (int) value);
+                return builder.lessThanOrEqualTo(key.as(long.class), (long) value);
             case GREATER_THAN:
-                return builder.greaterThan(key.as(int.class), (int) value);
+                return builder.greaterThan(key.as(long.class), (long) value);
             case GREATER_THAN_EQUAL:
-                return builder.greaterThanOrEqualTo(key.as(int.class), (int) value);
+                return builder.greaterThanOrEqualTo(key.as(long.class), (long) value);
             default:
                 break;
         }
