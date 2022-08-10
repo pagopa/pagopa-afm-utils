@@ -153,9 +153,7 @@ public class CalculatorService {
      */
     private boolean inTransferList(String creditorInstitutionFiscalCode, ArrayList<TransferListItem> transferList) {
         return transferList.parallelStream()
-                .filter(transferListItem -> transferListItem.getCreditorInstitution().equals(creditorInstitutionFiscalCode))
-                .findFirst()
-                .isPresent();
+                .anyMatch(transferListItem -> transferListItem.getCreditorInstitution().equals(creditorInstitutionFiscalCode));
     }
 
 }
