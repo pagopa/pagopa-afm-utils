@@ -1,16 +1,19 @@
 curl --location --request POST 'http://127.0.0.1:8586/calculate' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "paymentAmount": 100,
+    "paymentAmount": 1000,
     "primaryCreditorInstitution": "12345",
     "paymentMethod": null,
-    "touchPoint": null,
+    "touchpoint": null,
     "idPspList": null,
     "transferList": [
         {
-
-            "creditorInstitution": "test_28e50e84b749",
-            "transferCategory": "t1"
+            "creditorInstitution": "12346",
+            "transferCategory": "test1"
+        },
+        {
+            "creditorInstitution": "12346",
+            "transferCategory": "CP"
         },
         {
             "creditorInstitution": "12345",

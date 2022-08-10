@@ -32,7 +32,7 @@ public class CiBundle {
 
     private String ciFiscalCode;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="bundleId", referencedColumnName = "id")
     private Bundle bundle;
 
