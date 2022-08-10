@@ -1,5 +1,6 @@
 package it.gov.pagopa.afm.calculator.service;
 
+import it.gov.pagopa.afm.calculator.entity.Bundle;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.model.configuration.Configuration;
 import it.gov.pagopa.afm.calculator.repository.BundleRepository;
@@ -10,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,14 +36,25 @@ public class ConfigurationService {
         ciBundleRepository.deleteAll();
 
         // save
-        bundleRepository.saveAllAndFlush(configuration.getBundles());
-
+        List<Bundle> bundleList = bundleRepository.saveAllAndFlush(configuration.getBundles());
+        List<Bundle> bundleListToSave = new ArrayList<>();
         List<CiBundle> ciBundleList = configuration.getCiBundles().parallelStream().map(ciBundleM -> {
             CiBundle ciBundleE = modelMapper.map(ciBundleM, CiBundle.class);
-            ciBundleE.getBundle().getCiBundles().add(ciBundleE);
+            Optional<Bundle> optBundle = bundleList.parallelStream().filter(bundle ->
+                    bundle.getId().equals(ciBundleE.getBundle().getId())
+            ).findFirst();
+            if (optBundle.isPresent()) {
+                Bundle bundle = optBundle.get();
+                bundle.getCiBundles().add(ciBundleE);
+                bundleListToSave.add(bundle);
+//                bundleRepository.save(bundle);
+//                ciBundleE.setBundle(bundle);
+            }
+//            ciBundleRepository.saveAndFlush(ciBundleE);
             return ciBundleE;
         }).collect(Collectors.toList());
-        ciBundleRepository.saveAll(ciBundleList);
+        ciBundleRepository.saveAllAndFlush(ciBundleList);
+        bundleRepository.saveAll(bundleListToSave);
 
     }
 

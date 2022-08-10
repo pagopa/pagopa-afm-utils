@@ -34,7 +34,7 @@ public class CalculatorService {
     @Autowired
     UtilityComponent utilityComponent;
 
-    @Cacheable(value = "calculate")
+//    @Cacheable(value = "calculate")
     public List<Transfer> calculate(PaymentOption paymentOption, int limit) {
         // create filters
         var touchpointFilter = new BundleSpecification(new SearchCriteria("touchpoint", SearchOperation.NULL_OR_EQUAL, paymentOption.getTouchpoint()));
@@ -55,7 +55,8 @@ public class CalculatorService {
         // TODO evaluate equal/not_equal
         var taxonomyFilter = new TaxBundleSpecification(utilityComponent.getTransferCategoryList(paymentOption));
 
-        var specifications = Specification.where(touchpointFilter)
+        var specifications = Specification
+                .where(touchpointFilter)
                 .and(paymentMethodFilter)
                 .and(pspFilter)
                 .and(maxPriceRangeFilter)
