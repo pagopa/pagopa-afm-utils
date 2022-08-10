@@ -20,7 +20,7 @@ import java.util.List;
  * or exists at least one transferCategory specified in the {@code value} field
  */
 @AllArgsConstructor
-public class TaxBundleSpecification implements Specification<Bundle> {
+public class BundleTransferCategoryListSpecification implements Specification<Bundle> {
 
     private List<String> value;
 

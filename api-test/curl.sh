@@ -8,8 +8,8 @@ curl --location --request POST 'http://127.0.0.1:8586/calculate' \
     "idPspList": null,
     "transferList": [
         {
-            "creditorInstitution": "test_28e50e84b749",
-            "transferCategory": "pippo"
+            "creditorInstitution": "12346",
+            "transferCategory": "test1"
         },
         {
             "creditorInstitution": "12346",

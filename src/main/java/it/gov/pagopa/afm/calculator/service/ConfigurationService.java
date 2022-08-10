@@ -40,6 +40,7 @@ public class ConfigurationService {
         List<Bundle> bundleListToSave = new ArrayList<>();
         List<CiBundle> ciBundleList = configuration.getCiBundles().parallelStream().map(ciBundleM -> {
             CiBundle ciBundleE = modelMapper.map(ciBundleM, CiBundle.class);
+
             Optional<Bundle> optBundle = bundleList.parallelStream().filter(bundle ->
                     bundle.getId().equals(ciBundleE.getBundle().getId())
             ).findFirst();
@@ -47,15 +48,11 @@ public class ConfigurationService {
                 Bundle bundle = optBundle.get();
                 bundle.getCiBundles().add(ciBundleE);
                 bundleListToSave.add(bundle);
-//                bundleRepository.save(bundle);
-//                ciBundleE.setBundle(bundle);
             }
-//            ciBundleRepository.saveAndFlush(ciBundleE);
             return ciBundleE;
         }).collect(Collectors.toList());
         ciBundleRepository.saveAllAndFlush(ciBundleList);
         bundleRepository.saveAll(bundleListToSave);
-
     }
 
     public Configuration get() {

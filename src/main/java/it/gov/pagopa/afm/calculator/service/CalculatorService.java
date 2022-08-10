@@ -6,13 +6,12 @@ import it.gov.pagopa.afm.calculator.model.BundleType;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
 import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import it.gov.pagopa.afm.calculator.model.TransferListItem;
-import it.gov.pagopa.afm.calculator.model.calculator.CalculatorElem;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
 import it.gov.pagopa.afm.calculator.repository.BundleRepository;
 import it.gov.pagopa.afm.calculator.util.BundleSpecification;
 import it.gov.pagopa.afm.calculator.util.SearchCriteria;
 import it.gov.pagopa.afm.calculator.util.SearchOperation;
-import it.gov.pagopa.afm.calculator.util.TaxBundleSpecification;
+import it.gov.pagopa.afm.calculator.util.BundleTransferCategoryListSpecification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -34,7 +33,7 @@ public class CalculatorService {
     @Autowired
     UtilityComponent utilityComponent;
 
-//    @Cacheable(value = "calculate")
+    @Cacheable(value = "calculate")
     public List<Transfer> calculate(PaymentOption paymentOption, int limit) {
         // create filters
         var touchpointFilter = new BundleSpecification(new SearchCriteria("touchpoint", SearchOperation.NULL_OR_EQUAL, paymentOption.getTouchpoint()));
@@ -52,8 +51,7 @@ public class CalculatorService {
         var minPriceRangeFilter = new BundleSpecification(new SearchCriteria("minPaymentAmount", SearchOperation.LESS_THAN_EQUAL, paymentOption.getPaymentAmount()));
         var maxPriceRangeFilter = new BundleSpecification(new SearchCriteria("maxPaymentAmount", SearchOperation.GREATER_THAN_EQUAL, paymentOption.getPaymentAmount()));
 
-        // TODO evaluate equal/not_equal
-        var taxonomyFilter = new TaxBundleSpecification(utilityComponent.getTransferCategoryList(paymentOption));
+        var bundleTransferCategoryListFilter = new BundleTransferCategoryListSpecification(utilityComponent.getTransferCategoryList(paymentOption));
 
         var specifications = Specification
                 .where(touchpointFilter)
@@ -62,7 +60,7 @@ public class CalculatorService {
                 .and(maxPriceRangeFilter)
                 .and(minPriceRangeFilter)
                 .and(ciFilter.or(globalFilter))
-                .and(taxonomyFilter);
+                .and(bundleTransferCategoryListFilter);
 
         boolean primaryCiInTransferList = inTransferList(paymentOption.getPrimaryCreditorInstitution(), paymentOption.getTransferList());
 
@@ -70,11 +68,11 @@ public class CalculatorService {
         var bundles = bundleRepository.findAll(specifications);
 
         // calculate the taxPayerFee
-        List<CalculatorElem> response = new ArrayList<>();
 
         List<String> primaryTransferCategoryList = utilityComponent.getPrimaryTransferCategoryList(paymentOption, paymentOption.getPrimaryCreditorInstitution());
         List<Transfer> transfers = new ArrayList<>();
         for (Bundle bundle : bundles) {
+
             // if primaryCi is in transfer list we should evaluate the related incurred fee
             if (primaryCiInTransferList) {
                 // analyze public and private bundles
@@ -82,26 +80,27 @@ public class CalculatorService {
                     // check ciBundle belongs to primary CI
                     if (cibundle.getCiFiscalCode().equals(paymentOption.getPrimaryCreditorInstitution())) {
 
-                        transfers = cibundle.getAttributes().parallelStream()
-                                .map(attribute -> {
-                                    long primaryCiIncurredFee = 0L;
-
-                                    if (attribute.getTransferCategory() == null ||
+                        if (cibundle.getAttributes().size() > 0) {
+                            transfers = cibundle.getAttributes().parallelStream()
+                                    .filter(attribute -> (attribute.getTransferCategory() == null ||
                                             (attribute.getTransferCategoryRelation().equals(TransferCategoryRelation.EQUAL) && primaryTransferCategoryList.contains(attribute.getTransferCategory()) ||
                                                     (attribute.getTransferCategoryRelation().equals(TransferCategoryRelation.NOT_EQUAL) && !primaryTransferCategoryList.contains(attribute.getTransferCategory()))
-                                            )
-                                    ) {
+                                            )))
+                                    .map(attribute -> {
                                         // primaryCiIncurredFee is the minimum value between the payment amount of debt position and
                                         // the incurred fee of primary CI.
                                         // The second min is to prevent error in order to check that PSP payment amount should be always greater than CI one.
                                         // Note: this check should be done on Marketplace.
-                                        primaryCiIncurredFee = Math.min(paymentOption.getPaymentAmount(), Math.min(bundle.getPaymentAmount(), attribute.getMaxPaymentAmount()));
-                                    }
-
-                                    return createTransfer(Math.max(0, paymentOption.getPaymentAmount() - primaryCiIncurredFee),
-                                            primaryCiIncurredFee, bundle, cibundle.getId());
-                                })
-                                .collect(Collectors.toList());
+                                        long primaryCiIncurredFee = Math.min(paymentOption.getPaymentAmount(), Math.min(bundle.getPaymentAmount(), attribute.getMaxPaymentAmount()));
+                                        return createTransfer(Math.max(0, paymentOption.getPaymentAmount() - primaryCiIncurredFee),
+                                                primaryCiIncurredFee, bundle, cibundle.getId());
+                                    })
+                                    .collect(Collectors.toList());
+                        }
+                        else {
+                            transfers.add(createTransfer(Math.max(0, paymentOption.getPaymentAmount() - bundle.getPaymentAmount()),
+                                    0, bundle, cibundle.getId()));
+                        }
                     }
                 }
 
