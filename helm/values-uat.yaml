@@ -68,7 +68,7 @@ microservice-chart:
   envConfig:
     CACHE_SIZE: '1000'
     CACHE_EXPIRATION_TIME: '10s'
-    APPLICATIONINSIGHTS_CONNECTION_STRING: ai-connection-string
+    APPLICATIONINSIGHTS_CONNECTION_STRING: ai-u-connection-string
 
   envSecret: []
 

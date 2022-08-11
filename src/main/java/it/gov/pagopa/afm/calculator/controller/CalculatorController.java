@@ -55,17 +55,4 @@ public class CalculatorController {
             @RequestBody PaymentOption paymentOption, @RequestParam(required = false, defaultValue = "10") Integer limit) {
         return calculatorService.calculate(paymentOption, limit);
     }
-
-
-    @Operation(summary = "Execute calculator logic", tags = {"Calculator"})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = List.class))),
-            @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema())),
-            @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema())),
-            @ApiResponse(responseCode = "500", description = "Service unavailable", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class)))})
-    @PostMapping(value = "/calculate", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public List<Transfer> calculate(@RequestBody PaymentOption paymentOption, @RequestParam(required = false, defaultValue = "10") Integer limit) {
-        return calculatorService.calculate(paymentOption, limit);
-    }
 }
