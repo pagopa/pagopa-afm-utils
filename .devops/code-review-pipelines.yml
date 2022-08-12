@@ -8,7 +8,7 @@
 trigger: none
 
 pool:
-  vmImage: 'ubuntu-20.04'
+  vmImage: 'ubuntu-18.04'
 
 variables:
   MAVEN_CACHE_FOLDER: $(Pipeline.Workspace)/.m2/repository
@@ -33,18 +33,27 @@ steps:
       extraProperties: |
         sonar.projectKey=$(SONARCLOUD_PROJECT_KEY)
         sonar.projectName=$(SONARCLOUD_PROJECT_NAME)
+        sonar.coverage.exclusions=**/config/*,**/*Mock*,**/model/**,**/entity/*
+        sonar.cpd.exclusions=**/model/**,**/entity/*
+
 
   - task: Maven@3
+    displayName: 'Run Junit Test'
     inputs:
       mavenPomFile: 'pom.xml'
-      mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
-      javaHomeOption: 'JDKVersion'
-      jdkVersionOption: '1.11'
-      jdkArchitectureOption: 'x64'
+      goals: 'clean verify'
       publishJUnitResults: true
       testResultsFiles: '**/surefire-reports/TEST-*.xml'
-      goals: 'package'
+      codeCoverageToolOption: 'JaCoCo'
+      javaHomeOption: 'JDKVersion'
+      jdkVersionOption: '1.11'
+      mavenVersionOption: 'Default'
+      mavenOptions: '-Xmx3072m $(MAVEN_OPTS)'
+      mavenAuthenticateFeed: false
+      effectivePomSkip: false
       sonarQubeRunAnalysis: true
+      isJacocoCoverageReportXML: true
+      sqMavenPluginVersionChoice: 'latest'
 
   - task: SonarCloudPublish@1
     displayName: 'Publish SonarCloud results on build summary'

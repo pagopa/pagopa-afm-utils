@@ -2,6 +2,8 @@ package it.gov.pagopa.afm.calculator.service;
 
 import it.gov.pagopa.afm.calculator.entity.Bundle;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
+import it.gov.pagopa.afm.calculator.model.PaymentMethod;
+import it.gov.pagopa.afm.calculator.model.Touchpoint;
 import it.gov.pagopa.afm.calculator.model.configuration.Configuration;
 import it.gov.pagopa.afm.calculator.repository.BundleRepository;
 import it.gov.pagopa.afm.calculator.repository.CiBundleRepository;
@@ -35,8 +37,20 @@ public class ConfigurationService {
         bundleRepository.deleteAll();
         ciBundleRepository.deleteAll();
 
+        List<Bundle> bundles = configuration.getBundles();
+        // set any to null to simplify query during calculation
+        bundles.parallelStream().forEach(bundle -> {
+            if (bundle.getTouchpoint().equals(Touchpoint.ANY)) {
+                bundle.setTouchpoint(null);
+            }
+
+            if (bundle.getPaymentMethod().equals(PaymentMethod.ANY)) {
+                bundle.setPaymentMethod(null);
+            }
+        });
+
         // save
-        List<Bundle> bundleList = bundleRepository.saveAllAndFlush(configuration.getBundles());
+        List<Bundle> bundleList = bundleRepository.saveAllAndFlush(bundles);
         List<Bundle> bundleListToSave = new ArrayList<>();
         List<CiBundle> ciBundleList = configuration.getCiBundles().parallelStream().map(ciBundleM -> {
             CiBundle ciBundleE = modelMapper.map(ciBundleM, CiBundle.class);

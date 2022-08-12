@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -37,6 +38,9 @@ public class Bundle {
     @Id
     private String id;
     private String idPsp;
+
+    private String name;
+    private String description;
 
     private Long paymentAmount;
     private Long minPaymentAmount;
