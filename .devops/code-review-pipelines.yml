@@ -38,6 +38,7 @@ steps:
 
 
   - task: Maven@3
+    displayName: 'Run Junit Test'
     inputs:
       mavenPomFile: 'pom.xml'
       goals: 'clean verify'
