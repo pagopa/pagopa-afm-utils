@@ -12,6 +12,7 @@ import java.util.Arrays;
 @AllArgsConstructor
 @NoArgsConstructor
 public enum Touchpoint {
+    ANY("ANY"),
     IO("IO"),
     WISP("WISP"),
     CHECKOUT("CHECKOUT");

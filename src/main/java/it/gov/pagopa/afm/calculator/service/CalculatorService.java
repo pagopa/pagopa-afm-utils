@@ -3,7 +3,9 @@ package it.gov.pagopa.afm.calculator.service;
 import it.gov.pagopa.afm.calculator.entity.Bundle;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.model.BundleType;
+import it.gov.pagopa.afm.calculator.model.PaymentMethod;
 import it.gov.pagopa.afm.calculator.model.PaymentOption;
+import it.gov.pagopa.afm.calculator.model.Touchpoint;
 import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import it.gov.pagopa.afm.calculator.model.TransferListItem;
 import it.gov.pagopa.afm.calculator.model.calculator.Transfer;
@@ -82,39 +84,37 @@ public class CalculatorService {
                     if (cibundle.getCiFiscalCode().equals(paymentOption.getPrimaryCreditorInstitution())) {
 
                         if (cibundle.getAttributes().size() > 0) {
-                            transfers = cibundle.getAttributes().parallelStream()
+                            transfers.addAll(cibundle.getAttributes().parallelStream()
                                     .filter(attribute -> (attribute.getTransferCategory() == null ||
                                             (attribute.getTransferCategoryRelation().equals(TransferCategoryRelation.EQUAL) && primaryTransferCategoryList.contains(attribute.getTransferCategory()) ||
                                                     (attribute.getTransferCategoryRelation().equals(TransferCategoryRelation.NOT_EQUAL) && !primaryTransferCategoryList.contains(attribute.getTransferCategory()))
                                             )))
                                     .map(attribute -> {
-                                        // primaryCiIncurredFee is the minimum value between the payment amount of debt position and
-                                        // the incurred fee of primary CI.
+                                        // primaryCiIncurredFee = min (paymentAmount, min(ciIncurredFee, PspFee))
                                         // The second min is to prevent error in order to check that PSP payment amount should be always greater than CI one.
                                         // Note: this check should be done on Marketplace.
                                         long primaryCiIncurredFee = Math.min(paymentOption.getPaymentAmount(), Math.min(bundle.getPaymentAmount(), attribute.getMaxPaymentAmount()));
-                                        return createTransfer(Math.max(0, paymentOption.getPaymentAmount() - primaryCiIncurredFee),
+                                        return createTransfer(Math.max(0, bundle.getPaymentAmount() - primaryCiIncurredFee),
                                                 primaryCiIncurredFee, bundle, cibundle.getId());
                                     })
-                                    .collect(Collectors.toList());
+                                    .collect(Collectors.toList())
+                            );
                         }
                         else {
-                            transfers.add(createTransfer(Math.max(0, paymentOption.getPaymentAmount() - bundle.getPaymentAmount()),
-                                    0, bundle, cibundle.getId()));
+                            transfers.add(createTransfer(bundle.getPaymentAmount(), 0, bundle, cibundle.getId()));
                         }
                     }
                 }
 
                 // analyze global bundles
                 if (bundle.getType().equals(BundleType.GLOBAL) && bundle.getCiBundles().size() == 0) {
-                    long primaryCiIncurredFee = Math.min(paymentOption.getPaymentAmount(), bundle.getPaymentAmount());
-                    Transfer transfer = createTransfer(Math.max(0, paymentOption.getPaymentAmount() - primaryCiIncurredFee),
-                            primaryCiIncurredFee, bundle, null);
+                    // no incurred fee is present
+                    Transfer transfer = createTransfer(bundle.getPaymentAmount(), 0, bundle, null);
                     transfers.add(transfer);
                 }
             }
             else {
-                Transfer transfer = createTransfer(paymentOption.getPaymentAmount(), 0, bundle, null);
+                Transfer transfer = createTransfer(bundle.getPaymentAmount(), 0, bundle, null);
                 transfers.add(transfer);
             }
         }
@@ -137,9 +137,11 @@ public class CalculatorService {
         return Transfer.builder()
                 .taxPayerFee(taxPayerFee)
                 .primaryCiIncurredFee(primaryCiIncurredFee)
-                .paymentMethod(bundle.getPaymentMethod())
-                .touchpoint(bundle.getTouchpoint())
+                .paymentMethod(bundle.getPaymentMethod() == null ? PaymentMethod.ANY : bundle.getPaymentMethod())
+                .touchpoint(bundle.getTouchpoint() == null ? Touchpoint.ANY : bundle.getTouchpoint())
                 .idBundle(bundle.getId())
+                .bundleName(bundle.getName())
+                .bundleDescription(bundle.getDescription())
                 .idCiBundle(idCiBundle)
                 .idPsp(bundle.getIdPsp())
                 .build();
