@@ -4,6 +4,7 @@ from bundle import Bundle
 from cibundle import CiBundle
 from json import JSONEncoder
 import requests
+import sys
 
 
 class ConfigurationEncoder(JSONEncoder):
@@ -125,20 +126,43 @@ def generate_ci_bundles_3(how_many_bundles=750, bundle=None):
     return local_ci_bundles
 
 
+pspNo = 75
+ciNo = 10
+if len(sys.argv) < 1:
+    print("Specify environment: local or dev")
+    print("python3 generate_configuration.py <local|dev> [number_of_psp] [number_of_ci]")
+elif len(sys.argv) < 2:
+    env = sys.argv[1]
+    pspNo = 75
+    ciNo = 10
+elif len(sys.argv) < 3:
+    env = sys.argv[1]
+    pspNo = int(sys.argv[2])
+    ciNo = 10
+else:
+    env = sys.argv[1]
+    pspNo = int(sys.argv[2])
+    ciNo = int(sys.argv[3])
+
+
 ci_bundles = list()
-bundles = generate_bundles(75, 100)
+bundles = generate_bundles(pspNo, ciNo)
 
 print("creating configuration data for calculator...")
-configuration = {
+environment = {
     "bundles": json.loads(ConfigurationEncoder().encode(bundles)),
     "ciBundles": json.loads(ConfigurationEncoder().encode(ci_bundles))
 }
 
 print("saving configuration data on file...")
 with open('configuration_data_%s_%s.json' % (len(bundles), len(ci_bundles)), 'w') as outfile:
-    json.dump(configuration, outfile)
+    json.dump(environment, outfile)
+
+configuration = {}
+with open('%s.environment.json' % env) as json_file:
+    configuration = json.load(json_file)
 
 print("sending data to calculator...")
-url = "http://localhost:8586/configuration"
-x = requests.post(url, json=configuration)
+url = "%s/configuration" % configuration.get("host")
+x = requests.post(url, json=environment)
 print('request sent: %s' % x.status_code)
