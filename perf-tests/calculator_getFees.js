@@ -9,52 +9,22 @@ import { getFeesByPsp, getFees } from './helpers/calculator_helper.js';
 // note: SharedArray can currently only be constructed inside init code
 // according to https://k6.io/docs/javascript-api/k6-data/sharedarray
 const varsArray = new SharedArray('vars', function () {
-	return JSON.parse(open(`./${__ENV.VARS}`)).environment;
+	const data = JSON.parse(open(`./${__ENV.VARS}`))
+	return [data.environment[0], data.rampingVusNode];
 });
 // workaround to use shared array (only array should be used)
 const vars = varsArray[0];
+const optsConfiguration = varsArray[1];
 const rootUrl = `${vars.host}`;
 
 export const options = {
 	discardResponseBodies: true,
 	scenarios: {
-		// load_scenario: {
-		// 	// name of the executor to use
-		// 	executor: 'per-vu-iterations',
-		//
-		// 	// common scenario configuration
-		// 	startTime: '10s',
-		// 	gracefulStop: '5s',
-		//
-		// 	// executor-specific configuration
-		// 	vus: 2,
-		// 	iterations: 2,
-		// 	maxDuration: '10s',
-		// },
-		rampingVus: {
-			executor: 'ramping-vus',
-			startVUs: 0,
-			stages: [
-				{ duration: '3s', target: 30000 },
-				{ duration: '10s', target: 30000 },
-				{ duration: '5s', target: 75000 },
-				{ duration: '5s', target: 50000 },
-				{ duration: '5s', target: 100000 },
-				{ duration: '10s', target: 50000 },
-				{ duration: '15s', target: 450000 },
-				{ duration: '25s', target: 150000 },
-				{ duration: '15s', target: 200000 },
-				{ duration: '20s', target: 50000 },
-				{ duration: '10s', target: 30000 },
-				{ duration: '5s', target: 0 },
-			],
-			gracefulRampDown: '0s',
-		}
+		rampingVus: optsConfiguration,
 	},
 };
 
 export default function calculator() {
-
 
 	const params = {
 		headers: {
@@ -62,9 +32,13 @@ export default function calculator() {
 		},
 	};
 
-	const payload = {
-		"paymentAmount": 70,
-		"primaryCreditorInstitution": "fiscalCode-1",
+	// to give randomness to request in order to avoid caching
+    const paymentAmount = Math.floor(Math.random() * __VU % 100);
+    const primaryCreditorInstitution = 'fiscalCode-' + Math.floor(Math.random() * 2) + 1;
+
+    let payload = {
+        "paymentAmount": paymentAmount,
+        "primaryCreditorInstitution": primaryCreditorInstitution,
 		"paymentMethod": "CP",
 		"touchpoint": "CHECKOUT",
 		"idPspList": [],
