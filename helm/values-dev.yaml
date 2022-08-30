@@ -3,7 +3,7 @@ microservice-chart:
   nameOverride: ""
   fullnameOverride: ""
   image:
-    repository: pagopadcommonacr.azurecr.io/pagopaafmcalculator
+    repository: pagopadcommonacr.azurecr.io/pagopaafmcalculatordata
     tag: "0.0.1-4" #improve
     pullPolicy: Always
   livenessProbe:
@@ -29,7 +29,7 @@ microservice-chart:
   ingress:
     create: true
     host: "weudev.afm.internal.dev.platform.pagopa.it"
-    path: /pagopa-afm-calculator-service/(.*)
+    path: /pagopa-afm-calculator-data-service/(.*)
   serviceAccount:
     create: false
     annotations: {}
@@ -42,15 +42,15 @@ microservice-chart:
     allowPrivilegeEscalation: false
   resources:
     requests:
-      memory: "512Mi"
+      memory: "1Gi"
       cpu: "350m"
     limits:
       memory: "1Gi"
       cpu: "350m"
   autoscaling:
-    enable: true
+    enable: false
     minReplica: 1
-    maxReplica: 5
+    maxReplica: 1
     pollingInterval: 1 # seconds
     cooldownPeriod: 10 # seconds
     triggers:
@@ -67,6 +67,7 @@ microservice-chart:
           metricAggregationType: Count
           targetValue: "30"
   envConfig:
+    DB_PORT: '4000'
     CACHE_SIZE: '1000'
     CACHE_EXPIRATION_TIME: '10s'
   #    APPLICATIONINSIGHTS_CONNECTION_STRING: ai-d-connection-string
