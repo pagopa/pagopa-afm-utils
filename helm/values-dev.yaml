@@ -67,6 +67,7 @@ microservice-chart:
           metricAggregationType: Count
           targetValue: "30"
   envConfig:
+    # db_port is set in Dockerfile too
     DB_PORT: '4000'
     CACHE_SIZE: '1000'
     CACHE_EXPIRATION_TIME: '10s'
