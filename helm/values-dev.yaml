@@ -42,16 +42,17 @@ microservice-chart:
     allowPrivilegeEscalation: false
   resources:
     requests:
-      memory: "500Mi"
+      memory: "512Mi"
       cpu: "350m"
     limits:
-      memory: "500Mi"
+      memory: "1Gi"
       cpu: "350m"
   autoscaling:
+    enable: true
     minReplica: 1
-    maxReplica: 2
-    pollingInterval: 30 # seconds
-    cooldownPeriod: 300 # seconds
+    maxReplica: 5
+    pollingInterval: 1 # seconds
+    cooldownPeriod: 10 # seconds
     triggers:
       - type: azure-monitor
         metadata:
