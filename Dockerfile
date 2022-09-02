@@ -19,6 +19,8 @@ RUN true
 COPY --chown=spring:spring  --from=builder spring-boot-loader/ ./
 COPY --chown=spring:spring  --from=builder application/ ./
 
+RUN mkdir db
+
 EXPOSE 8080 4000
 
 COPY --chown=spring:spring  docker/run.sh ./run.sh

@@ -4,7 +4,11 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: pagopadcommonacr.azurecr.io/pagopaafmcalculatordata
+<<<<<<< Updated upstream
     tag: "0.0.1-4" #improve
+=======
+    tag: "0.0.1-2" #improve
+>>>>>>> Stashed changes
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -43,10 +47,10 @@ microservice-chart:
   resources:
     requests:
       memory: "1Gi"
-      cpu: "350m"
+      cpu: "0.3"
     limits:
-      memory: "1Gi"
-      cpu: "350m"
+      memory: "1.5Gi"
+      cpu: "1"
   autoscaling:
     enable: false
     minReplica: 1
