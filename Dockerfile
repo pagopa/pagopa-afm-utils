@@ -19,7 +19,7 @@ RUN true
 COPY --chown=spring:spring  --from=builder spring-boot-loader/ ./
 COPY --chown=spring:spring  --from=builder application/ ./
 
-RUN mkdir db
+RUN mkdir -p ./db
 
 EXPOSE 8080 4000
 
