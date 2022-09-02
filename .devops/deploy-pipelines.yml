@@ -154,7 +154,7 @@ stages:
   - stage: 'Serving_helm'
     displayName: 'Serving_Helm'
     dependsOn: Build
-    condition: or(succeeded(), ne('${{ parameters.SEMVER }}', 'skip') )
+    condition: succeeded()
     jobs:
       - job: Serving_helm
         displayName: Serving_helm
@@ -166,10 +166,11 @@ stages:
               targetPath: '$(Build.Repository.LocalPath)/helm'
               artifact: 'helm'
               publishLocation: 'pipeline'
+
   - stage: 'Deploy'
     displayName: 'Deploy_to_${{ parameters.ENV }}'
     dependsOn: "Serving_helm"
-    condition: or(succeeded(), ne('${{ parameters.SEMVER }}', 'skip') )
+    condition: succeeded()
     pool:
       name: $(poolImage)
     jobs:
