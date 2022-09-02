@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: pagopadcommonacr.azurecr.io/pagopaafmcalculatordata
-    tag: "0.0.1-6" #improve
+    tag: "0.0.1-7" #improve
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -57,7 +57,6 @@ microservice-chart:
     CACHE_SIZE: '1000'
     CACHE_EXPIRATION_TIME: '10s'
     APPLICATIONINSIGHTS_CONNECTION_STRING: ai-d-connection-string
-
   envSecret: []
   keyvault:
     name: "pagopa-d-afm-kv"
