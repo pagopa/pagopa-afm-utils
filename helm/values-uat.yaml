@@ -50,21 +50,6 @@ microservice-chart:
   autoscaling:
     minReplica: 1
     maxReplica: 2
-    pollingInterval: 30 # seconds
-    cooldownPeriod: 300 # seconds
-    triggers:
-      - type: azure-monitor
-        metadata:
-          tenantId: 7788edaf-0346-4068-9d79-c868aed15b3d
-          subscriptionId: 26abc801-0d8f-4a6e-ac5f-8e81bcc09112
-          resourceGroupName: pagopa-u-afm-sec-rg
-          resourceURI: Microsoft.KeyVault/vaults/pagopa-u-afm-kv
-          metricName: ServiceApiHit
-          # metricNamespace: Microsoft.KeyVault/vaults
-          # metricFilter: namespace eq 'default'
-          # metricAggregationInterval: "-1:1:0"
-          metricAggregationType: Count
-          targetValue: "30"
   envConfig:
     DB_PORT: '4000'
     CACHE_SIZE: '1000'
