@@ -4,11 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: pagopadcommonacr.azurecr.io/pagopaafmcalculatordata
-<<<<<<< Updated upstream
-    tag: "0.0.1-4" #improve
-=======
     tag: "0.0.1-2" #improve
->>>>>>> Stashed changes
     pullPolicy: Always
   livenessProbe:
     httpGet:
