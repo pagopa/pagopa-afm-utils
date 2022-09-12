@@ -42,18 +42,20 @@ microservice-chart:
     allowPrivilegeEscalation: false
   resources:
     requests:
-      memory: "500Mi"
-      cpu: "350m"
+      memory: "1Gi"
+      cpu: "0.3"
     limits:
-      memory: "500Mi"
-      cpu: "350m"
+      memory: "1.5Gi"
+      cpu: "1"
   autoscaling:
+    enable: false
     minReplica: 1
-    maxReplica: 2
+    maxReplica: 1
   envConfig:
+    # db_port is set in Dockerfile too
     DB_PORT: '4000'
-    CACHE_SIZE: '1000'
-    CACHE_EXPIRATION_TIME: '10s'
+    CACHE_SIZE: '10000'
+    CACHE_EXPIRATION_TIME: '5m'
   envSecret:
     APPLICATIONINSIGHTS_CONNECTION_STRING: ai-u-connection-string
   keyvault:
