@@ -1,4 +1,4 @@
 {
   "env": "dev",
-  "host": "https://api.dev.platform.pagopa.it/afm/calculator-service/v1"
+  "host": "https://api.dev.platform.pagopa.it/afm/calculator-data-service/v1"
 }

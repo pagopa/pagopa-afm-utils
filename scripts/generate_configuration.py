@@ -155,7 +155,7 @@ environment = {
 }
 
 print("saving configuration data on file...")
-with open('configuration_data_%s_%s.json' % (len(bundles), len(ci_bundles)), 'w') as outfile:
+with open('configuration_data_%s_%s_%s_%s.json' % (pspNo, ciNo, len(bundles), len(ci_bundles)), 'w') as outfile:
     json.dump(environment, outfile)
 
 configuration = {}
