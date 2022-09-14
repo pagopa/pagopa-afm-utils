@@ -40,11 +40,11 @@ public class ConfigurationService {
         List<Bundle> bundles = configuration.getBundles();
         // set any to null to simplify query during calculation
         bundles.parallelStream().forEach(bundle -> {
-            if (bundle.getTouchpoint().equals(Touchpoint.ANY)) {
+            if (Touchpoint.ANY.equals(bundle.getTouchpoint())) {
                 bundle.setTouchpoint(null);
             }
 
-            if (bundle.getPaymentMethod().equals(PaymentMethod.ANY)) {
+            if (PaymentMethod.ANY.equals(bundle.getPaymentMethod())) {
                 bundle.setPaymentMethod(null);
             }
         });
