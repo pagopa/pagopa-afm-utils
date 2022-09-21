@@ -4,7 +4,7 @@
     "title": "PagoPA API Calculator Data",
     "description": "Calculator Data microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "0.0.2-1"
+    "version": "0.0.2-2"
   },
   "servers": [
     {
