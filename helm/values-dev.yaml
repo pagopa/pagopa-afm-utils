@@ -44,20 +44,20 @@ microservice-chart:
     - name: afm-data-mount-point
       mountPath: "/mnt/afm-data-volume"
       readOnly: true
-      persistentVolumeClaim: afm-data-volume
+      persistentVolumeClaim: afm-data-volume-ro
   persistence:
-    name: afm-pv-data
+    name: afm-pv-data-ro
     storage: 3Gi
-    accessModes: ReadWriteMany
-    readOnly: false
+    accessModes: ReadOnlyMany
+    readOnly: true
     storageClassName: azurefile-csi
-    volumeHandle: afm-data-volume
+    volumeHandle: afm-data-volume-ro
     volumeAttributes:
       resourceGroup: pagopa-d-weu-afm-rg
       shareName: pagopa-d-weu-afm-data-volume
     mountOptions:
-      - dir_mode=0777
-      - file_mode=0777
+      - dir_mode=0777 # TODO fix
+      - file_mode=0777 # TODO fix
       - uid=0
       - gid=0
       - mfsymlinks
@@ -67,8 +67,8 @@ microservice-chart:
     claim:
       accessModes: ReadOnlyMany
       storage: 3Gi
-      name: afm-data-volume
-      volumeName: afm-pv-data
+      name: afm-data-volume-ro
+      volumeName: afm-pv-data-ro
   resources:
     requests:
       memory: "1Gi"
@@ -89,6 +89,8 @@ microservice-chart:
     DATA_VOLUME: "/mnt/afm-data-volume"
   envSecret:
     APPLICATIONINSIGHTS_CONNECTION_STRING: ai-d-connection-string
+    AZURESTORAGEACCOUNTKEY: azurestorageaccountkey
+    AZURESTORAGEACCOUNTNAME: azurestorageaccountname
   keyvault:
     name: "pagopa-d-afm-kv"
     tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
