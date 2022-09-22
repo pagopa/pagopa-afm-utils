@@ -40,6 +40,35 @@ microservice-chart:
       type: RuntimeDefault
   securityContext:
     allowPrivilegeEscalation: false
+  volumes:
+    - name: afm-data-mount-point
+      mountPath: "/mnt/afm-data-volume"
+      readOnly: true
+      persistentVolumeClaim: afm-data-volume
+  persistence:
+    name: afm-pv-data
+    storage: 3Gi
+    accessModes: ReadWriteMany
+    readOnly: false
+    storageClassName: azurefile-csi
+    volumeHandle: afm-data-volume
+    volumeAttributes:
+      resourceGroup: pagopa-d-weu-afm-rg
+      shareName: pagopa-d-weu-afm-data-volume
+    mountOptions:
+      - dir_mode=0777
+      - file_mode=0777
+      - uid=0
+      - gid=0
+      - mfsymlinks
+      - cache=strict # https://github.com/piastry/cifs-utils/blob/master/mount.cifs.rst
+      - nosharesock # reduce probability of reconnect races
+      - nobrl
+    claim:
+      accessModes: ReadOnlyMany
+      storage: 3Gi
+      name: afm-data-volume
+      volumeName: afm-pv-data
   resources:
     requests:
       memory: "1Gi"
@@ -57,6 +86,7 @@ microservice-chart:
     DB_PORT: '4000'
     CACHE_SIZE: '10000'
     CACHE_EXPIRATION_TIME: '5m'
+    DATA_VOLUME: "/mnt/afm-data-volume"
   envSecret:
     APPLICATIONINSIGHTS_CONNECTION_STRING: ai-d-connection-string
   keyvault:
