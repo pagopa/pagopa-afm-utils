@@ -45,30 +45,28 @@ microservice-chart:
       mountPath: "/mnt/afm-data-volume"
       readOnly: true
       persistentVolumeClaim: afm-data-volume-ro
+
   persistence:
-    name: afm-pv-data-ro
-    storage: 3Gi
-    accessModes: ReadOnlyMany
-    readOnly: true
-    storageClassName: azurefile-csi
-    volumeHandle: afm-data-volume-ro
-    volumeAttributes:
-      resourceGroup: pagopa-d-weu-afm-rg
-      shareName: pagopa-d-weu-afm-data-volume
-    mountOptions:
-      - dir_mode=0777 # TODO fix
-      - file_mode=0777 # TODO fix
-      - uid=0
-      - gid=0
-      - mfsymlinks
-      - cache=strict # https://github.com/piastry/cifs-utils/blob/master/mount.cifs.rst
-      - nosharesock # reduce probability of reconnect races
-      - nobrl
-    claim:
-      accessModes: ReadOnlyMany
+    - name: afm-pv-data-ro
+      create: true
+      storageClassName: azurefile-csi
       storage: 3Gi
-      name: afm-data-volume-ro
-      volumeName: afm-pv-data-ro
+      accessModes: ReadOnlyMany
+      volumeHandle: afm-data-volume-ro
+      volumeAttributes:
+        resourceGroup: pagopa-d-weu-afm-rg
+        shareName: pagopa-d-weu-afm-data-volume
+      mountOptions:
+        - dir_mode=0555
+        - file_mode=0555
+        - mfsymlinks
+        - cache=strict # https://github.com/piastry/cifs-utils/blob/master/mount.cifs.rst
+        - nosharesock # reduce probability of reconnect races
+        - nobrl
+      claim:
+        create: true
+        name: afm-data-volume-ro
+
   resources:
     requests:
       memory: "1Gi"
