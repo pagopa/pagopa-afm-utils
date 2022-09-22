@@ -6,6 +6,9 @@ on:
     branches:
       - main
     types: [ closed ]
+  push:
+    branches:
+      - main
 
 
   # Allows you to run this workflow manually from the Actions tab
@@ -14,7 +17,6 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
-    if: ${{ github.event.pull_request.merged }}
     name: Call Azure Build Pipeline
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -53,6 +55,5 @@ jobs:
           azure-devops-project-url: https://dev.azure.com/pagopaspa/pagoPA-projects
           azure-pipeline-name: 'pagopa-afm-calculator-data.deploy'
           azure-devops-token: ${{ secrets.AZURE_DEVOPS_TOKEN }}
-          azure-template-parameters: '{"ENV": "dev", "SEMVER": "${{env.SEMVER}}", "TEST": "true"}'
+          azure-template-parameters: '{"ENV": "dev", "SEMVER": "${{env.SEMVER}}", "TEST": "true", "FORCE_REPLACE_DOCKER_IMAGE": "false"}'
           azure-pipeline-variables: '{"system.debug": "true"}'
-

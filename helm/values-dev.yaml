@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: pagopadcommonacr.azurecr.io/pagopaafmcalculatordata
-    tag: "0.0.2" #improve
+    tag: "0.0.2-3" #improve
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -52,6 +52,7 @@ microservice-chart:
     minReplica: 1
     maxReplica: 1
   envConfig:
+    WEBSITE_SITE_NAME: 'pagopaafmcalculatordata' # required to show cloud role name in application insights
     # db_port is set in Dockerfile too
     DB_PORT: '4000'
     CACHE_SIZE: '10000'
