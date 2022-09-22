@@ -1,5 +1,6 @@
-package it.gov.pagopa.afm.calculator.service;
+package it.gov.pagopa.afm.calculator.task;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.afm.calculator.entity.Bundle;
 import it.gov.pagopa.afm.calculator.entity.CiBundle;
 import it.gov.pagopa.afm.calculator.model.PaymentMethod;
@@ -7,44 +8,37 @@ import it.gov.pagopa.afm.calculator.model.Touchpoint;
 import it.gov.pagopa.afm.calculator.model.configuration.Configuration;
 import it.gov.pagopa.afm.calculator.repository.BundleRepository;
 import it.gov.pagopa.afm.calculator.repository.CiBundleRepository;
-import it.gov.pagopa.afm.calculator.task.ConfigurationTask;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-@Service
 @Slf4j
-public class ConfigurationService {
-    @Value("${volume.mount-point}")
+public class ConfigurationTask implements Runnable {
+
+    private BundleRepository bundleRepository;
+    private CiBundleRepository ciBundleRepository;
+
+    private ModelMapper modelMapper;
     private String volume;
-    @Autowired
-    BundleRepository bundleRepository;
 
-    @Autowired
-    CiBundleRepository ciBundleRepository;
-
-    @Autowired
-    ModelMapper modelMapper;
-
-    @EventListener(ApplicationReadyEvent.class)
-    @Transactional
-    public void save() {
-        ConfigurationTask configurationTask = new ConfigurationTask(bundleRepository, ciBundleRepository, volume, modelMapper);
-        CompletableFuture.runAsync(configurationTask).thenRun(() -> log.debug("Configuration loaded " + LocalDateTime.now()));
+    public ConfigurationTask(BundleRepository bundleRepository, CiBundleRepository ciBundleRepository, String volume, ModelMapper modelMapper) {
+        this.bundleRepository = bundleRepository;
+        this.ciBundleRepository = ciBundleRepository;
+        this.modelMapper = modelMapper;
+        this.volume = volume;
     }
-    public void save(Configuration configuration) {
+
+    @Override
+    public void run() {
+        Configuration configuration = getConfiguration();
+
         // erase tables
         bundleRepository.deleteAll();
         ciBundleRepository.deleteAll();
@@ -79,12 +73,19 @@ public class ConfigurationService {
         }).collect(Collectors.toList());
         ciBundleRepository.saveAllAndFlush(ciBundleList);
         bundleRepository.saveAll(bundleListToSave);
+
     }
 
-    public Configuration get() {
-        return Configuration.builder()
-                .bundles(bundleRepository.findAll())
-                .ciBundles(ciBundleRepository.findAll().parallelStream().map(ciBundle -> modelMapper.map(ciBundle, it.gov.pagopa.afm.calculator.model.configuration.CiBundle.class)).collect(Collectors.toList()))
-                .build();
+    Configuration getConfiguration() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        LocalDate now = LocalDate.now();
+        String filename = String.format("configuration_%s_%s_%s.json", now.getYear(), now.getMonthValue(), now.getDayOfMonth());
+        try {
+            Configuration configuration = objectMapper.readValue(new File(String.format("%s/%s", volume, filename)), Configuration.class);
+            return configuration;
+        } catch (IOException e) {
+            log.error("Problem to read configuration: ", e);
+            throw new RuntimeException(e);
+        }
     }
 }

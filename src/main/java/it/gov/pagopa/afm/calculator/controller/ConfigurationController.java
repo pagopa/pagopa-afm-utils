@@ -15,11 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 @RestController()
 @Tag(name = "Configuration", description = "Everything about Calculator Configuration")
@@ -30,14 +26,14 @@ public class ConfigurationController {
 
     @Operation(summary = "Save calculator configuration", tags = {"Configuration"})
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = Configuration.class))),
+            @ApiResponse(responseCode = "201", description = "Created", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema())),
             @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema())),
             @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema())),
             @ApiResponse(responseCode = "500", description = "Service unavailable", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class)))})
     @PostMapping(value = "/configuration", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Void> configure(@RequestBody @Valid @NotNull Configuration configuration) {
-        configurationService.save(configuration);
+    public ResponseEntity<Void> configure() {
+        configurationService.save();
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
