@@ -57,10 +57,15 @@ microservice-chart:
     DB_PORT: '4000'
     CACHE_SIZE: '10000'
     CACHE_EXPIRATION_TIME: '5m'
+    AFM_CALCULATOR_HOST: https://api.uat.platform.pagopa.it/afm/marketplace-service/v1
+    AFM_CALCULATOR_RETRY_MAX_ATTEMPTS: "1"
+    AFM_CALCULATOR_RETRY_MAX_DELAY: "2000"
+    CONFIGURATION_TRIGGER: "0 0 12 * * ?"
   envSecret:
     APPLICATIONINSIGHTS_CONNECTION_STRING: ai-p-connection-string
     CONNECTION_STRING: storage-account-p-connection-str
     BLOB_CONTAINER_NAME: storage-account-p-blob-name
+    AFM_MARKETPLACE_SUBSCRIPTION_KEY: afm-internal-subscription-key-REMOVE
   keyvault:
     name: "pagopa-p-afm-kv"
     tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
