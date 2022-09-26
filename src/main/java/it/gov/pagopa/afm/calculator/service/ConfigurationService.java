@@ -27,8 +27,11 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class ConfigurationService {
-    @Value("${volume.mount-point}")
-    private String volume;
+    @Value("${azure.storage.connectionString}")
+    private String storageConnectionString;
+
+    @Value("${azure.storage.blobName}")
+    private String containerBlob;
     @Autowired
     BundleRepository bundleRepository;
 
@@ -41,7 +44,7 @@ public class ConfigurationService {
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
     public void save() {
-        ConfigurationTask configurationTask = new ConfigurationTask(bundleRepository, ciBundleRepository, volume, modelMapper);
+        ConfigurationTask configurationTask = new ConfigurationTask(bundleRepository, ciBundleRepository, modelMapper, storageConnectionString, containerBlob);
         CompletableFuture.runAsync(configurationTask).thenRun(() -> log.debug("Configuration loaded " + LocalDateTime.now()));
     }
     public void save(Configuration configuration) {

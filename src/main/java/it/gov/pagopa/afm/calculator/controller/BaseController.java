@@ -31,9 +31,6 @@ public class BaseController {
     @Value("${info.properties.environment}")
     private String environment;
 
-    @Value("${volume.mount-point}")
-    private String volume;
-
     @Operation(summary = "health check", description = "Return OK if application is started", security = {@SecurityRequirement(name = "ApiKey")}, tags = {"Home"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = AppInfo.class))),
@@ -45,20 +42,6 @@ public class BaseController {
     @GetMapping(value = "/info")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<AppInfo> healthCheck() {
-
-        try {
-            File file = new File(volume + "/test.txt");
-            Scanner scanner = new Scanner(file);
-            while (scanner.hasNextLine()) {
-                String data = scanner.nextLine();
-                System.out.println("TEST CONTENT: " + data);
-            }
-            scanner.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred: " + e.getMessage());
-        }
-
-
         // Used just for health checking
         AppInfo info = AppInfo.builder()
                 .name(name)

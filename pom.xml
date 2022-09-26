@@ -19,6 +19,7 @@
         <java.version>11</java.version>
         <hibernate-version>6.1.1.Final</hibernate-version>
         <openfeign-version>3.1.4</openfeign-version>
+        <azure-storage-blob-version>12.19.1</azure-storage-blob-version>
     </properties>
 
     <dependencies>
@@ -41,6 +42,17 @@
         <dependency>
             <groupId>org.springframework.retry</groupId>
             <artifactId>spring-retry</artifactId>
+        </dependency>
+
+        <!-- Azure Storage -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-storage-blob</artifactId>
+            <version>${azure-storage-blob-version}</version>
         </dependency>
 
         <!-- Swagger/OpenAPI -->
