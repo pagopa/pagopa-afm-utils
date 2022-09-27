@@ -65,7 +65,7 @@ microservice-chart:
     APPLICATIONINSIGHTS_CONNECTION_STRING: ai-u-connection-string
     CONNECTION_STRING: storage-account-u-connection-str
     BLOB_CONTAINER_NAME: storage-account-u-blob-name
-    AFM_MARKETPLACE_SUBSCRIPTION_KEY: afm-internal-subscription-key-REMOVE
+    AFM_MARKETPLACE_SUBSCRIPTION_KEY: afm-marketplace-subscription-key
   keyvault:
     name: "pagopa-u-afm-kv"
     tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
