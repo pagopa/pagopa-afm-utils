@@ -45,7 +45,15 @@ public class ConfigurationService {
     @Transactional
     public void save() {
         ConfigurationTask configurationTask = new ConfigurationTask(bundleRepository, ciBundleRepository, modelMapper, storageConnectionString, containerBlob);
-        CompletableFuture.runAsync(configurationTask).thenRun(() -> log.debug("Configuration loaded " + LocalDateTime.now()));
+        CompletableFuture.runAsync(configurationTask)
+                .whenComplete((msg, ex) -> {
+                    LocalDateTime when = LocalDateTime.now();
+                    if (ex != null) {
+                        log.info("Configuration loaded " + when);
+                    } else {
+                        log.error("Configuration not loaded");
+                    }
+                });
     }
     public void save(Configuration configuration) {
         // erase tables
