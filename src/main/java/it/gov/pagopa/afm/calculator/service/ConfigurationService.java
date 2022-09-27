@@ -49,9 +49,9 @@ public class ConfigurationService {
                 .whenComplete((msg, ex) -> {
                     LocalDateTime when = LocalDateTime.now();
                     if (ex != null) {
-                        log.info("Configuration loaded " + when);
+                        log.error("Configuration not loaded " + when, ex);
                     } else {
-                        log.error("Configuration not loaded");
+                        log.info("Configuration loaded " + when);
                     }
                 });
     }
