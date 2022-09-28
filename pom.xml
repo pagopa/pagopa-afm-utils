@@ -11,13 +11,15 @@
 
     <groupId>it.gov.pagopa</groupId>
     <artifactId>microservice</artifactId>
-    <version>0.0.2-3</version>
+    <version>0.0.2-13</version>
     <name>afm-calculator-data</name>
     <description>Calculator Data microservice for pagoPA AFM</description>
 
     <properties>
         <java.version>11</java.version>
         <hibernate-version>6.1.1.Final</hibernate-version>
+        <openfeign-version>3.1.4</openfeign-version>
+        <azure-storage-blob-version>12.19.1</azure-storage-blob-version>
     </properties>
 
     <dependencies>
@@ -28,6 +30,29 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- Feign Client -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>${openfeign-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.retry</groupId>
+            <artifactId>spring-retry</artifactId>
+        </dependency>
+
+        <!-- Azure Storage -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-storage-blob</artifactId>
+            <version>${azure-storage-blob-version}</version>
         </dependency>
 
         <!-- Swagger/OpenAPI -->

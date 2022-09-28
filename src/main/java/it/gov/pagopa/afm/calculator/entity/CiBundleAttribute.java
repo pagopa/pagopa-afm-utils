@@ -1,5 +1,6 @@
 package it.gov.pagopa.afm.calculator.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import it.gov.pagopa.afm.calculator.model.TransferCategoryRelation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +21,7 @@ import javax.persistence.Table;
 @Builder(toBuilder = true)
 @Entity
 @Table(name = "CIBUNDLEATTRIBUTE", schema = "AFM_CALCULATOR")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CiBundleAttribute {
 
     @Id
