@@ -106,7 +106,7 @@ public class ConfigurationTask implements Runnable {
             ObjectMapper objectMapper = new ObjectMapper();
             configuration = objectMapper.readValue(outputStream.toString(), Configuration.class);
         } catch (BlobStorageException | JsonProcessingException e) {
-            log.error("Problem to deserialize configuration: ", e);
+            log.error("Problem to deserialize configuration or configuration not found.");
             throw new RuntimeException(e);
         }
         return configuration;
