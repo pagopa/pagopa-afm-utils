@@ -88,7 +88,7 @@ public class ConfigurationTask implements Runnable {
 
     Configuration getConfiguration() {
         // try to create blob container
-        AzuriteStorageUtil azuriteStorageUtil = new AzuriteStorageUtil(storageConnectionString, null,null, containerBlob);
+        AzuriteStorageUtil azuriteStorageUtil = new AzuriteStorageUtil(storageConnectionString, containerBlob);
         azuriteStorageUtil.createBlob();
 
         BlobServiceClient blobServiceClient = new BlobServiceClientBuilder()
