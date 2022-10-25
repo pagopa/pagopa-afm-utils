@@ -39,5 +39,4 @@ export containerRegistry=${containerRegistry}
 export image=${image}
 
 stack_name=$(cd .. && basename "$PWD")
-docker network prune -f
 docker-compose -p "${stack_name}" up -d --remove-orphans --force-recreate
