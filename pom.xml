@@ -10,16 +10,13 @@
     </parent>
 
     <groupId>it.gov.pagopa</groupId>
-    <artifactId>microservice</artifactId>
+    <artifactId>calculator-data</artifactId>
     <version>0.0.4</version>
-    <name>afm-calculator-data</name>
-    <description>Calculator Data microservice for pagoPA AFM</description>
+    <name>afm-utils</name>
+    <description>Utility microservice for pagoPA AFM</description>
 
     <properties>
         <java.version>11</java.version>
-        <hibernate-version>6.1.1.Final</hibernate-version>
-        <openfeign-version>3.1.4</openfeign-version>
-        <azure-storage-blob-version>12.19.1</azure-storage-blob-version>
     </properties>
 
     <dependencies>
@@ -36,7 +33,7 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
-            <version>${openfeign-version}</version>
+            <version>3.1.4</version>
         </dependency>
 
         <dependency>
@@ -44,22 +41,11 @@
             <artifactId>spring-retry</artifactId>
         </dependency>
 
-        <!-- Azure Storage -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.azure</groupId>
-            <artifactId>azure-storage-blob</artifactId>
-            <version>${azure-storage-blob-version}</version>
-        </dependency>
-
         <!-- Swagger/OpenAPI -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.6.9</version>
+            <version>1.6.11</version>
         </dependency>
         <!-- Spring utils-->
         <dependency>
@@ -85,33 +71,12 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jpa</artifactId>
-            <version>2.7.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>${hibernate-version}</version>
         </dependency>
 
         <!-- utilities -->
@@ -137,17 +102,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- fix log4j vulnerability-->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>2.17.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-to-slf4j</artifactId>
-            <version>2.16.0</version>
-        </dependency>
     </dependencies>
 
     <build>

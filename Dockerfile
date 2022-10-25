@@ -20,4 +20,4 @@ RUN true
 COPY --chown=spring:spring  --from=builder spring-boot-loader/ ./
 COPY --chown=spring:spring  --from=builder application/ ./
 
-EXPOSE 8080 4000
+EXPOSE 8080

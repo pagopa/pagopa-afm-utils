@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  afm-utils:
+    container_name: 'afm-utils'
+    image: ${image}
+    build:
+      dockerfile: Dockerfile
+      context: ../
+    env_file:
+      - ./config/.env
+    ports:
+      - "8080:8080"
+    networks:
+      afmutils_net:
+
+
+  marketplace-be:
+    container_name: 'marketplace-be'
+    image: ${containerRegistry}/pagopaafmmarketplacebe:latest
+    user: root
+    volumes:
+      - ./config/cosmosdb.sh:/cosmosdb.sh
+    env_file:
+      - ./config/marketplace.env
+    ports:
+      - 8082:8080
+    entrypoint: sh /cosmosdb.sh
+    depends_on:
+      - cosmosdb
+    networks:
+      afmutils_net:
+
+
+  cosmosdb:
+    container_name: 'cosmosdb'
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
+    ports:
+      - '8081:8081'
+      - '10251-10254:10251-10254'
+    environment:
+      - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=10
+      - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
+      - AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE=10.20.0.2
+    networks:
+      afmutils_net:
+        ipv4_address: 10.20.0.2
+
+
+networks:
+  afmutils_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.20.0.0/16
+          gateway: 10.20.0.1
+
+

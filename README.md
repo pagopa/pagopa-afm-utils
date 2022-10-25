@@ -1,4 +1,4 @@
-# AFM Calculator Data
+# AFM Utils
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pagopa_pagopa-afm-calculator-data&metric=alert_status)](https://sonarcloud.io/dashboard?id=pagopa_pagopa-afm-calculator-data)
 
