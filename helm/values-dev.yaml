@@ -3,7 +3,7 @@ microservice-chart:
   nameOverride: ""
   fullnameOverride: ""
   image:
-    repository: pagopadcommonacr.azurecr.io/pagopaafmcalculatordata
+    repository: pagopadcommonacr.azurecr.io/pagopaafmutils
     tag: "0.0.4" #improve
     pullPolicy: Always
   livenessProbe:
@@ -29,7 +29,7 @@ microservice-chart:
   ingress:
     create: true
     host: "weudev.afm.internal.dev.platform.pagopa.it"
-    path: /pagopa-afm-calculator-data-service/(.*)
+    path: /pagopa-afm-utils-service/(.*)
   serviceAccount:
     create: false
     annotations: {}
@@ -52,20 +52,16 @@ microservice-chart:
     minReplica: 1
     maxReplica: 1
   envConfig:
-    WEBSITE_SITE_NAME: 'pagopaafmcalculatordata' # required to show cloud role name in application insights
-    # db_port is set in Dockerfile too
-    DB_PORT: '4000'
+    WEBSITE_SITE_NAME: 'pagopaafmutils' # required to show cloud role name in application insights
     CACHE_SIZE: '10000'
     CACHE_EXPIRATION_TIME: '5m'
     AFM_MARKETPLACE_HOST: https://api.dev.platform.pagopa.it/afm/marketplace-service/v1
     AFM_MARKETPLACE_RETRY_MAX_ATTEMPTS: "1"
     AFM_MARKETPLACE_RETRY_MAX_DELAY: "2000"
     CONFIGURATION_TRIGGER: "0 0 12 * * ?"
-    LOGGING_LEVEL: "INFO"
+    APP_LOGGING_LEVEL: "DEBUG"
   envSecret:
     APPLICATIONINSIGHTS_CONNECTION_STRING: ai-d-connection-string
-    CONNECTION_STRING: storage-account-d-connection-str
-    BLOB_CONTAINER_NAME: storage-account-d-blob-name
     AFM_MARKETPLACE_SUBSCRIPTION_KEY: afm-marketplace-subscription-key
   keyvault:
     name: "pagopa-d-afm-kv"

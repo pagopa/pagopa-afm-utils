@@ -1,10 +1,10 @@
-# AFM Calculator Data
+# AFM Utils
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pagopa_pagopa-afm-calculator-data&metric=alert_status)](https://sonarcloud.io/dashboard?id=pagopa_pagopa-afm-calculator-data)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pagopa_pagopa-afm-utils&metric=alert_status)](https://sonarcloud.io/dashboard?id=pagopa_pagopa-afm-utils)
 
 Spring Application exposes API to upload calculator data according to [_AFM Marketplace_](https://github.com/pagopa/pagopa-afm-marketplace-be) configuration.
 
-- [PagoPa AFM Calculator](#pagopa-afm-calculator-data)
+- [PagoPa AFM Utils](#pagopa-afm-utils)
     - [API Documentation 📖](#api-documentation-)
     - [Technology Stack](#technology-stack)
     - [Develop Locally 💻](#develop-locally-)
@@ -14,7 +14,6 @@ Spring Application exposes API to upload calculator data according to [_AFM Mark
 
 ---
 ## API Documentation 📖
-See the [Swagger 2 here.](https://editor.swagger.io/?url=https://raw.githubusercontent.com/pagopa/pagopa-afm-calculator-data/main/openapi/swagger.json)
 
 See the [OpenApi 3 here.](https://editor.swagger.io/?url=https://raw.githubusercontent.com/pagopa/pagopa-afm-calculator-data/main/openapi/openapi.json)
 
@@ -24,8 +23,6 @@ See the [OpenApi 3 here.](https://editor.swagger.io/?url=https://raw.githubuserc
 - Java 11
 - Spring Boot
 - Spring Web
-- Hibernate
-- JPA
 
 ---
 
