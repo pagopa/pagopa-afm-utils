@@ -19,4 +19,6 @@ public class CDI {
 	private Boolean digitalStamp;
 	private String validityDateFrom;
 	private List<Detail> details;
+	
+	// TODO status error description
 }

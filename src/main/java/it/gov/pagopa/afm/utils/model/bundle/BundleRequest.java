@@ -1,5 +1,6 @@
 package it.gov.pagopa.afm.utils.model.bundle;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -16,11 +17,17 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class BundleRequest {
-    @NotNull
+public class BundleRequest implements Serializable{
+    /**
+	 * generated serialVersionUID
+	 */
+	private static final long serialVersionUID = -3848735995119820291L;
+	
+	@NotNull
     private String idChannel;
     @NotNull
     private String idBrokerPsp;
+    private String idCdi;
     private String name;
     private String description;
     private Long paymentAmount;

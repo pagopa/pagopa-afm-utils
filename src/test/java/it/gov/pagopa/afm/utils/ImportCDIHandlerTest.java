@@ -60,5 +60,65 @@ public class ImportCDIHandlerTest {
 		
 		assertEquals(1, responses.size());
 		assertThat(responses.get(0).getIdBundle()).isEqualTo("12345");
+		
+		wireMockServer.stop();
+	}
+	
+	@Test
+	void executeMultipleTouchPoint() throws IOException {
+		// precondition
+		CDI cdi = TestUtil.readModelFromFile("cdi/cdi_wisp_io_checkout.json", CDI.class);
+		List<CDI> items = new ArrayList<>();
+		items.add(cdi);
+		
+		BundleResponse response = BundleResponse.builder().idBundle("12345").build();
+		
+		WireMockServer wireMockServer = new WireMockServer(8585);
+        wireMockServer.start();
+        
+        configureFor(wireMockServer.port());
+        stubFor(post(urlEqualTo("/psps/"+cdi.getIdPsp()+"/bundles"))
+                .willReturn(aResponse()
+                        .withStatus(201)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(TestUtil.toJson(response))));
+		
+		
+		//test execution
+		List<BundleResponse> responses = handler.execute(items, context);
+		
+		assertEquals(3, responses.size());
+		assertThat(responses.get(0).getIdBundle()).isEqualTo("12345");
+		
+		wireMockServer.stop();
+	}
+	
+	@Test
+	void executeMultipleServiceAmount() throws IOException {
+		// precondition
+		CDI cdi = TestUtil.readModelFromFile("cdi/cdi_service_amount.json", CDI.class);
+		List<CDI> items = new ArrayList<>();
+		items.add(cdi);
+		
+		BundleResponse response = BundleResponse.builder().idBundle("12345").build();
+		
+		WireMockServer wireMockServer = new WireMockServer(8585);
+        wireMockServer.start();
+        
+        configureFor(wireMockServer.port());
+        stubFor(post(urlEqualTo("/psps/"+cdi.getIdPsp()+"/bundles"))
+                .willReturn(aResponse()
+                        .withStatus(201)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(TestUtil.toJson(response))));
+		
+		
+		//test execution
+		List<BundleResponse> responses = handler.execute(items, context);
+		
+		assertEquals(2, responses.size());
+		assertThat(responses.get(0).getIdBundle()).isEqualTo("12345");
+		
+		wireMockServer.stop();
 	}
 }

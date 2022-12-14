@@ -9,10 +9,10 @@
 			"idChannel": "string",
 			"name": "string",
 			"description": "string",
-			"paymentMethod": "string",
+			"paymentMethod": "CP",
 			"onUs": false,
 			"channelApp": false,
-			"channelCardsCart": false,
+			"channelCardsCart": true,
 			"serviceAmount": [
 				{
 					"paymentAmount": 1000,

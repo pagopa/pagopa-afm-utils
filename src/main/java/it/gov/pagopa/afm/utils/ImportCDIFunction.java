@@ -47,12 +47,20 @@ public class ImportCDIFunction  implements Function<Mono<BundleWrapper>, Mono<Li
         } catch (FeignException.BadRequest e) {
             log.error("Creation of the Bundle on Markeplace Bad Request Error [idPsp={}]", idPsp, e);
             //throw new AppException(AppError.BUNDLE_REQUEST_DATA_ERROR, "[idPsp= "+idPsp+"]");
+            //FAILED
         } catch (FeignException.Conflict e) {
             log.error("Creation of the Bundle on Markeplace Conflict Error [idPsp={}]", idPsp, e);
             //throw new AppException(AppError.BUNDLE_REQUEST_DATA_ERROR, "[idPsp= "+idPsp+"]");
-        } catch (Exception e) {
+            //FAILED
+        } catch (FeignException.InternalServerError e) {
+            log.error("Creation of the Bundle on Markeplace Conflict Error [idPsp={}]", idPsp, e);
+            //throw new AppException(AppError.BUNDLE_REQUEST_DATA_ERROR, "[idPsp= "+idPsp+"]");
+            //RETRY
+        } 
+		catch (Exception e) {
             log.error("Creation of the Bundle on Markeplace Error [idPsp={}]", idPsp, e);
             //throw new AppException(AppError.INTERNAL_SERVER_ERROR);
+            //FAILED
         }
 		 return response;
 	}
