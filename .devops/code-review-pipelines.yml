@@ -15,6 +15,14 @@ variables:
   MAVEN_OPTS: '-Dmaven.repo.local=$(MAVEN_CACHE_FOLDER)'
 
 steps:
+
+  - task: Npm@1
+    displayName: 'Azure Function Extension Install'
+    inputs:
+    #this is needed so that the function extension install in the maven task doesn't fail
+      command: 'custom'
+      customCommand: 'install -g azure-functions-core-tools@3 --unsafe-perm true'
+      
   - task: Cache@2
     inputs:
       key: 'maven | "$(Agent.OS)" | pom.xml'
@@ -59,9 +67,3 @@ steps:
     displayName: 'Publish SonarCloud results on build summary'
     inputs:
       pollingTimeoutSec: '300'
-      
-  - task: Npm@1
-        inputs:
-        #this is needed so that the function extension install in the maven task doesn't fail
-            command: 'custom'
-            customCommand: 'install -g azure-functions-core-tools@3 --unsafe-perm true'
