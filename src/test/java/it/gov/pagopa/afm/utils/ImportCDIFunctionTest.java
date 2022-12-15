@@ -1,12 +1,12 @@
 package it.gov.pagopa.afm.utils;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.jeasy.random.EasyRandom;
@@ -17,9 +17,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import feign.FeignException;
-import it.gov.pagopa.afm.utils.model.bundle.BundleRequest;
+import it.gov.pagopa.afm.utils.entity.CDI;
 import it.gov.pagopa.afm.utils.model.bundle.BundleResponse;
-import it.gov.pagopa.afm.utils.model.bundle.BundleWrapper;
+import it.gov.pagopa.afm.utils.model.bundle.Wrapper;
 import it.gov.pagopa.afm.utils.service.MarketPlaceClient;
 import reactor.core.publisher.Mono;
 
@@ -36,16 +36,14 @@ class ImportCDIFunctionTest {
 		Mockito.when(marketPlaceClient.createBundle(eq("201"), any())).thenReturn(response);
 		
 		EasyRandom generator = new EasyRandom();
-		BundleRequest request = generator.nextObject(BundleRequest.class);
-		request.setTransferCategoryList(null);
+		CDI cdi = generator.nextObject(CDI.class);
+		cdi.setIdPsp("201");
+		cdi.setValidityDateFrom("2022-12-15");
 		
-		List<BundleRequest> requests = new ArrayList<>();
-		requests.add(request);
-		
-		BundleWrapper input = BundleWrapper.builder().idPsp("201").bundleRequests(requests).build();
+		Wrapper input = Wrapper.builder().cdiItems(Arrays.asList(new CDI[] {cdi})).build();
 		Mono<List<BundleResponse>> responses = new ImportCDIFunction(marketPlaceClient).apply(Mono.just(input));
 		
-		assertEquals(1, responses.block().size());
+		assertTrue(responses.block().size() > 0);
 		assertThat(responses.block().get(0).getIdBundle()).isEqualTo("12345");
 	}
 	
@@ -54,16 +52,16 @@ class ImportCDIFunctionTest {
 		// precondition
 		Mockito.when(marketPlaceClient.createBundle(eq("400"), any())).thenThrow(FeignException.BadRequest.class);
 		
+
 		EasyRandom generator = new EasyRandom();
-		BundleRequest request = generator.nextObject(BundleRequest.class);
+		CDI cdi = generator.nextObject(CDI.class);
+		cdi.setIdPsp("400");
+		cdi.setValidityDateFrom("2022-12-15");
 		
-		List<BundleRequest> requests = new ArrayList<>();
-		requests.add(request);
-		
-		BundleWrapper input = BundleWrapper.builder().idPsp("400").bundleRequests(requests).build();
+		Wrapper input = Wrapper.builder().cdiItems(Arrays.asList(new CDI[] {cdi})).build();
 		Mono<List<BundleResponse>> responses = new ImportCDIFunction(marketPlaceClient).apply(Mono.just(input));
 		
-		assertEquals(1, responses.block().size());
+		assertTrue(responses.block().size() > 0);
 		assertNull(responses.block().get(0).getIdBundle());
 	}
 	
@@ -73,15 +71,14 @@ class ImportCDIFunctionTest {
 		Mockito.when(marketPlaceClient.createBundle(eq("409"), any())).thenThrow(FeignException.Conflict.class);
 		
 		EasyRandom generator = new EasyRandom();
-		BundleRequest request = generator.nextObject(BundleRequest.class);
+		CDI cdi = generator.nextObject(CDI.class);
+		cdi.setIdPsp("409");
+		cdi.setValidityDateFrom("2022-12-15");
 		
-		List<BundleRequest> requests = new ArrayList<>();
-		requests.add(request);
-		
-		BundleWrapper input = BundleWrapper.builder().idPsp("409").bundleRequests(requests).build();
+		Wrapper input = Wrapper.builder().cdiItems(Arrays.asList(new CDI[] {cdi})).build();
 		Mono<List<BundleResponse>> responses = new ImportCDIFunction(marketPlaceClient).apply(Mono.just(input));
 		
-		assertEquals(1, responses.block().size());
+		assertTrue(responses.block().size() > 0);
 		assertNull(responses.block().get(0).getIdBundle());
 	}
 }

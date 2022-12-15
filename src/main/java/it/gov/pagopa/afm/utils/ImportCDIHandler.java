@@ -1,29 +1,21 @@
 package it.gov.pagopa.afm.utils;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.springframework.cloud.function.adapter.azure.FunctionInvoker;
-import org.springframework.util.CollectionUtils;
 
 import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.annotation.CosmosDBTrigger;
 import com.microsoft.azure.functions.annotation.FunctionName;
 
 import it.gov.pagopa.afm.utils.entity.CDI;
-import it.gov.pagopa.afm.utils.entity.Detail;
-import it.gov.pagopa.afm.utils.entity.ServiceAmount;
-import it.gov.pagopa.afm.utils.model.bundle.BundleRequest;
 import it.gov.pagopa.afm.utils.model.bundle.BundleResponse;
-import it.gov.pagopa.afm.utils.model.bundle.BundleType;
-import it.gov.pagopa.afm.utils.model.bundle.BundleWrapper;
+import it.gov.pagopa.afm.utils.model.bundle.Wrapper;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ImportCDIHandler extends FunctionInvoker<BundleWrapper, List<BundleResponse>> {
+public class ImportCDIHandler extends FunctionInvoker<Wrapper, List<BundleResponse>> {
 		
 	@FunctionName("importCDIFunction")
 	public List<BundleResponse> execute(
@@ -37,44 +29,41 @@ public class ImportCDIHandler extends FunctionInvoker<BundleWrapper, List<Bundle
 			List<CDI> items,
 			ExecutionContext context) {
 		
-		log.info("Processing the trigger.");
+		log.info("Import CDI function executed at: " + LocalDateTime.now() + " for CDI list with size: " + items.size());
 		
-		BundleWrapper bundleWrapper = new BundleWrapper();
-		
-		for (CDI cdi: items) {
-			log.info("Generate Package function executed at: " + LocalDateTime.now() + " for CDI with idPsp: " + cdi.getIdPsp());
-			if (!CollectionUtils.isEmpty(cdi.getDetails())) {
-				DateTimeFormatter  dfDate     = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-				bundleWrapper.setIdPsp(cdi.getIdPsp());
-				BundleRequest bundleRequest = new BundleRequest();
-				bundleRequest.setIdCdi(cdi.getIdCdi());
-				bundleRequest.setDigitalStamp(cdi.getDigitalStamp());
-				bundleRequest.setDigitalStampRestriction(Boolean.FALSE);
-				bundleRequest.setType(BundleType.GLOBAL);
-				bundleRequest.setTransferCategoryList(null);
-				bundleRequest.setValidityDateFrom(LocalDate.parse(cdi.getValidityDateFrom(), dfDate));
-				bundleRequest.setValidityDateTo(null);
-				for (Detail d: cdi.getDetails()) {
-					bundleRequest.setIdChannel(d.getIdChannel());
-					bundleRequest.setIdBrokerPsp(d.getIdBrokerPsp());
-					bundleRequest.setName(d.getName());
-					bundleRequest.setDescription(d.getDescription());
-					bundleRequest.setPaymentType(d.getPaymentMethod());
-					// TODO calculate value
-					bundleRequest.setOnUs(null);
-					for (ServiceAmount sa: d.getServiceAmount()) {
-						bundleRequest.setPaymentAmount(sa.getPaymentAmount());
-						bundleRequest.setMinPaymentAmount(sa.getMinPaymentAmount());
-						bundleRequest.setMaxPaymentAmount(sa.getMaxPaymentAmount());
-						//bundleWrapper.getBundleRequests().add(bundleRequest);
-						this.addBundleByTouchpoint(d, bundleWrapper, bundleRequest);
-					}
+		Wrapper wrapper = Wrapper.builder().cdiItems(items).build();
+		return handleRequest(wrapper, context);
+	}
+/*
+	public void createBundlesByCDI(BundleWrapper bundleWrapper, CDI cdi) {
+		if (!CollectionUtils.isEmpty(cdi.getDetails())) {
+			DateTimeFormatter  dfDate     = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			bundleWrapper.setIdPsp(cdi.getIdPsp());
+			BundleRequest bundleRequest = new BundleRequest();
+			bundleRequest.setIdCdi(cdi.getIdCdi());
+			bundleRequest.setDigitalStamp(cdi.getDigitalStamp());
+			bundleRequest.setDigitalStampRestriction(Boolean.FALSE);
+			bundleRequest.setType(BundleType.GLOBAL);
+			bundleRequest.setTransferCategoryList(null);
+			bundleRequest.setValidityDateFrom(LocalDate.parse(cdi.getValidityDateFrom(), dfDate));
+			bundleRequest.setValidityDateTo(null);
+			for (Detail d: cdi.getDetails()) {
+				bundleRequest.setIdChannel(d.getIdChannel());
+				bundleRequest.setIdBrokerPsp(d.getIdBrokerPsp());
+				bundleRequest.setName(d.getName());
+				bundleRequest.setDescription(d.getDescription());
+				bundleRequest.setPaymentType(d.getPaymentMethod());
+				// TODO calculate value
+				bundleRequest.setOnUs(null);
+				for (ServiceAmount sa: d.getServiceAmount()) {
+					bundleRequest.setPaymentAmount(sa.getPaymentAmount());
+					bundleRequest.setMinPaymentAmount(sa.getMinPaymentAmount());
+					bundleRequest.setMaxPaymentAmount(sa.getMaxPaymentAmount());
+					//bundleWrapper.getBundleRequests().add(bundleRequest);
+					this.addBundleByTouchpoint(d, bundleWrapper, bundleRequest);
 				}
 			}
-			
 		}
-		
-		return handleRequest(bundleWrapper, context);
 	}
 	
 	private void addBundleByTouchpoint(Detail d, BundleWrapper bundleWrapper, BundleRequest bundleRequest) {
@@ -114,5 +103,5 @@ public class ImportCDIHandler extends FunctionInvoker<BundleWrapper, List<Bundle
 		}
 		
 	}
-
+*/
 }
