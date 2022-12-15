@@ -27,6 +27,7 @@ public class BundleRequest implements Serializable{
     private String idChannel;
     @NotNull
     private String idBrokerPsp;
+    @NotNull
     private String idCdi;
     private String name;
     private String description;
@@ -34,7 +35,6 @@ public class BundleRequest implements Serializable{
     private Long minPaymentAmount;
     private Long maxPaymentAmount;
     private String paymentType;
-    private Boolean onUs;
     private Boolean digitalStamp;
     private Boolean digitalStampRestriction;
     private String touchpoint;

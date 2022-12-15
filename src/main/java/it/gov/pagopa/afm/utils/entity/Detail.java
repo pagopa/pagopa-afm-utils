@@ -20,7 +20,6 @@ public class Detail {
 	private String name;
 	private String description;
 	private String paymentMethod;
-	private Boolean onUs;
 	private Boolean channelApp;
 	private Boolean channelCardsCart;
 	private List<ServiceAmount> serviceAmount;

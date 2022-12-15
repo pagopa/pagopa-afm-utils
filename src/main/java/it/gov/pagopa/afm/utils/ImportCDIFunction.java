@@ -16,10 +16,14 @@ import feign.FeignException;
 import it.gov.pagopa.afm.utils.entity.CDI;
 import it.gov.pagopa.afm.utils.entity.Detail;
 import it.gov.pagopa.afm.utils.entity.ServiceAmount;
+import it.gov.pagopa.afm.utils.entity.StatusType;
+import it.gov.pagopa.afm.utils.exception.AppError;
+import it.gov.pagopa.afm.utils.exception.AppException;
 import it.gov.pagopa.afm.utils.model.bundle.BundleRequest;
 import it.gov.pagopa.afm.utils.model.bundle.BundleResponse;
 import it.gov.pagopa.afm.utils.model.bundle.BundleType;
 import it.gov.pagopa.afm.utils.model.bundle.Wrapper;
+import it.gov.pagopa.afm.utils.service.CDIService;
 import it.gov.pagopa.afm.utils.service.MarketPlaceClient;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -33,32 +37,44 @@ import reactor.core.publisher.Mono;
 public class ImportCDIFunction  implements Function<Mono<Wrapper>, Mono<List<BundleResponse>>>{
 
 	@Autowired(required=false)
-    private MarketPlaceClient marketPlaceClient;
+	private MarketPlaceClient marketPlaceClient;
 
-	
+	@Autowired(required=false)
+	private CDIService cdiService;
+
+
 	@Override
 	public Mono<List<BundleResponse>> apply(Mono<Wrapper> input) {	
 		List<BundleResponse> bundleResponses = new ArrayList<>();
 		return input.map(wrapper -> {			
-			
+
 			for (CDI cdi: wrapper.getCdiItems()) {
-				String idPsp = cdi.getIdPsp();
-				List<BundleRequest> bundleRequestList = this.createBundlesByCDI(cdi);
-				// TODO attempting createBundle with list parameter
-				for (BundleRequest bundleRequest: bundleRequestList) {
-					bundleResponses.add(this.createBundle(idPsp, bundleRequest));
+				// processed only cdis not in FAILED status
+				if (null != cdi.getCdiStatus() && !cdi.getCdiStatus().equals(StatusType.FAILED)) {
+					String idPsp = cdi.getIdPsp();
+					List<BundleRequest> bundleRequestList = this.createBundlesByCDI(cdi);
+					// TODO attempting createBundle with list parameter
+					for (BundleRequest bundleRequest: bundleRequestList) {
+						try {
+							bundleResponses.add(this.createBundle(idPsp, bundleRequest));
+							// success -> delete the CDI
+							Optional.ofNullable(cdiService).ifPresent(result -> cdiService.deleteCDI(cdi));
+						}
+						catch (AppException e) {
+							// error -> set CDI status to failed
+							cdi.setCdiStatus(StatusType.FAILED);
+							cdi.setCdiErrorDesc(e.getMessage());
+							CDI updated = Optional.ofNullable(cdiService).map(result -> cdiService.updateCDI(cdi)).orElseGet(() -> null);
+							log.error(String.format("CDI status updated [%s, %s]", updated.getCdiStatus(), updated.getCdiErrorDesc()));
+						}
+					}
 				}
 			}
-			
-			/*
-            for (BundleRequest bundleRequest: wrapper.getBundleRequests()) {
-            	bundleResponses.add(this.createBundle(wrapper.getIdPsp(), bundleRequest));
-            }*/
-            return bundleResponses;
-        });
-		
+			return bundleResponses;
+		});
+
 	}
-	
+
 	public List<BundleRequest> createBundlesByCDI(CDI cdi) {
 		List<BundleRequest> bundleRequestList = new ArrayList<>();
 		if (!CollectionUtils.isEmpty(cdi.getDetails())) {
@@ -87,11 +103,11 @@ public class ImportCDIFunction  implements Function<Mono<Wrapper>, Mono<List<Bun
 		}
 		return bundleRequestList;
 	}
-	
+
 	private void addBundleByTouchpoint(Detail d, List<BundleRequest> bundleRequestList, BundleRequest bundleRequest) {
-		
+
 		boolean isNullTouchPoint = true;
-		
+
 		if (d.getPaymentMethod().equalsIgnoreCase("PO")) {
 			isNullTouchPoint = false;
 			BundleRequest bundleRequestClone = SerializationUtils.clone(bundleRequest);
@@ -99,15 +115,15 @@ public class ImportCDIFunction  implements Function<Mono<Wrapper>, Mono<List<Bun
 			bundleRequestList.add(bundleRequestClone);
 		}
 		if ((d.getPaymentMethod().equalsIgnoreCase("CP") && d.getChannelCardsCart() && d.getChannelApp().equals(Boolean.FALSE)) || 
-				 (d.getPaymentMethod().matches("(?i)BBT|BP|MYBK|AD") && d.getChannelApp().equals(Boolean.FALSE)) ||
-				 (!d.getPaymentMethod().equalsIgnoreCase("PPAL") && d.getChannelApp())) {
+				(d.getPaymentMethod().matches("(?i)BBT|BP|MYBK|AD") && d.getChannelApp().equals(Boolean.FALSE)) ||
+				(!d.getPaymentMethod().equalsIgnoreCase("PPAL") && d.getChannelApp())) {
 			isNullTouchPoint = false;
 			BundleRequest bundleRequestClone = SerializationUtils.clone(bundleRequest);
 			bundleRequestClone.setTouchpoint("WISP");
 			bundleRequestList.add(bundleRequestClone);
 		}
 		if ((d.getPaymentMethod().equalsIgnoreCase("CP") && d.getChannelCardsCart() && d.getChannelApp().equals(Boolean.FALSE)) ||
-				 (d.getPaymentMethod().equalsIgnoreCase("PPAL") && d.getChannelApp())) {
+				(d.getPaymentMethod().equalsIgnoreCase("PPAL") && d.getChannelApp())) {
 			isNullTouchPoint = false;
 			BundleRequest bundleRequestClone = SerializationUtils.clone(bundleRequest);
 			bundleRequestClone.setTouchpoint("IO");
@@ -123,35 +139,35 @@ public class ImportCDIFunction  implements Function<Mono<Wrapper>, Mono<List<Bun
 			// default bundle with null touchpoint value
 			bundleRequestList.add(bundleRequest);
 		}
-		
-	}
-	
-	
-	private BundleResponse createBundle(String idPsp, BundleRequest bundleRequest) {
-		BundleResponse response = BundleResponse.builder().build();
-		try {
-			response = Optional.ofNullable(marketPlaceClient).map(result -> marketPlaceClient.createBundle(idPsp, bundleRequest)).orElseGet(() -> BundleResponse.builder().build());
-        } catch (FeignException.BadRequest e) {
-            log.error("Creation of the Bundle on Markeplace Bad Request Error [idPsp={}]", idPsp, e);
-            //throw new AppException(AppError.BUNDLE_REQUEST_DATA_ERROR, "[idPsp= "+idPsp+"]");
-            //FAILED
-        } catch (FeignException.Conflict e) {
-            log.error("Creation of the Bundle on Markeplace Conflict Error [idPsp={}]", idPsp, e);
-            //throw new AppException(AppError.BUNDLE_REQUEST_DATA_ERROR, "[idPsp= "+idPsp+"]");
-            //FAILED
-        } catch (FeignException.InternalServerError e) {
-            log.error("Creation of the Bundle on Markeplace Conflict Error [idPsp={}]", idPsp, e);
-            //throw new AppException(AppError.BUNDLE_REQUEST_DATA_ERROR, "[idPsp= "+idPsp+"]");
-            //RETRY
-        } 
-		catch (Exception e) {
-            log.error("Creation of the Bundle on Markeplace Error [idPsp={}]", idPsp, e);
-            //throw new AppException(AppError.INTERNAL_SERVER_ERROR);
-            //FAILED
-        }
-		 return response;
+
 	}
 
-	
+
+	private BundleResponse createBundle(String idPsp, BundleRequest bundleRequest) throws AppException{
+		final String detailErrorMsg = "[idPsp= "+idPsp+", idCdi= "+bundleRequest.getIdCdi()+", idBrokerPsp= "+bundleRequest.getIdBrokerPsp()+"]";
+		BundleResponse response = null;
+		try {
+			response = Optional.ofNullable(marketPlaceClient).map(result -> marketPlaceClient.createBundle(idPsp, bundleRequest)).orElseGet(() -> null);
+		} catch (FeignException.BadRequest e) {
+			log.error("Creation of the Bundle on Markeplace Bad Request Error"+detailErrorMsg, e);
+			throw new AppException(AppError.BUNDLE_REQUEST_DATA_ERROR, e.getMessage());
+		} catch (FeignException.NotFound e) {
+			log.error("Creation of the Bundle on Markeplace Not Found Error"+detailErrorMsg, e);
+			throw new AppException(AppError.BUNDLE_NOT_FOUND_ERROR, e.getMessage());
+		} catch (FeignException.Conflict e) {
+			log.error("Creation of the Bundle on Markeplace Conflict Error"+detailErrorMsg, e);
+			throw new AppException(AppError.BUNDLE_CONFLICT_ERROR, e.getMessage());
+		} catch (FeignException.InternalServerError e) {
+			log.error("Creation of the Bundle on Markeplace Internal Server Error"+detailErrorMsg, e);
+			throw new AppException(AppError.INTERNAL_SERVER_ERROR, e.getMessage());
+		} 
+		catch (Exception e) {
+			log.error("Creation of the Bundle on Markeplace Unexpected Error"+detailErrorMsg, e);
+			throw new AppException(AppError.UNKNOWN, e.getMessage());
+		}
+		return response;
+	}
+
+
 
 }

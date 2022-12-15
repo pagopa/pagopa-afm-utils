@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cloud.function.adapter.azure.FunctionInvoker;
 
 import com.microsoft.azure.functions.ExecutionContext;
@@ -17,6 +19,7 @@ import it.gov.pagopa.afm.utils.entity.CDI;
 import it.gov.pagopa.afm.utils.model.bundle.BundleResponse;
 import it.gov.pagopa.afm.utils.model.bundle.Wrapper;
 
+@ExtendWith(MockitoExtension.class)
 class ImportCDIHandlerTest {
 	
 	@Test

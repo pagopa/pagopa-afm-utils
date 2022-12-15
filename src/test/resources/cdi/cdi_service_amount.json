@@ -10,7 +10,6 @@
 			"name": "string",
 			"description": "string",
 			"paymentMethod": "string",
-			"onUs": false,
 			"channelApp": true,
 			"channelCardsCart": false,
 			"serviceAmount": [
@@ -26,5 +25,6 @@
 				}
 			]
 		}
-	]
+	],
+	"cdiStatus": "NEW"
 }

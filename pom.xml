@@ -17,6 +17,7 @@
 
     <properties>
         <java.version>11</java.version>
+        <cosmos-data-version>3.30.0</cosmos-data-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -117,6 +118,12 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-function-webflux</artifactId>
+        </dependency>
+      <!-- AZURE -->
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-spring-data-cosmos</artifactId>
+            <version>${cosmos-data-version}</version>
         </dependency>
 	<!-- test library -->
         <dependency>
