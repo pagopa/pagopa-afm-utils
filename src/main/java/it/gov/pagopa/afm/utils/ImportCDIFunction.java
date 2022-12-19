@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+
 import feign.FeignException;
 import it.gov.pagopa.afm.utils.entity.CDI;
 import it.gov.pagopa.afm.utils.entity.Detail;
@@ -53,21 +55,20 @@ public class ImportCDIFunction  implements Function<Mono<Wrapper>, Mono<List<Bun
 				if (null != cdi.getCdiStatus() && !cdi.getCdiStatus().equals(StatusType.FAILED)) {
 					String idPsp = cdi.getIdPsp();
 					List<BundleRequest> bundleRequestList = this.createBundlesByCDI(cdi);
-					// TODO attempting createBundle with list parameter
-					for (BundleRequest bundleRequest: bundleRequestList) {
-						try {
-							bundleResponses.add(this.createBundle(idPsp, bundleRequest));
-							// success -> delete the CDI
-							Optional.ofNullable(cdiService).ifPresent(result -> cdiService.deleteCDI(cdi));
-						}
-						catch (AppException e) {
-							// error -> set CDI status to failed
-							cdi.setCdiStatus(StatusType.FAILED);
-							cdi.setCdiErrorDesc(e.getMessage());
-							CDI updated = Optional.ofNullable(cdiService).map(result -> cdiService.updateCDI(cdi)).orElseGet(() -> null);
-							log.error(String.format("CDI status updated [%s, %s]", updated.getCdiStatus(), updated.getCdiErrorDesc()));
-						}
+					try {
+						Optional.ofNullable(this.createBundleByList(idPsp, bundleRequestList)).ifPresent(bundleResponses::addAll);
+						// success -> delete the CDI
+						Optional.ofNullable(cdiService).ifPresent(result -> cdiService.deleteCDI(cdi));
 					}
+					catch (AppException e) {
+						log.error("Error during the creation of the MarketPlace Bundles [idPsp= "+idPsp+", idCdi="+cdi.getIdCdi()+"]", e);
+						// error -> set CDI status to failed
+						cdi.setCdiStatus(StatusType.FAILED);
+						cdi.setCdiErrorDesc(e.getMessage());
+						CDI updated = Optional.ofNullable(cdiService).map(result -> cdiService.updateCDI(cdi)).orElseGet(() -> CDI.builder().build());
+						log.info(String.format("CDI status updated [%s, %s]", updated.getCdiStatus(), updated.getCdiErrorDesc()));
+					}
+
 				}
 			}
 			return bundleResponses;
@@ -85,7 +86,7 @@ public class ImportCDIFunction  implements Function<Mono<Wrapper>, Mono<List<Bun
 			bundleRequest.setDigitalStampRestriction(Boolean.FALSE);
 			bundleRequest.setType(BundleType.GLOBAL);
 			bundleRequest.setTransferCategoryList(null);
-			bundleRequest.setValidityDateFrom(LocalDate.parse(cdi.getValidityDateFrom(), dfDate));
+			bundleRequest.setValidityDateFrom(!StringUtils.isEmpty(cdi.getValidityDateFrom()) ? LocalDate.parse(cdi.getValidityDateFrom(), dfDate) : null);
 			bundleRequest.setValidityDateTo(null);
 			for (Detail d: cdi.getDetails()) {
 				bundleRequest.setIdChannel(d.getIdChannel());
@@ -143,26 +144,19 @@ public class ImportCDIFunction  implements Function<Mono<Wrapper>, Mono<List<Bun
 	}
 
 
-	private BundleResponse createBundle(String idPsp, BundleRequest bundleRequest) throws AppException{
-		final String detailErrorMsg = "[idPsp= "+idPsp+", idCdi= "+bundleRequest.getIdCdi()+", idBrokerPsp= "+bundleRequest.getIdBrokerPsp()+"]";
-		BundleResponse response = null;
+	private List<BundleResponse> createBundleByList(String idPsp, List<BundleRequest> bundleRequestList) throws AppException{
+		List<BundleResponse> response = null;
 		try {
-			response = Optional.ofNullable(marketPlaceClient).map(result -> marketPlaceClient.createBundle(idPsp, bundleRequest)).orElseGet(() -> null);
+			response = Optional.ofNullable(marketPlaceClient).map(result -> marketPlaceClient.createBundleByList(idPsp, bundleRequestList)).orElseGet(() -> null);
 		} catch (FeignException.BadRequest e) {
-			log.error("Creation of the Bundle on Markeplace Bad Request Error"+detailErrorMsg, e);
 			throw new AppException(AppError.BUNDLE_REQUEST_DATA_ERROR, e.getMessage());
 		} catch (FeignException.NotFound e) {
-			log.error("Creation of the Bundle on Markeplace Not Found Error"+detailErrorMsg, e);
 			throw new AppException(AppError.BUNDLE_NOT_FOUND_ERROR, e.getMessage());
 		} catch (FeignException.Conflict e) {
-			log.error("Creation of the Bundle on Markeplace Conflict Error"+detailErrorMsg, e);
 			throw new AppException(AppError.BUNDLE_CONFLICT_ERROR, e.getMessage());
 		} catch (FeignException.InternalServerError e) {
-			log.error("Creation of the Bundle on Markeplace Internal Server Error"+detailErrorMsg, e);
 			throw new AppException(AppError.INTERNAL_SERVER_ERROR, e.getMessage());
-		} 
-		catch (Exception e) {
-			log.error("Creation of the Bundle on Markeplace Unexpected Error"+detailErrorMsg, e);
+		} catch (Exception e) {
 			throw new AppException(AppError.UNKNOWN, e.getMessage());
 		}
 		return response;

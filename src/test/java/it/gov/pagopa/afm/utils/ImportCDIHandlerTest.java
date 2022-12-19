@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cloud.function.adapter.azure.FunctionInvoker;
 
@@ -16,11 +17,15 @@ import com.microsoft.azure.functions.ExecutionContext;
 
 import it.gov.pagopa.afm.utils.common.TestUtil;
 import it.gov.pagopa.afm.utils.entity.CDI;
+import it.gov.pagopa.afm.utils.model.bundle.BundleRequest;
 import it.gov.pagopa.afm.utils.model.bundle.BundleResponse;
 import it.gov.pagopa.afm.utils.model.bundle.Wrapper;
 
 @ExtendWith(MockitoExtension.class)
 class ImportCDIHandlerTest {
+	
+	@Spy
+	ImportCDIFunction importCDIFunction;
 	
 	@Test
 	void execute() throws IOException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
@@ -29,13 +34,14 @@ class ImportCDIHandlerTest {
 		List<CDI> items = new ArrayList<>();
 		items.add(cdi);
 		
+		List<BundleRequest> requests = importCDIFunction.createBundlesByCDI(cdi);
 		
 		//test execution
         FunctionInvoker<Wrapper, List<BundleResponse>> handler = new FunctionInvoker<>(ImportCDIFunction.class);
         Wrapper wrapper = new Wrapper();
         wrapper.setCdiItems(items);
         
-        List<BundleResponse> responses = handler.handleRequest(wrapper, new ExecutionContext() {
+        handler.handleRequest(wrapper, new ExecutionContext() {
             @Override
             public Logger getLogger() {
                 return Logger.getLogger(ImportCDIHandlerTest.class.getName());
@@ -53,7 +59,7 @@ class ImportCDIHandlerTest {
         });
         
         handler.close();
-		assertEquals(1, responses.size());
+		assertEquals(1, requests.size());
 	}
 	
 	@Test
@@ -63,12 +69,14 @@ class ImportCDIHandlerTest {
 		List<CDI> items = new ArrayList<>();
 		items.add(cdi);
 		
+		List<BundleRequest> requests = importCDIFunction.createBundlesByCDI(cdi);
+		
 		//test execution
         FunctionInvoker<Wrapper, List<BundleResponse>> handler = new FunctionInvoker<>(ImportCDIFunction.class);
         Wrapper wrapper = new Wrapper();
         wrapper.setCdiItems(items);
         
-        List<BundleResponse> responses = handler.handleRequest(wrapper, new ExecutionContext() {
+        handler.handleRequest(wrapper, new ExecutionContext() {
             @Override
             public Logger getLogger() {
                 return Logger.getLogger(ImportCDIHandlerTest.class.getName());
@@ -86,7 +94,7 @@ class ImportCDIHandlerTest {
         });
         
         handler.close();
-		assertEquals(3, responses.size());
+		assertEquals(3, requests.size());
 	}
 	
 	@Test
@@ -96,12 +104,14 @@ class ImportCDIHandlerTest {
 		List<CDI> items = new ArrayList<>();
 		items.add(cdi);	
 		
+		List<BundleRequest> requests = importCDIFunction.createBundlesByCDI(cdi);
+		
 		//test execution
         FunctionInvoker<Wrapper, List<BundleResponse>> handler = new FunctionInvoker<>(ImportCDIFunction.class);
         Wrapper wrapper = new Wrapper();
         wrapper.setCdiItems(items);
         
-        List<BundleResponse> responses = handler.handleRequest(wrapper, new ExecutionContext() {
+        handler.handleRequest(wrapper, new ExecutionContext() {
             @Override
             public Logger getLogger() {
                 return Logger.getLogger(ImportCDIHandlerTest.class.getName());
@@ -119,6 +129,6 @@ class ImportCDIHandlerTest {
         });
 		
         handler.close();
-		assertEquals(2, responses.size());
+		assertEquals(2, requests.size());
 	}
 }

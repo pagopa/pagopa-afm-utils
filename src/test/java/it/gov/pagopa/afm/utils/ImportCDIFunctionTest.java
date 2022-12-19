@@ -38,7 +38,7 @@ class ImportCDIFunctionTest {
 	void applyTest(){
 		// precondition
 		BundleResponse response = BundleResponse.builder().idBundle("12345").build();
-		Mockito.when(marketPlaceClient.createBundle(eq("201"), any())).thenReturn(response);
+		Mockito.when(marketPlaceClient.createBundleByList(eq("201"), any())).thenReturn(Arrays.asList(response));
 		
 		EasyRandom generator = new EasyRandom();
 		CDI cdi = generator.nextObject(CDI.class);
@@ -61,7 +61,7 @@ class ImportCDIFunctionTest {
 		cdi.setIdPsp("400");
 		cdi.setValidityDateFrom("2022-12-15");
 		cdi.setCdiStatus(StatusType.NEW);
-		Mockito.when(marketPlaceClient.createBundle(eq("400"), any())).thenThrow(FeignException.BadRequest.class);
+		Mockito.when(marketPlaceClient.createBundleByList(eq("400"), any())).thenThrow(FeignException.BadRequest.class);
 		Mockito.when(cdiService.updateCDI(any(CDI.class))).thenReturn(cdi);
 
 		Wrapper input = Wrapper.builder().cdiItems(Arrays.asList(new CDI[] {cdi})).build();
@@ -78,7 +78,7 @@ class ImportCDIFunctionTest {
 		cdi.setIdPsp("409");
 		cdi.setValidityDateFrom("2022-12-15");
 		cdi.setCdiStatus(StatusType.NEW);
-		Mockito.when(marketPlaceClient.createBundle(eq("409"), any())).thenThrow(FeignException.Conflict.class);
+		Mockito.when(marketPlaceClient.createBundleByList(eq("409"), any())).thenThrow(FeignException.Conflict.class);
 		Mockito.when(cdiService.updateCDI(any(CDI.class))).thenReturn(cdi);
 		
 		
@@ -96,7 +96,7 @@ class ImportCDIFunctionTest {
 		cdi.setIdPsp("404");
 		cdi.setValidityDateFrom("2022-12-15");
 		cdi.setCdiStatus(StatusType.NEW);
-		Mockito.when(marketPlaceClient.createBundle(eq("404"), any())).thenThrow(FeignException.NotFound.class);
+		Mockito.when(marketPlaceClient.createBundleByList(eq("404"), any())).thenThrow(FeignException.NotFound.class);
 		Mockito.when(cdiService.updateCDI(any(CDI.class))).thenReturn(cdi);
 		
 		
