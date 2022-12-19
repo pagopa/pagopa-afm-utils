@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>it.gov.pagopa</groupId>
-    <artifactId>calculator-data</artifactId>
+    <artifactId>afm-utils</artifactId>
     <version>0.0.4</version>
     <name>afm-utils</name>
     <description>Utility microservice for pagoPA AFM</description>
