@@ -37,8 +37,8 @@ steps:
       organization: '$(SONARCLOUD_ORG)'
       scannerMode: Other
       extraProperties: |
-        sonar.projectKey=pagopa_pagopa-afm-utils
-        sonar.projectName=pagopa-afm-utils
+        sonar.projectKey=$(SONARCLOUD_PROJECT_KEY)
+        sonar.projectName=$(SONARCLOUD_PROJECT_NAME)
         sonar.coverage.exclusions=**/config/*,**/*Mock*,**/model/**,**/entity/*
         sonar.cpd.exclusions=**/model/**,**/entity/*
 
