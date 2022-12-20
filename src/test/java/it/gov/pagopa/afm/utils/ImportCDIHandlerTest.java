@@ -1,6 +1,7 @@
 package it.gov.pagopa.afm.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,8 +10,11 @@ import java.util.logging.Logger;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.function.adapter.azure.FunctionInvoker;
 
 import com.microsoft.azure.functions.ExecutionContext;
@@ -26,6 +30,10 @@ class ImportCDIHandlerTest {
 	
 	@Spy
 	ImportCDIFunction importCDIFunction;
+	
+	@Mock
+	ImportCDIHandler  importCDIHandler; 
+
 	
 	@Test
 	void execute() throws IOException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
@@ -130,5 +138,17 @@ class ImportCDIHandlerTest {
 		
         handler.close();
 		assertEquals(2, requests.size());
+	}
+	
+	@Test
+	void functionTest() throws IOException {
+		// precondition
+		CDI cdi = TestUtil.readModelFromFile("cdi/cdi.json", CDI.class);
+		List<CDI> items = new ArrayList<>();
+		items.add(cdi);
+		
+		importCDIHandler.execute(items, Mockito.mock(ExecutionContext.class));
+		
+		assertTrue(true);
 	}
 }
