@@ -1,7 +1,6 @@
 package it.gov.pagopa.afm.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,11 +9,8 @@ import java.util.logging.Logger;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.function.adapter.azure.FunctionInvoker;
 
 import com.microsoft.azure.functions.ExecutionContext;
@@ -30,10 +26,6 @@ class ImportCDIHandlerTest {
 	
 	@Spy
 	ImportCDIFunction importCDIFunction;
-	
-	@Mock
-	ImportCDIHandler  importCDIHandler; 
-
 	
 	@Test
 	void execute() throws IOException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
@@ -141,14 +133,48 @@ class ImportCDIHandlerTest {
 	}
 	
 	@Test
-	void functionTest() throws IOException {
+	void executePaymentMethodPO() throws IOException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		// precondition
-		CDI cdi = TestUtil.readModelFromFile("cdi/cdi.json", CDI.class);
+		CDI cdi = TestUtil.readModelFromFile("cdi/cdi_PO.json", CDI.class);
 		List<CDI> items = new ArrayList<>();
 		items.add(cdi);
 		
-		importCDIHandler.execute(items, Mockito.mock(ExecutionContext.class));
+		List<BundleRequest> requests = importCDIFunction.createBundlesByCDI(cdi);
 		
-		assertTrue(true);
+		assertEquals(1, requests.size());
+		assertEquals("PSP", requests.get(0).getTouchpoint());
+	}
+	
+	@Test
+	void executeFailed() throws IOException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		// precondition
+		CDI cdi = TestUtil.readModelFromFile("cdi/cdi_status_FAILED.json", CDI.class);
+		List<CDI> items = new ArrayList<>();
+		items.add(cdi);
+		
+		//test execution
+        FunctionInvoker<Wrapper, List<BundleResponse>> handler = new FunctionInvoker<>(ImportCDIFunction.class);
+        Wrapper wrapper = new Wrapper();
+        wrapper.setCdiItems(items);
+        
+        List<BundleResponse> result = handler.handleRequest(wrapper, new ExecutionContext() {
+            @Override
+            public Logger getLogger() {
+                return Logger.getLogger(ImportCDIHandlerTest.class.getName());
+            }
+
+            @Override
+            public String getInvocationId() {
+                return "id1";
+            }
+
+            @Override
+            public String getFunctionName() {
+                return "importCDIFunction";
+            }
+        });
+        
+        handler.close();
+		assertEquals(0,result.size());
 	}
 }

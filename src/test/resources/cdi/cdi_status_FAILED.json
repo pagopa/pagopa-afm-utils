@@ -1,0 +1,30 @@
+{
+	"idPsp": "string",
+	"idCdi": "string",
+	"digitalStamp": true,
+	"validityDateFrom": "2022-12-14",
+	"details": [
+		{
+			"idBrokerPsp": "string",
+			"idChannel": "string",
+			"name": "string",
+			"description": "string",
+			"paymentMethod": "string",
+			"channelApp": true,
+			"channelCardsCart": false,
+			"serviceAmount": [
+				{
+					"paymentAmount": 1000,
+					"minPaymentAmount": 500,
+					"maxPaymentAmount": 1500
+				},
+				{
+					"paymentAmount": 333,
+					"minPaymentAmount": 666,
+					"maxPaymentAmount": 999
+				}
+			]
+		}
+	],
+	"cdiStatus": "FAILED"
+}
