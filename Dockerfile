@@ -1,3 +1,4 @@
+ARG JAVA_VERSION=11
 #
 # Build
 #
@@ -19,5 +20,8 @@ COPY --chown=spring:spring  --from=builder snapshot-dependencies/ ./
 RUN true
 COPY --chown=spring:spring  --from=builder spring-boot-loader/ ./
 COPY --chown=spring:spring  --from=builder application/ ./
+
+# This image additionally contains function core tools – useful when using custom extensions
+FROM mcr.microsoft.com/azure-functions/java:4.0-java$JAVA_VERSION
 
 EXPOSE 8080
