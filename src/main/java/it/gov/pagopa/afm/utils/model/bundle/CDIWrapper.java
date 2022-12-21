@@ -14,6 +14,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Wrapper {
+public class CDIWrapper {
 	private List<CDI> cdiItems;
 }

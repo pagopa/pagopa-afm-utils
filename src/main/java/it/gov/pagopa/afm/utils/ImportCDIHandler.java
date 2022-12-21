@@ -11,11 +11,11 @@ import com.microsoft.azure.functions.annotation.FunctionName;
 
 import it.gov.pagopa.afm.utils.entity.CDI;
 import it.gov.pagopa.afm.utils.model.bundle.BundleResponse;
-import it.gov.pagopa.afm.utils.model.bundle.Wrapper;
+import it.gov.pagopa.afm.utils.model.bundle.CDIWrapper;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ImportCDIHandler extends FunctionInvoker<Wrapper, List<BundleResponse>> {
+public class ImportCDIHandler extends FunctionInvoker<CDIWrapper, List<BundleResponse>> {
 		
 	@FunctionName("importCDIFunction")
 	public List<BundleResponse> execute(
@@ -31,7 +31,7 @@ public class ImportCDIHandler extends FunctionInvoker<Wrapper, List<BundleRespon
 		
 		log.info("Import CDI function executed at: " + LocalDateTime.now() + " for CDI list with size: " + items.size());
 		
-		Wrapper wrapper = Wrapper.builder().cdiItems(items).build();
+		CDIWrapper wrapper = CDIWrapper.builder().cdiItems(items).build();
 		return handleRequest(wrapper, context);
 	}
 }

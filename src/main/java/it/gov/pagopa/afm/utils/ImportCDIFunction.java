@@ -24,7 +24,9 @@ import it.gov.pagopa.afm.utils.exception.AppException;
 import it.gov.pagopa.afm.utils.model.bundle.BundleRequest;
 import it.gov.pagopa.afm.utils.model.bundle.BundleResponse;
 import it.gov.pagopa.afm.utils.model.bundle.BundleType;
-import it.gov.pagopa.afm.utils.model.bundle.Wrapper;
+import it.gov.pagopa.afm.utils.model.bundle.CDIWrapper;
+import it.gov.pagopa.afm.utils.model.bundle.PaymentMethodType;
+import it.gov.pagopa.afm.utils.model.bundle.TouchpointType;
 import it.gov.pagopa.afm.utils.service.CDIService;
 import it.gov.pagopa.afm.utils.service.MarketPlaceClient;
 import lombok.AllArgsConstructor;
@@ -36,7 +38,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @NoArgsConstructor
 @AllArgsConstructor
-public class ImportCDIFunction  implements Function<Mono<Wrapper>, Mono<List<BundleResponse>>>{
+public class ImportCDIFunction  implements Function<Mono<CDIWrapper>, Mono<List<BundleResponse>>>{
 
 	@Autowired(required=false)
 	private MarketPlaceClient marketPlaceClient;
@@ -46,7 +48,7 @@ public class ImportCDIFunction  implements Function<Mono<Wrapper>, Mono<List<Bun
 
 
 	@Override
-	public Mono<List<BundleResponse>> apply(Mono<Wrapper> input) {	
+	public Mono<List<BundleResponse>> apply(Mono<CDIWrapper> input) {	
 		List<BundleResponse> bundleResponses = new ArrayList<>();
 		return input.map(wrapper -> {			
 
@@ -109,31 +111,31 @@ public class ImportCDIFunction  implements Function<Mono<Wrapper>, Mono<List<Bun
 
 		boolean isNullTouchPoint = true;
 
-		if (d.getPaymentMethod().equalsIgnoreCase("PO")) {
+		if (d.getPaymentMethod().equalsIgnoreCase(PaymentMethodType.PO.name())) {
 			isNullTouchPoint = false;
 			BundleRequest bundleRequestClone = SerializationUtils.clone(bundleRequest);
-			bundleRequestClone.setTouchpoint("PSP");
+			bundleRequestClone.setTouchpoint(TouchpointType.PSP.name());
 			bundleRequestList.add(bundleRequestClone);
 		}
-		if ((d.getPaymentMethod().equalsIgnoreCase("CP") && d.getChannelCardsCart() && d.getChannelApp().equals(Boolean.FALSE)) || 
-				(d.getPaymentMethod().matches("(?i)BBT|BP|MYBK|AD") && d.getChannelApp().equals(Boolean.FALSE)) ||
-				(!d.getPaymentMethod().equalsIgnoreCase("PPAL") && d.getChannelApp())) {
+		if ((d.getPaymentMethod().equalsIgnoreCase(PaymentMethodType.CP.name()) && d.getChannelCardsCart() && d.getChannelApp().equals(Boolean.FALSE)) || 
+				(d.getPaymentMethod().matches("(?i)"+PaymentMethodType.BBT+"|"+PaymentMethodType.BP+"|"+PaymentMethodType.MYBK+"|"+PaymentMethodType.AD) && d.getChannelApp().equals(Boolean.FALSE)) ||
+				(!d.getPaymentMethod().equalsIgnoreCase(PaymentMethodType.PPAL.name()) && d.getChannelApp())) {
 			isNullTouchPoint = false;
 			BundleRequest bundleRequestClone = SerializationUtils.clone(bundleRequest);
-			bundleRequestClone.setTouchpoint("WISP");
+			bundleRequestClone.setTouchpoint(TouchpointType.WISP.name());
 			bundleRequestList.add(bundleRequestClone);
 		}
-		if ((d.getPaymentMethod().equalsIgnoreCase("CP") && d.getChannelCardsCart() && d.getChannelApp().equals(Boolean.FALSE)) ||
-				(d.getPaymentMethod().equalsIgnoreCase("PPAL") && d.getChannelApp())) {
+		if ((d.getPaymentMethod().equalsIgnoreCase(PaymentMethodType.CP.name()) && d.getChannelCardsCart() && d.getChannelApp().equals(Boolean.FALSE)) ||
+				(d.getPaymentMethod().equalsIgnoreCase(PaymentMethodType.PPAL.name()) && d.getChannelApp())) {
 			isNullTouchPoint = false;
 			BundleRequest bundleRequestClone = SerializationUtils.clone(bundleRequest);
-			bundleRequestClone.setTouchpoint("IO");
+			bundleRequestClone.setTouchpoint(TouchpointType.IO.name());
 			bundleRequestList.add(bundleRequestClone);
 		}
-		if ((d.getPaymentMethod().equalsIgnoreCase("CP") && d.getChannelCardsCart() && d.getChannelApp().equals(Boolean.FALSE))) {
+		if ((d.getPaymentMethod().equalsIgnoreCase(PaymentMethodType.CP.name()) && d.getChannelCardsCart() && d.getChannelApp().equals(Boolean.FALSE))) {
 			isNullTouchPoint = false;
 			BundleRequest bundleRequestClone = SerializationUtils.clone(bundleRequest);
-			bundleRequestClone.setTouchpoint("CHECKOUT");
+			bundleRequestClone.setTouchpoint(TouchpointType.CHECKOUT.name());
 			bundleRequestList.add(bundleRequestClone);
 		}
 		if (isNullTouchPoint) {

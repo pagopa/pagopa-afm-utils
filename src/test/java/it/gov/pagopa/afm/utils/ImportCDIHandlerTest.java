@@ -19,7 +19,7 @@ import it.gov.pagopa.afm.utils.common.TestUtil;
 import it.gov.pagopa.afm.utils.entity.CDI;
 import it.gov.pagopa.afm.utils.model.bundle.BundleRequest;
 import it.gov.pagopa.afm.utils.model.bundle.BundleResponse;
-import it.gov.pagopa.afm.utils.model.bundle.Wrapper;
+import it.gov.pagopa.afm.utils.model.bundle.CDIWrapper;
 
 @ExtendWith(MockitoExtension.class)
 class ImportCDIHandlerTest {
@@ -37,8 +37,8 @@ class ImportCDIHandlerTest {
 		List<BundleRequest> requests = importCDIFunction.createBundlesByCDI(cdi);
 		
 		//test execution
-        FunctionInvoker<Wrapper, List<BundleResponse>> handler = new FunctionInvoker<>(ImportCDIFunction.class);
-        Wrapper wrapper = new Wrapper();
+        FunctionInvoker<CDIWrapper, List<BundleResponse>> handler = new FunctionInvoker<>(ImportCDIFunction.class);
+        CDIWrapper wrapper = new CDIWrapper();
         wrapper.setCdiItems(items);
         
         handler.handleRequest(wrapper, new ExecutionContext() {
@@ -72,8 +72,8 @@ class ImportCDIHandlerTest {
 		List<BundleRequest> requests = importCDIFunction.createBundlesByCDI(cdi);
 		
 		//test execution
-        FunctionInvoker<Wrapper, List<BundleResponse>> handler = new FunctionInvoker<>(ImportCDIFunction.class);
-        Wrapper wrapper = new Wrapper();
+        FunctionInvoker<CDIWrapper, List<BundleResponse>> handler = new FunctionInvoker<>(ImportCDIFunction.class);
+        CDIWrapper wrapper = new CDIWrapper();
         wrapper.setCdiItems(items);
         
         handler.handleRequest(wrapper, new ExecutionContext() {
@@ -107,8 +107,8 @@ class ImportCDIHandlerTest {
 		List<BundleRequest> requests = importCDIFunction.createBundlesByCDI(cdi);
 		
 		//test execution
-        FunctionInvoker<Wrapper, List<BundleResponse>> handler = new FunctionInvoker<>(ImportCDIFunction.class);
-        Wrapper wrapper = new Wrapper();
+        FunctionInvoker<CDIWrapper, List<BundleResponse>> handler = new FunctionInvoker<>(ImportCDIFunction.class);
+        CDIWrapper wrapper = new CDIWrapper();
         wrapper.setCdiItems(items);
         
         handler.handleRequest(wrapper, new ExecutionContext() {
@@ -153,8 +153,8 @@ class ImportCDIHandlerTest {
 		items.add(cdi);
 		
 		//test execution
-        FunctionInvoker<Wrapper, List<BundleResponse>> handler = new FunctionInvoker<>(ImportCDIFunction.class);
-        Wrapper wrapper = new Wrapper();
+        FunctionInvoker<CDIWrapper, List<BundleResponse>> handler = new FunctionInvoker<>(ImportCDIFunction.class);
+        CDIWrapper wrapper = new CDIWrapper();
         wrapper.setCdiItems(items);
         
         List<BundleResponse> result = handler.handleRequest(wrapper, new ExecutionContext() {

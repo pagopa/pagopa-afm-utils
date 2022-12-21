@@ -20,7 +20,7 @@ import feign.FeignException;
 import it.gov.pagopa.afm.utils.entity.CDI;
 import it.gov.pagopa.afm.utils.entity.StatusType;
 import it.gov.pagopa.afm.utils.model.bundle.BundleResponse;
-import it.gov.pagopa.afm.utils.model.bundle.Wrapper;
+import it.gov.pagopa.afm.utils.model.bundle.CDIWrapper;
 import it.gov.pagopa.afm.utils.service.CDIService;
 import it.gov.pagopa.afm.utils.service.MarketPlaceClient;
 import reactor.core.publisher.Mono;
@@ -46,7 +46,7 @@ class ImportCDIFunctionTest {
 		cdi.setValidityDateFrom("2022-12-15");
 		cdi.setCdiStatus(StatusType.NEW);
 		
-		Wrapper input = Wrapper.builder().cdiItems(Arrays.asList(new CDI[] {cdi})).build();
+		CDIWrapper input = CDIWrapper.builder().cdiItems(Arrays.asList(new CDI[] {cdi})).build();
 		Mono<List<BundleResponse>> responses = new ImportCDIFunction(marketPlaceClient, cdiService).apply(Mono.just(input));
 		
 		assertTrue(responses.block().size() > 0);
@@ -64,7 +64,7 @@ class ImportCDIFunctionTest {
 		Mockito.when(marketPlaceClient.createBundleByList(eq("400"), any())).thenThrow(FeignException.BadRequest.class);
 		Mockito.when(cdiService.updateCDI(any(CDI.class))).thenReturn(cdi);
 
-		Wrapper input = Wrapper.builder().cdiItems(Arrays.asList(new CDI[] {cdi})).build();
+		CDIWrapper input = CDIWrapper.builder().cdiItems(Arrays.asList(new CDI[] {cdi})).build();
 		Mono<List<BundleResponse>> responses = new ImportCDIFunction(marketPlaceClient, cdiService).apply(Mono.just(input));
 		
 		assertEquals(0,responses.block().size());
@@ -82,7 +82,7 @@ class ImportCDIFunctionTest {
 		Mockito.when(cdiService.updateCDI(any(CDI.class))).thenReturn(cdi);
 		
 		
-		Wrapper input = Wrapper.builder().cdiItems(Arrays.asList(new CDI[] {cdi})).build();
+		CDIWrapper input = CDIWrapper.builder().cdiItems(Arrays.asList(new CDI[] {cdi})).build();
 		Mono<List<BundleResponse>> responses = new ImportCDIFunction(marketPlaceClient, cdiService).apply(Mono.just(input));
 		
 		assertEquals(0,responses.block().size());
@@ -100,7 +100,7 @@ class ImportCDIFunctionTest {
 		Mockito.when(cdiService.updateCDI(any(CDI.class))).thenReturn(cdi);
 		
 		
-		Wrapper input = Wrapper.builder().cdiItems(Arrays.asList(new CDI[] {cdi})).build();
+		CDIWrapper input = CDIWrapper.builder().cdiItems(Arrays.asList(new CDI[] {cdi})).build();
 		Mono<List<BundleResponse>> responses = new ImportCDIFunction(marketPlaceClient, cdiService).apply(Mono.just(input));
 		
 		assertEquals(0,responses.block().size());
