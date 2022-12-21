@@ -1,6 +1,8 @@
 ARG JAVA_VERSION=11
 # This image additionally contains function core tools – useful when using custom extensions
 FROM mcr.microsoft.com/azure-functions/java:4.0-java$JAVA_VERSION
+RUN apt-get update
+RUN apt-get -y install nodejs
 RUN npm install -g azure-functions-core-tools@3 --unsafe-perm true
 
 #
