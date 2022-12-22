@@ -16,21 +16,25 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ImportCDIHandler extends FunctionInvoker<CDIWrapper, List<BundleResponse>> {
-		
+
 	@FunctionName("importCDIFunction")
 	public List<BundleResponse> execute(
 			@CosmosDBTrigger(
-					name = "CDIDatastoreTrigger",
-					databaseName = "db",
-					collectionName = "cdis",
-					leaseCollectionName = "cdis-leases",
-					createLeaseCollectionIfNotExists = true,
-					connectionStringSetting = "COSMOS_CONN_STRING") 
-			List<CDI> items,
+					name = "CDIDatastoreTrigger", 
+					databaseName = "db", 
+					//		collectionName = "cdis", 
+					//		leaseCollectionName = "cdis-leases", 
+					//		createLeaseCollectionIfNotExists = true, 
+					//		connectionStringSetting = "COSMOS_CONN_STRING"
+					containerName = "cdis", 
+					leaseContainerName = "cdis-leases", 
+					createLeaseContainerIfNotExists = true, 
+					connection = "COSMOS_CONN_STRING"
+					) List<CDI> items,
 			ExecutionContext context) {
-		
+
 		log.info("Import CDI function executed at: " + LocalDateTime.now() + " for CDI list with size: " + items.size());
-		
+
 		CDIWrapper wrapper = CDIWrapper.builder().cdiItems(items).build();
 		return handleRequest(wrapper, context);
 	}
