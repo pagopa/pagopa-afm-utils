@@ -3,8 +3,7 @@ ARG JAVA_VERSION=11
 FROM mcr.microsoft.com/azure-functions/java:4.0-java$JAVA_VERSION
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y nodejs \
-    npm 
-RUN npm install -g azure-functions-core-tools@3 --unsafe-perm true
+    npm install -g azure-functions-core-tools@3 --unsafe-perm true
 
 #
 # Build
