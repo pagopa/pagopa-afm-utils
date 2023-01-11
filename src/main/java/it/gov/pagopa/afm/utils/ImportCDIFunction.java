@@ -49,18 +49,29 @@ public class ImportCDIFunction  implements Function<Mono<CDIWrapper>, Mono<List<
 
 	@Override
 	public Mono<List<BundleResponse>> apply(Mono<CDIWrapper> input) {	
+		
 		List<BundleResponse> bundleResponses = new ArrayList<>();
+		
 		return input.map(wrapper -> {			
-
+			
+			// the status of the items is put on PROCESSING to identify that these records are not in a final state
+			// *** @CosmosDBTrigger doesn't need of this step -> remove when change to this kind of function ***
+			this.setCDIToProcessingStatus(wrapper.getCdiItems());
+			
 			for (CDI cdi: wrapper.getCdiItems()) {
 				// processed only cdis not in FAILED status
 				if (null != cdi.getCdiStatus() && !cdi.getCdiStatus().equals(StatusType.FAILED)) {
 					String idPsp = cdi.getIdPsp();
 					List<BundleRequest> bundleRequestList = this.createBundlesByCDI(cdi);
 					try {
+						// create marketplace bundle
 						Optional.ofNullable(this.createBundleByList(idPsp, bundleRequestList)).ifPresent(bundleResponses::addAll);
 						// success -> delete the CDI
-						Optional.ofNullable(cdiService).ifPresent(result -> cdiService.deleteCDI(cdi));
+						Optional.ofNullable(cdiService).ifPresent(result -> 
+						{
+							cdiService.deleteCDI(cdi);
+							log.info(String.format("SUCCESS Bundles creation -> CDI deleted [idCdi=%s]", cdi.getIdCdi()));
+						});
 					}
 					catch (AppException e) {
 						log.error("Error during the creation of the MarketPlace Bundles [idPsp= "+idPsp+", idCdi="+cdi.getIdCdi()+"]", e);
@@ -68,7 +79,7 @@ public class ImportCDIFunction  implements Function<Mono<CDIWrapper>, Mono<List<
 						cdi.setCdiStatus(StatusType.FAILED);
 						cdi.setCdiErrorDesc(e.getMessage());
 						CDI updated = Optional.ofNullable(cdiService).map(result -> cdiService.updateCDI(cdi)).orElseGet(() -> CDI.builder().build());
-						log.info(String.format("CDI status updated [%s, %s]", updated.getCdiStatus(), updated.getCdiErrorDesc()));
+						log.info(String.format("CDI status updated [idCdi=%s, status=%s, errorDesc=%s]", updated.getIdCdi(), updated.getCdiStatus(), updated.getCdiErrorDesc()));
 					}
 
 				}
@@ -162,6 +173,15 @@ public class ImportCDIFunction  implements Function<Mono<CDIWrapper>, Mono<List<
 			throw new AppException(AppError.UNKNOWN, e.getMessage());
 		}
 		return response;
+	}
+	
+	// remove when @CosmosDBTrigger function will be used
+	public void setCDIToProcessingStatus(List<CDI> items) {
+		for (CDI cdi: items) {
+			cdi.setCdiStatus(StatusType.PROCESSING);
+			CDI updated = Optional.ofNullable(cdiService).map(result -> cdiService.updateCDI(cdi)).orElseGet(() -> CDI.builder().build());
+			log.info(String.format("CDI status updated [idCdi=%s, status=%s]", updated.getIdCdi(), updated.getCdiStatus()));
+		}
 	}
 
 

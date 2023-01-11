@@ -20,6 +20,6 @@ public class CDIService {
     }
     
     public void deleteCDI(CDI cdiEntity) {
-    	cdisRepository.delete(cdiEntity);
-    }
+    	cdisRepository.delete(cdiEntity);	
+    } 
 }
