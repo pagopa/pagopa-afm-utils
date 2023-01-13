@@ -17,4 +17,4 @@ ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
 
 COPY --from=installer-env ["/home/site/wwwroot", "/home/site/wwwroot"]
 
-EXPOSE 80
+EXPOSE 8080
