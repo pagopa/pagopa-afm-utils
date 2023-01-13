@@ -23,6 +23,12 @@ steps:
         maven
       path: $(MAVEN_CACHE_FOLDER)
     displayName: Cache Maven local repo
+    
+  - task: Npm@1
+    displayName: 'Azure Function Extension Install'
+    inputs:
+      command: 'custom'
+      customCommand: 'install -g azure-functions-core-tools@3 --unsafe-perm true'
 
   - task: SonarCloudPrepare@1
     displayName: 'Prepare SonarCloud analysis configuration'
