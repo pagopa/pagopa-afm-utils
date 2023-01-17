@@ -1,12 +1,11 @@
 package it.gov.pagopa.afm.utils.config;
 
-import feign.RequestInterceptor;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 
-@Slf4j
+import feign.RequestInterceptor;
+
 public class FeignConfig {
 
 	static final String HEADER_REQUEST_ID = "X-Request-Id";
