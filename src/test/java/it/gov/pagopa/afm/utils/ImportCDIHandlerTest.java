@@ -20,12 +20,13 @@ import it.gov.pagopa.afm.utils.entity.CDI;
 import it.gov.pagopa.afm.utils.model.bundle.BundleRequest;
 import it.gov.pagopa.afm.utils.model.bundle.BundleResponse;
 import it.gov.pagopa.afm.utils.model.bundle.CDIWrapper;
+import it.gov.pagopa.afm.utils.service.CDIService;
 
 @ExtendWith(MockitoExtension.class)
 class ImportCDIHandlerTest {
 	
 	@Spy
-	ImportCDIFunction importCDIFunction;
+	CDIService cdiService;
 	
 	@Test
 	void execute() throws IOException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
@@ -34,7 +35,7 @@ class ImportCDIHandlerTest {
 		List<CDI> items = new ArrayList<>();
 		items.add(cdi);
 		
-		List<BundleRequest> requests = importCDIFunction.createBundlesByCDI(cdi);
+		List<BundleRequest> requests = cdiService.createBundlesByCDI(cdi);
 		
 		//test execution
         FunctionInvoker<CDIWrapper, List<BundleResponse>> handler = new FunctionInvoker<>(ImportCDIFunction.class);
@@ -69,7 +70,7 @@ class ImportCDIHandlerTest {
 		List<CDI> items = new ArrayList<>();
 		items.add(cdi);
 		
-		List<BundleRequest> requests = importCDIFunction.createBundlesByCDI(cdi);
+		List<BundleRequest> requests = cdiService.createBundlesByCDI(cdi);
 		
 		//test execution
         FunctionInvoker<CDIWrapper, List<BundleResponse>> handler = new FunctionInvoker<>(ImportCDIFunction.class);
@@ -104,7 +105,7 @@ class ImportCDIHandlerTest {
 		List<CDI> items = new ArrayList<>();
 		items.add(cdi);	
 		
-		List<BundleRequest> requests = importCDIFunction.createBundlesByCDI(cdi);
+		List<BundleRequest> requests = cdiService.createBundlesByCDI(cdi);
 		
 		//test execution
         FunctionInvoker<CDIWrapper, List<BundleResponse>> handler = new FunctionInvoker<>(ImportCDIFunction.class);
@@ -139,7 +140,7 @@ class ImportCDIHandlerTest {
 		List<CDI> items = new ArrayList<>();
 		items.add(cdi);
 		
-		List<BundleRequest> requests = importCDIFunction.createBundlesByCDI(cdi);
+		List<BundleRequest> requests = cdiService.createBundlesByCDI(cdi);
 		
 		assertEquals(1, requests.size());
 		assertEquals("PSP", requests.get(0).getTouchpoint());
