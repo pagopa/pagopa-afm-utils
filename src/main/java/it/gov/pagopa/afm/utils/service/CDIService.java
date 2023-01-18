@@ -57,7 +57,7 @@ public class CDIService {
     }
     
     public List<BundleResponse> syncCDI() {
-    	return this.turnCDIToBundles(this.getWorkableCDIs());
+    	return this.turnCDIToBundles(cdisRepository.getWorkableCDIs());
     }
     
     

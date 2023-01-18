@@ -1,10 +1,11 @@
 package it.gov.pagopa.afm.utils.service;
 
-import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.times;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import it.gov.pagopa.afm.utils.entity.CDI;
@@ -20,21 +21,23 @@ class CDIServiceTest {
 	@Test
 	void deleteTest() {
 		CDIService cdiService = new CDIService(cdisRepository, marketPlaceClient);
-		cdiService.deleteCDI(CDI.builder().build());
-		assertTrue(true);
+		CDI cdi = CDI.builder().build();
+		cdiService.deleteCDI(cdi);
+		Mockito.verify(cdisRepository, times(1)).delete(cdi);
 	}
 	
 	@Test
 	void updateTest() {
 		CDIService cdiService = new CDIService(cdisRepository, marketPlaceClient);
-		cdiService.updateCDI(CDI.builder().build());
-		assertTrue(true);
+		CDI cdi = CDI.builder().build();
+		cdiService.updateCDI(cdi);
+		Mockito.verify(cdisRepository, times(1)).save(cdi);
 	}
 	
 	@Test
 	void getWorkableCDIs() {
 		CDIService cdiService = new CDIService(cdisRepository, marketPlaceClient);
 		cdiService.getWorkableCDIs();
-		assertTrue(true);
+		Mockito.verify(cdisRepository, times(1)).getWorkableCDIs();
     }
 }
