@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: pagopapcommonacr.azurecr.io/pagopaafmutils
-    tag: "0.2.0" #improve
+    tag: "0.3.0" #improve
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -61,12 +61,10 @@ microservice-chart:
     AFM_MARKETPLACE_HOST: https://api.platform.pagopa.it/afm/marketplace-service/v1
     AFM_MARKETPLACE_RETRY_MAX_ATTEMPTS: "1"
     AFM_MARKETPLACE_RETRY_MAX_DELAY: "2000"
-
     COSMOS_URI: https://pagopa-p-weu-afm-marketplace-cosmos-account.documents.azure.com:443/
     COSMOS_DATABASE: 'db'
     COSMOS_QUERY_METRICS: 'false'
     CDI_CONTAINER_NAME: 'cdis'
-
   envSecret:
     APPLICATIONINSIGHTS_CONNECTION_STRING: ai-p-connection-string
     AFM_MARKETPLACE_SUBSCRIPTION_KEY: afm-marketplace-subscription-key
