@@ -16,14 +16,13 @@
     "/cdis/sync": {
       "get": {
         "tags": [
-          "Import CDI API"
+          "Import CDI rest API"
         ],
-        "description": "Returns the list of ids of the created bundles",
-        "operationId": "importCDIFunction",
-        "summary": "import cdi",
+        "summary": "API to trigger the import of the CDIs and convert to bundles.",
+        "operationId": "syncCDI",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Obtained bundle list.",
             "headers": {
               "X-Request-Id": {
                 "description": "This header identifies the call",
@@ -42,8 +41,64 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Service unavailable.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemJson"
+                }
+              }
+            }
           }
-        }
+        },
+        "security": [
+          {
+            "ApiKey": []
+          }
+        ]
       },
       "parameters": [
         {
