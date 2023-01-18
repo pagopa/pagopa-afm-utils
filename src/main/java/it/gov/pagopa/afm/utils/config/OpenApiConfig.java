@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static it.gov.pagopa.afm.utils.config.RequestFilter.HEADER_REQUEST_ID;
+import static it.gov.pagopa.afm.utils.Constants.HEADER_REQUEST_ID;
 
 @Configuration
 public class OpenApiConfig {
