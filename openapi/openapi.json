@@ -13,55 +13,12 @@
     }
   ],
   "paths": {
-    "/api/cdis/sync": {
-      "get": {
-        "tags": [
-          "Import CDI function API"
-        ],
-        "description": "Returns the list of ids of the created bundles",
-        "operationId": "importCDIFunction",
-        "summary": "Azure function API to trigger the import of the CDIs and convert to bundles",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "headers": {
-              "X-Request-Id": {
-                "description": "This header identifies the call",
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/BundleResponse"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "parameters": [
-        {
-          "name": "X-Request-Id",
-          "in": "header",
-          "description": "This header identifies the call, if not passed it is self-generated. This ID is returned in the response.",
-          "schema": {
-            "type": "string"
-          }
-        }
-      ]
-    },
     "/cdis/sync": {
       "get": {
         "tags": [
           "Import CDI rest API"
         ],
-        "summary": "Rest API to trigger the import of the CDIs and convert to bundles.",
+        "summary": "API to trigger the import of the CDIs and convert to bundles.",
         "operationId": "syncCDI",
         "responses": {
           "200": {
@@ -81,6 +38,39 @@
                   "items": {
                     "$ref": "#/components/schemas/BundleResponse"
                   }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "headers": {
+              "X-Request-Id": {
+                "description": "This header identifies the call",
+                "schema": {
+                  "type": "string"
                 }
               }
             }

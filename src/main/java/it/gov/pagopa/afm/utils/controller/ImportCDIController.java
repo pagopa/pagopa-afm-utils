@@ -29,6 +29,9 @@ public class ImportCDIController {
 	@Operation(summary = "API to trigger the import of the CDIs and convert to bundles.", security = {@SecurityRequirement(name = "ApiKey")}, operationId = "syncCDI", tags = {"Import CDI rest API"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Obtained bundle list.", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(name = "BundleResponse", implementation = BundleResponse.class)))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema())),
+            @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema())),
             @ApiResponse(responseCode = "500", description = "Service unavailable.", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ProblemJson.class)))})
     @GetMapping(value = "/cdis/sync",
             produces = MediaType.APPLICATION_JSON_VALUE)
