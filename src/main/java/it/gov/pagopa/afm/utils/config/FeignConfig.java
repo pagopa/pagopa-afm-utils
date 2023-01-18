@@ -6,10 +6,11 @@ import org.springframework.context.annotation.Bean;
 
 import feign.RequestInterceptor;
 
+import static it.gov.pagopa.afm.utils.Constants.HEADER_REQUEST_ID;
+import static it.gov.pagopa.afm.utils.Constants.HEADER_SUBSCRIPTION_KEY;
+
 public class FeignConfig {
 
-	static final String HEADER_REQUEST_ID = "X-Request-Id";
-	static final String HEADER_SUBSCRIPTION_KEY = "Ocp-Apim-Subscription-Key";
     @Value("${service.marketplace.subscriptionKey}")
     private String subscriptionKey;
 
