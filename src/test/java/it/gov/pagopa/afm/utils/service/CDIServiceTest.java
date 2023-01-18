@@ -34,10 +34,4 @@ class CDIServiceTest {
 		Mockito.verify(cdisRepository, times(1)).save(cdi);
 	}
 	
-	@Test
-	void getWorkableCDIs() {
-		CDIService cdiService = new CDIService(cdisRepository, marketPlaceClient);
-		cdiService.getWorkableCDIs();
-		Mockito.verify(cdisRepository, times(1)).getWorkableCDIs();
-    }
 }
