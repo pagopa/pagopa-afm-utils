@@ -52,9 +52,6 @@ public class CDIService {
     	cdisRepository.delete(cdiEntity);	
     } 
     
-    public List<CDI> getWorkableCDIs() {
-    	return cdisRepository.getWorkableCDIs();
-    }
     
     public List<BundleResponse> syncCDI() {
     	return this.turnCDIToBundles(cdisRepository.getWorkableCDIs());
