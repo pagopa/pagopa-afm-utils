@@ -22,7 +22,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - run: |
-          echo toJson(github.event)
+          echo ${{ toJSON(github) }}
       - name: Formatting
         uses: axel-op/googlejavaformat-action@v3
         with:
