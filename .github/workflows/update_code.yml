@@ -64,8 +64,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          ref: main
 
       - name: Set up JDK 11
         uses: actions/setup-java@v1
@@ -82,26 +80,3 @@ jobs:
         with:
           args: "--replace"
           commit-message: "Google Java format [skip ci]"
-
-      # prepare openapi template for infra repo
-      - run: |
-          mkdir -p "${GITHUB_WORKSPACE}/infra"
-          jq  '."servers"[0]."url" |= "${host}"' "${GITHUB_WORKSPACE}/openapi/openapi.json" > "${GITHUB_WORKSPACE}/infra/_openapi.json.tpl"
-          
-          # open a PR on infra repo
-      - name: Create pull request
-        uses: jacopocarlini/action-pull-request-another-repo@main
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-        with:
-          source_folder: 'infra'
-          destination_repo: 'pagopa/pagopa-infra'
-          destination_folder: 'src/domains/afm-app/api/marketplace-service/utils'
-          destination_base_branch: 'main'
-          destination_head_branch: 'AFM-Utils-swagger-update'
-          user_email: 'github-bot@pagopa.it'
-          user_name: 'pagopa-github-bot'
-          allow_force_push: 'true'
-
-      # TODO terraform apply to update the new openapi.json
-
