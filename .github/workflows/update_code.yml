@@ -60,7 +60,6 @@ jobs:
   update:
     name: Update Openapi and Formatting
     runs-on: ubuntu-latest
-    if: ${{ github.event.event_name == 'issue_comment' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
