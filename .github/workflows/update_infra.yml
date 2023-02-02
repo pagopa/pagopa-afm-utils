@@ -13,7 +13,6 @@ jobs:
   update_infra:
     name: Update Infra
     runs-on: ubuntu-latest
-    if: ${{ github.event.event_name == 'issue_comment' && contains('update_code', github.event.comment.body) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
