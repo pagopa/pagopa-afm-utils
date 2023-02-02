@@ -22,8 +22,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - run: |
-          echo ${{ toJSON(github) }}
       - name: Formatting
         uses: axel-op/googlejavaformat-action@v3
         with:
@@ -68,9 +66,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: main
-
-      - run: |
-          echo ${{ toJSON(github) }}
 
       - name: Set up JDK 11
         uses: actions/setup-java@v1
