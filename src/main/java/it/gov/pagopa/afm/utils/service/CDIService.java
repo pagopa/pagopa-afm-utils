@@ -99,6 +99,7 @@ public class CDIService {
 			DateTimeFormatter  dfDate     = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 			BundleRequest bundleRequest = new BundleRequest();
 			bundleRequest.setIdCdi(cdi.getIdCdi());
+			bundleRequest.setAbi(cdi.getAbi());
 			bundleRequest.setDigitalStamp(cdi.getDigitalStamp());
 			bundleRequest.setDigitalStampRestriction(Boolean.FALSE);
 			bundleRequest.setType(BundleType.GLOBAL);

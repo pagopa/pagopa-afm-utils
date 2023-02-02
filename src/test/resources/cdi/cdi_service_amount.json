@@ -1,6 +1,7 @@
 {
 	"idPsp": "string",
 	"idCdi": "string",
+	"abi": "string",
 	"digitalStamp": true,
 	"validityDateFrom": "2022-12-14",
 	"details": [

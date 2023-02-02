@@ -20,6 +20,7 @@ public class CDI {
 	private String id;
 	private String idPsp;
 	private String idCdi;
+	private String abi;
 	private Boolean digitalStamp;
 	private String validityDateFrom;
 	private List<Detail> details;
