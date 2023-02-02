@@ -28,7 +28,7 @@ jobs:
         with:
           java-version: 11
 
-      - name: Update OpenApi and Swagger files
+      - name: Update OpenApi/Swagger file
         run: |
           cd ./openapi
           sh ./generate_openapi.sh
