@@ -14,7 +14,7 @@ permissions:
 jobs:
   check_formatting:
     runs-on: ubuntu-latest
-    if: ${{ github.event.issue.pull_request }}
+    if: ${{ github.event.pull_request }}
     steps:
       - name: Formatting
         uses: axel-op/googlejavaformat-action@v3
@@ -45,7 +45,7 @@ jobs:
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: 'Comment this PR with *update code* to update `openapi.json` and to format the code'
+                body: 'Comment this PR with *update code* to update `openapi.json` and to format the code. Consider to use pre-commit.'
             })
   
 
