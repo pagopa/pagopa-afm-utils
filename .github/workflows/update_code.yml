@@ -1,12 +1,10 @@
 name: Update Code
 
 on:
-  workflow_run:
-    workflows:
-      - Auto Deploy
-    types:
-      - completed
-
+  pull_request:
+    branches:
+      - main
+  issue_comment:
 
   workflow_dispatch:
 
@@ -14,9 +12,46 @@ permissions:
   contents: write
 
 jobs:
-  code:
+  check_formatting:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.issue.pull_request }}
+    steps:
+      - name: Formatting
+        uses: axel-op/googlejavaformat-action@v3
+        with:
+          args: "--set-exit-if-changed"
+
+      - uses: actions/github-script@v6.3.3
+        if: always()
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            var comments = await github.rest.issues.listComments({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo
+            });
+            for (const comment of comments.data) {
+              if (comment.body.includes('Comment this PR with')){
+                github.rest.issues.deleteComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: comment.id
+                })
+              }
+            }
+            github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: 'Comment this PR with */update_code* to update `openapi.json` and to format the code'
+            })
+  
+
+  update:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.issue.pull_request && contains("/update_code" ,github.event.issue.comment.body) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -48,13 +83,13 @@ jobs:
       - name: Create pull request
         uses: jacopocarlini/action-pull-request-another-repo@main
         env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }} # TODO: set this secret in repository
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
           source_folder: 'infra'
           destination_repo: 'pagopa/pagopa-infra'
-          destination_folder: 'src/your-path-here/v1' # TODO: set the path
+          destination_folder: 'src/domains/afm-app/api/marketplace-service/utils'
           destination_base_branch: 'main'
-          destination_head_branch: 'projectName-swagger-update' # TODO: set the name
+          destination_head_branch: 'AFM-Utils-swagger-update'
           user_email: 'github-bot@pagopa.it'
           user_name: 'pagopa-github-bot'
           allow_force_push: 'true'

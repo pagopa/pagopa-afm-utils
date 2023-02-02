@@ -2,12 +2,13 @@ name: Create Dashboard
 
 # Controls when the workflow will run
 on:
-  workflow_run:
-    workflows:
-      - Auto Deploy
-    types:
-      - completed
-
+  push:
+    branches:
+      - main
+    paths:
+      - 'openapi/openapi.json'
+      - '.github/workflows/create_dashboard.yaml'
+      - '.opex/**'
 env:
   TEMPLATE_DIR: azure-dashboard
   CLIENT_ID:  # TODO
@@ -23,7 +24,6 @@ jobs:
   dashboard:
     # The type of runner that the job will run on
     runs-on: ubuntu-22.04
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     strategy:
       matrix:
