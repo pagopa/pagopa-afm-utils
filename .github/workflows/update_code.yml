@@ -32,14 +32,14 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            console.log(toJSON(context));
+            console.log(context);
             var comments = await github.rest.issues.listComments({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo
             });
             for (const comment of comments.data) {
-              console.log(toJSON(comment));
+              console.log(comment);
               if (comment.body.includes('Comment this PR with')){
                 github.rest.issues.deleteComment({
                   issue_number: context.issue.number,
