@@ -53,7 +53,7 @@ jobs:
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: 'Comment this PR with */update_code* to update `openapi.json` and to format the code. Consider to use pre-commit.'
+                body: 'Comment this PR with */update_code* to update `openapi.json` and to format the code'
             })
   
 
