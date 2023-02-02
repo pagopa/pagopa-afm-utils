@@ -12,17 +12,16 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 
 jobs:
   check_format:
     name: Check Format
     runs-on: ubuntu-latest
-#    if: ${{ github.event.event_name == 'pull_request' }}
+    if: ${{ github.event.event_name == 'pull_request' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - run: |
-          echo ${{ toJSON(github) }}
       - name: Formatting
         uses: axel-op/googlejavaformat-action@v3
         with:
@@ -61,15 +60,12 @@ jobs:
   update:
     name: Update Openapi and Formatting
     runs-on: ubuntu-latest
-#    if: ${{ github.event.event_name == 'issue_comment' && contains('/update_code' ,github.event.issue.comment.body) }}
+    if: ${{ github.event.event_name == 'issue_comment' && contains('/update_code', github.event.comment.body) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           ref: main
-
-      - run: |
-          echo ${{ toJSON(github) }}
 
       - name: Set up JDK 11
         uses: actions/setup-java@v1
