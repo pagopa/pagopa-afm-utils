@@ -9,28 +9,16 @@ services:
       context: ../
     env_file:
       - ./config/.env
-    ports:
-      - "80:80"
-    networks:
-      afmutils_net:
-
-
-  marketplace-be:
-    container_name: 'marketplace-be'
-    image: ${containerRegistry}/pagopaafmmarketplacebe:latest
     user: root
     volumes:
       - ./config/cosmosdb.sh:/cosmosdb.sh
-    env_file:
-      - ./config/marketplace.env
     ports:
-      - 8082:8080
+      - 8080:8080
     entrypoint: sh /cosmosdb.sh
     depends_on:
       - cosmosdb
     networks:
       afmutils_net:
-
 
   cosmosdb:
     container_name: 'cosmosdb'
