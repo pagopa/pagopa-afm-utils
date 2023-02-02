@@ -11,19 +11,19 @@ import org.springframework.scheduling.support.CronTrigger;
 @EnableScheduling
 public class SchedulerConfig {
 
-    @Value("${scheduledTask.trigger}")
-    private String cronTrigger;
+  @Value("${scheduledTask.trigger}")
+  private String cronTrigger;
 
-    @Bean
-    public ThreadPoolTaskScheduler threadPoolTaskScheduler(){
-        ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
-        threadPoolTaskScheduler.setPoolSize(1);
-        threadPoolTaskScheduler.setThreadNamePrefix("ThreadPoolTaskScheduler");
-        return threadPoolTaskScheduler;
-    }
+  @Bean
+  public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
+    ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
+    threadPoolTaskScheduler.setPoolSize(1);
+    threadPoolTaskScheduler.setThreadNamePrefix("ThreadPoolTaskScheduler");
+    return threadPoolTaskScheduler;
+  }
 
-    @Bean
-    public CronTrigger cronTrigger() {
-        return new CronTrigger(cronTrigger);
-    }
+  @Bean
+  public CronTrigger cronTrigger() {
+    return new CronTrigger(cronTrigger);
+  }
 }
