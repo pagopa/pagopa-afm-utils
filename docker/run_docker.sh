@@ -1,6 +1,7 @@
-# sh ./run_docker.sh <local|dev|uat|prod>
+# sh ./run_docker.sh <local|dev|uat|prod> --skip-recreate
 
 ENV=$1
+RECREATE=$2
 
 if [ -z "$ENV" ]
 then
@@ -39,4 +40,24 @@ export containerRegistry=${containerRegistry}
 export image=${image}
 
 stack_name=$(cd .. && basename "$PWD")
-docker-compose -p "${stack_name}" up -d --remove-orphans --force-recreate
+if [ "$RECREATE" = "--skip-recreate" ]; then
+    docker compose -p "${stack_name}" up -d
+  else
+    docker compose -p "${stack_name}" up -d --remove-orphans --force-recreate --build
+fi
+
+# waiting the containers
+printf 'Waiting for the service'
+attempt_counter=0
+max_attempts=50
+until $(curl --output /dev/null --silent --head --fail http://localhost:8080/actuator/info); do
+    if [ ${attempt_counter} -eq ${max_attempts} ];then
+      echo "Max attempts reached"
+      exit 1
+    fi
+
+    printf '.'
+    attempt_counter=$((attempt_counter+1))
+    sleep 5
+done
+echo 'Service Started'
