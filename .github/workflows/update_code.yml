@@ -38,3 +38,4 @@ jobs:
         with:
           args: "--replace"
           commit-message: "Google Java format [skip ci]"
+
