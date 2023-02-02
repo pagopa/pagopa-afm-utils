@@ -31,8 +31,8 @@ on:
           - skip
 
 env:
-  NAMESPACE: # TODO
-  APP_NAME: # TODO
+  NAMESPACE: afm
+  APP_NAME: pagopaafmutils
 
 permissions:
   packages: write
@@ -202,7 +202,7 @@ jobs:
         if: ${{ matrix.environment != 'dev' && (github.event.inputs.environment == null || matrix.environment == github.event.inputs.environment) }}
         with:
           secret: ${{ github.TOKEN }}
-          approvers: user1, team1 # TODO
+          approvers: gec
           minimum-approvals: 1
           issue-title: "Deploying v${{ needs.release.outputs.version }} to ${{ matrix.environment }}"
           exclude-workflow-initiator-as-approver: false
@@ -240,4 +240,4 @@ jobs:
           message_format: '{emoji} *{workflow}* {status_message} in <{repo_url}|{repo}>'
           footer: 'Linked to Repo <{repo_url}|{repo}>'
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # TODO
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

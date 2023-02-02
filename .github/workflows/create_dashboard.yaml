@@ -9,6 +9,9 @@ on:
       - 'openapi/openapi.json'
       - '.github/workflows/create_dashboard.yaml'
       - '.opex/**'
+
+  workflow_dispatch:
+
 env:
   TEMPLATE_DIR: azure-dashboard
   CLIENT_ID:  # TODO
@@ -37,7 +40,6 @@ jobs:
         uses: actions/checkout@1f9a0c22da41e6ebfa534300ef656657ea2c6707
         with:
           persist-credentials: false
-          fetch-depth: 0
 
       - name: Read terraform version
         id: read-version
