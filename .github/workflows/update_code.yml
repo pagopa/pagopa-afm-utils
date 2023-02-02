@@ -5,17 +5,24 @@ on:
     branches:
       - main
   issue_comment:
+    types: [created, edited]
 
   workflow_dispatch:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
-  check_formatting:
+  check_format:
+    name: Check Format
     runs-on: ubuntu-latest
-    if: ${{ github.event.issue.pull_request }}
+#    if: ${{ github.event.event_name == 'pull_request' }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - run: |
+          echo ${{ toJSON(github) }}
       - name: Formatting
         uses: axel-op/googlejavaformat-action@v3
         with:
@@ -26,12 +33,14 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            console.log(context);
             var comments = await github.rest.issues.listComments({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo
             });
             for (const comment of comments.data) {
+              console.log(comment);
               if (comment.body.includes('Comment this PR with')){
                 github.rest.issues.deleteComment({
                   issue_number: context.issue.number,
@@ -50,13 +59,17 @@ jobs:
   
 
   update:
+    name: Update Openapi and Formatting
     runs-on: ubuntu-latest
-    if: ${{ github.event.issue.pull_request && contains('/update_code' ,github.event.issue.comment.body) }}
+#    if: ${{ github.event.event_name == 'issue_comment' && contains('/update_code' ,github.event.issue.comment.body) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           ref: main
+
+      - run: |
+          echo ${{ toJSON(github) }}
 
       - name: Set up JDK 11
         uses: actions/setup-java@v1
