@@ -21,7 +21,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
+      - run: |
+          echo toJson(github.event)
       - name: Formatting
         uses: axel-op/googlejavaformat-action@v3
         with:
