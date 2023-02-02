@@ -12,8 +12,7 @@ import org.springframework.context.annotation.DependsOn;
 @DependsOn("expressionResolver")
 public class Application {
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
-
+  public static void main(String[] args) {
+    SpringApplication.run(Application.class, args);
+  }
 }

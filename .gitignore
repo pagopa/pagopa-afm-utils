@@ -3,3 +3,4 @@ target/**/*
 /.idea/
 .iml
 /utilities/emulatorcert.crt
+.cache
