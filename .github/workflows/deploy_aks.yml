@@ -216,8 +216,7 @@ jobs:
 
       - name: Helm Deploy
         if: ${{ github.event.inputs.environment == null || matrix.environment == github.event.inputs.environment }}
-        run: |
-          helm upgrade --namespace ${{ env.NAMESPACE }}
+        run: helm upgrade --namespace ${{ env.NAMESPACE }}
             --install --values ./helm/values-${{ matrix.environment }}.yaml 
             --set microservice-chart.image.tag=${{ needs.release.outputs.version }} 
             --wait --timeout 5m0s 
