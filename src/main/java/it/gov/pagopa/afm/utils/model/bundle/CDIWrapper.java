@@ -1,8 +1,7 @@
 package it.gov.pagopa.afm.utils.model.bundle;
 
-import java.util.List;
-
 import it.gov.pagopa.afm.utils.entity.CDI;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,5 +14,5 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class CDIWrapper {
-	private List<CDI> cdiItems;
+  private List<CDI> cdiItems;
 }

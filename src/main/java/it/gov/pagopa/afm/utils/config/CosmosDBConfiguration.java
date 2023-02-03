@@ -1,12 +1,5 @@
 package it.gov.pagopa.afm.utils.config;
 
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.lang.Nullable;
-
 import com.azure.core.credential.AzureKeyCredential;
 import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.DirectConnectionConfig;
@@ -16,8 +9,12 @@ import com.azure.spring.data.cosmos.core.ResponseDiagnostics;
 import com.azure.spring.data.cosmos.core.ResponseDiagnosticsProcessor;
 import com.azure.spring.data.cosmos.core.mapping.EnableCosmosAuditing;
 import com.azure.spring.data.cosmos.repository.config.EnableCosmosRepositories;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.Nullable;
 
 @Configuration
 @EnableCosmosRepositories("it.gov.pagopa.afm.utils.repository")
@@ -26,48 +23,47 @@ import lombok.extern.slf4j.Slf4j;
 @ConditionalOnExpression("'${info.properties.environment}'!='test'")
 public class CosmosDBConfiguration extends AbstractCosmosConfiguration {
 
+  @Value("${azure.cosmos.uri}")
+  private String uri;
 
-    @Value("${azure.cosmos.uri}")
-    private String uri;
+  @Value("${azure.cosmos.key}")
+  private String key;
 
-    @Value("${azure.cosmos.key}")
-    private String key;
+  @Value("${azure.cosmos.database}")
+  private String dbName;
 
-    @Value("${azure.cosmos.database}")
-    private String dbName;
+  @Value("${azure.cosmos.populate-query-metrics}")
+  private boolean queryMetricsEnabled;
 
-    @Value("${azure.cosmos.populate-query-metrics}")
-    private boolean queryMetricsEnabled;
+  @Bean
+  CosmosClientBuilder getCosmosClientBuilder() {
+    AzureKeyCredential azureKeyCredential = new AzureKeyCredential(key);
+    DirectConnectionConfig directConnectionConfig = new DirectConnectionConfig();
+    return new CosmosClientBuilder()
+        .endpoint(uri)
+        .credential(azureKeyCredential)
+        .directMode(directConnectionConfig);
+  }
 
-    @Bean
-    CosmosClientBuilder getCosmosClientBuilder() {
-        AzureKeyCredential azureKeyCredential = new AzureKeyCredential(key);
-        DirectConnectionConfig directConnectionConfig = new DirectConnectionConfig();
-        return new CosmosClientBuilder()
-                .endpoint(uri)
-                .credential(azureKeyCredential)
-                .directMode(directConnectionConfig);
-    }
+  @Override
+  public CosmosConfig cosmosConfig() {
+    return CosmosConfig.builder()
+        .enableQueryMetrics(queryMetricsEnabled)
+        .responseDiagnosticsProcessor(new ResponseDiagnosticsProcessorImplementation())
+        .build();
+  }
+
+  @Override
+  protected String getDatabaseName() {
+    return dbName;
+  }
+
+  private static class ResponseDiagnosticsProcessorImplementation
+      implements ResponseDiagnosticsProcessor {
 
     @Override
-    public CosmosConfig cosmosConfig() {
-        return CosmosConfig.builder()
-                .enableQueryMetrics(queryMetricsEnabled)
-                .responseDiagnosticsProcessor(new ResponseDiagnosticsProcessorImplementation())
-                .build();
+    public void processResponseDiagnostics(@Nullable ResponseDiagnostics responseDiagnostics) {
+      log.info("Response Diagnostics {}", responseDiagnostics);
     }
-
-    @Override
-    protected String getDatabaseName() {
-        return dbName;
-    }
-
-    private static class ResponseDiagnosticsProcessorImplementation implements ResponseDiagnosticsProcessor {
-
-        @Override
-        public void processResponseDiagnostics(@Nullable ResponseDiagnostics responseDiagnostics) {
-            log.info("Response Diagnostics {}", responseDiagnostics);
-        }
-    }
-
+  }
 }

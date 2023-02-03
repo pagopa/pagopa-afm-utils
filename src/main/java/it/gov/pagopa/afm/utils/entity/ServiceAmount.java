@@ -12,7 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class ServiceAmount {
-	private Long paymentAmount;
-	private Long minPaymentAmount;
-	private Long maxPaymentAmount;
+  private Long paymentAmount;
+  private Long minPaymentAmount;
+  private Long maxPaymentAmount;
 }

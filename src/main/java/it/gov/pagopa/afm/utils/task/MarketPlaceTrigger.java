@@ -4,13 +4,14 @@ import it.gov.pagopa.afm.utils.service.MarketPlaceClient;
 
 public class MarketPlaceTrigger implements Runnable {
 
-    private final MarketPlaceClient marketPlaceClient;
-    public MarketPlaceTrigger(MarketPlaceClient marketPlaceClient) {
-        this.marketPlaceClient = marketPlaceClient;
-    }
+  private final MarketPlaceClient marketPlaceClient;
 
-    @Override
-    public void run() {
-        marketPlaceClient.getConfiguration();
-    }
+  public MarketPlaceTrigger(MarketPlaceClient marketPlaceClient) {
+    this.marketPlaceClient = marketPlaceClient;
+  }
+
+  @Override
+  public void run() {
+    marketPlaceClient.getConfiguration();
+  }
 }
