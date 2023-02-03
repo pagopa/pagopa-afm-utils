@@ -13,7 +13,7 @@
 
 	<groupId>it.gov.pagopa</groupId>
 	<artifactId>afm-utils</artifactId>
-	<version>0.4.2</version>
+	<version>0.4.2-1-main</version>
 	<name>afm-utils</name>
 	<description>Utility microservice for pagoPA AFM</description>
 	<packaging>jar</packaging>
