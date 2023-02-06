@@ -214,13 +214,40 @@ jobs:
           helm repo add microservice-chart https://pagopa.github.io/aks-microservice-chart-blueprint
           helm dep build helm  
 
-      - name: Helm Deploy
-        if: ${{ github.event.inputs.environment == null || matrix.environment == github.event.inputs.environment }}
-        run: helm upgrade --namespace ${{ env.NAMESPACE }}
-            --install --values ./helm/values-${{ matrix.environment }}.yaml 
-            --set microservice-chart.image.tag=${{ needs.release.outputs.version }} 
-            --wait --timeout 5m0s 
-            ${{ env.APP_NAME }} ./helm
+#      - name: Helm Deploy
+#        if: ${{ github.event.inputs.environment == null || matrix.environment == github.event.inputs.environment }}
+#        run: helm upgrade --namespace ${{ env.NAMESPACE }}
+#            --install --values ./helm/values-${{ matrix.environment }}.yaml
+#            --set microservice-chart.image.tag=${{ needs.release.outputs.version }}
+#            --wait --timeout 5m0s
+#            ${{ env.APP_NAME }} ./helm
+
+      - name: Azure login
+        id: login
+        uses: azure/login@v1.4.3
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set AKS context
+        id: set-context
+        uses: azure/aks-set-context@v3
+        with:
+          resource-group: '${{ secrets.resource_group }}'
+          cluster-name: '${{ secrets.cluster_name }}'
+
+      - name: Setup kubectl
+        id: install-kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Deploy to AKS
+        id: deploy-aks
+        uses: Azure/k8s-deploy@v4
+        with:
+          namespace: 'afm'
+          manifests: |
+            ./helm/Chart.yaml
+          images: 'ghcr.io/pagopa/pagopa-afm-utils:latest'
+          pull-images: false
 
         # TODO log deployment successful on App Insights
 
