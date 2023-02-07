@@ -37,8 +37,6 @@ env:
   AZURE_CONTAINER_REGISTRY: pagopadcommonacr
   RESOURCE_GROUP: pagopa-d-weu-dev-aks-rg          # set this to the resource group containing your AKS cluster
   CLUSTER_NAME: pagopa-d-weu-dev-aks              # set this to the name of your AKS cluster
-  # If you bake using helm:
-  CHART_PATH: helm/Chart.yaml                   # set this to the path to your helm file
 
 permissions:
   packages: write
@@ -235,22 +233,19 @@ jobs:
           cluster-name: ${{ env.CLUSTER_NAME }}
         id: login
 
-      - name: Configure deployment
-        uses: azure/k8s-bake@773b6144a3732e3bf4c78b146a0bb9617b2e016b
-        with:
-          renderEngine: 'helm'
-          helmChart: ${{ env.CHART_PATH }}
-          helm-version: 'latest'
-        id: bake
+      - name: Helm Setup
+        if: ${{ github.event.inputs.environment == null || matrix.environment == github.event.inputs.environment }}
+        run: |
+          helm repo add microservice-chart https://pagopa.github.io/aks-microservice-chart-blueprint
+          helm dep build helm  
 
-      - name: Deploys application
-        uses: Azure/k8s-deploy@c8fbd76ededaad2799c054a9fd5d0fa5d4e9aee4
-        with:
-          manifests: ${{ steps.bake.outputs.manifestsBundle }}
-          images: |
-            ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.APP_NAME }}:${{ needs.release.outputs.version }}
-          imagepullsecrets: |
-            ${{ env.APP_NAME }}
+      - name: Helm Deploy
+        if: ${{ github.event.inputs.environment == null || matrix.environment == github.event.inputs.environment }}
+        run: helm upgrade --namespace ${{ env.NAMESPACE }}
+          --install --values ./helm/values-${{ matrix.environment }}.yaml
+          --set microservice-chart.image.tag=${{ needs.release.outputs.version }}
+          --wait --timeout 5m0s
+          ${{ env.APP_NAME }} ./helm
 
         # TODO log deployment successful on App Insights
 
