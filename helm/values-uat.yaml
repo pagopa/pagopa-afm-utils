@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: pagopaucommonacr.azurecr.io/pagopaafmutils
-    tag: "0.4.2-3-test6" #improve
+    tag: "0.4.2-4-main" #improve
     pullPolicy: Always
   livenessProbe:
     httpGet:
