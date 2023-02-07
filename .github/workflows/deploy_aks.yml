@@ -61,7 +61,7 @@ jobs:
           ref: ${{ github.ref_name}}
           token: ${{ secrets.API_TOKEN_GITHUB }}
 
-      - run: echo $github
+      - run: echo ${{ github }}
 
       - name: Set up JDK 11
         uses: actions/setup-java@v1
@@ -193,6 +193,16 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
     # TODO remember to add the package write permissions to the action https://github.com/users/<OWNER>/packages/container/<REPOSITORY>/settings
 
+      - name: Azure Login
+        uses: azure/login@89d153571fe9a34ed70fcf9f1d95ab8debea7a73
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Build image on ACR
+        run: |
+          az configure --defaults acr=${{ env.AZURE_CONTAINER_REGISTRY }}
+          az acr build --image ${{ env.APP_NAME }}:${{ needs.release.outputs.version }} --registry ${{ env.AZURE_CONTAINER_REGISTRY }} .
+
   deploy:
     needs: [release, build]
     runs-on: ubuntu-latest
@@ -224,11 +234,6 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Build image on ACR
-        run: |
-          az configure --defaults acr=${{ env.AZURE_CONTAINER_REGISTRY }}
-          az acr build --image ${{ env.APP_NAME }}:${{ needs.release.outputs.version }} --registry ${{ env.AZURE_CONTAINER_REGISTRY }} .
-
       - name: Gets K8s context
         uses: azure/aks-set-context@4e5aec273183a197b181314721843e047123d9fa
         with:
@@ -236,6 +241,12 @@ jobs:
           resource-group: ${{ env.RESOURCE_GROUP }}
           cluster-name: ${{ env.CLUSTER_NAME }}
         id: login
+
+      - name: Helm Setup
+        if: ${{ github.event.inputs.environment == null || matrix.environment == github.event.inputs.environment }}
+        run: |
+          helm repo add microservice-chart https://pagopa.github.io/aks-microservice-chart-blueprint
+          helm dep build helm  
 
       - name: Bake Helm Templates
         id: bake
