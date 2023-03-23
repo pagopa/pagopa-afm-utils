@@ -50,9 +50,7 @@ public class CDIService {
 
   public void saveCDIs(List<CDI> cdis) {
     cdisRepository.saveAll(cdis);
-    CompletableFuture.runAsync(() -> {
-        turnCDIToBundles(cdis);
-    });
+    CompletableFuture.runAsync(() -> turnCDIToBundles(cdis));
   }
 
   public List<BundleResponse> syncCDI() {
