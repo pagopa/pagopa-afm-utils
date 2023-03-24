@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -47,11 +48,16 @@ public class CDIService {
     cdisRepository.delete(cdiEntity);
   }
 
+  public void saveCDIs(List<CDI> cdis) {
+    cdisRepository.saveAll(cdis);
+    CompletableFuture.runAsync(() -> turnCDIToBundles(cdis));
+  }
+
   public List<BundleResponse> syncCDI() {
     return this.turnCDIToBundles(cdisRepository.getWorkableCDIs());
   }
 
-  public List<BundleResponse> turnCDIToBundles(List<CDI> cdis) {
+  private List<BundleResponse> turnCDIToBundles(List<CDI> cdis) {
     log.info(
         "CDIService - turnCDIToBundles executed at: "
             + LocalDateTime.now()
@@ -120,7 +126,7 @@ public class CDIService {
         bundleRequest.setIdBrokerPsp(d.getIdBrokerPsp());
         bundleRequest.setName(d.getName());
         bundleRequest.setDescription(d.getDescription());
-        bundleRequest.setPaymentType(d.getPaymentMethod());
+        bundleRequest.setPaymentType(d.getPaymentType());
         for (ServiceAmount sa : d.getServiceAmount()) {
           bundleRequest.setPaymentAmount(sa.getPaymentAmount());
           bundleRequest.setMinPaymentAmount(sa.getMinPaymentAmount());
@@ -137,16 +143,16 @@ public class CDIService {
 
     boolean isNullTouchPoint = true;
 
-    if (d.getPaymentMethod().equalsIgnoreCase(PaymentMethodType.PO.name())) {
+    if (d.getPaymentType().equalsIgnoreCase(PaymentMethodType.PO.name())) {
       isNullTouchPoint = false;
       BundleRequest bundleRequestClone = SerializationUtils.clone(bundleRequest);
       bundleRequestClone.setTouchpoint(TouchpointType.PSP.name());
       bundleRequestList.add(bundleRequestClone);
     }
-    if ((d.getPaymentMethod().equalsIgnoreCase(PaymentMethodType.CP.name())
+    if ((d.getPaymentType().equalsIgnoreCase(PaymentMethodType.CP.name())
             && d.getChannelCardsCart()
             && d.getChannelApp().equals(Boolean.FALSE))
-        || (d.getPaymentMethod()
+        || (d.getPaymentType()
                 .matches(
                     "(?i)"
                         + PaymentMethodType.BBT
@@ -157,24 +163,24 @@ public class CDIService {
                         + "|"
                         + PaymentMethodType.AD)
             && d.getChannelApp().equals(Boolean.FALSE))
-        || (!d.getPaymentMethod().equalsIgnoreCase(PaymentMethodType.PPAL.name())
+        || (!d.getPaymentType().equalsIgnoreCase(PaymentMethodType.PPAL.name())
             && d.getChannelApp())) {
       isNullTouchPoint = false;
       BundleRequest bundleRequestClone = SerializationUtils.clone(bundleRequest);
       bundleRequestClone.setTouchpoint(TouchpointType.WISP.name());
       bundleRequestList.add(bundleRequestClone);
     }
-    if ((d.getPaymentMethod().equalsIgnoreCase(PaymentMethodType.CP.name())
+    if ((d.getPaymentType().equalsIgnoreCase(PaymentMethodType.CP.name())
             && d.getChannelCardsCart()
             && d.getChannelApp().equals(Boolean.FALSE))
-        || (d.getPaymentMethod().equalsIgnoreCase(PaymentMethodType.PPAL.name())
+        || (d.getPaymentType().equalsIgnoreCase(PaymentMethodType.PPAL.name())
             && d.getChannelApp())) {
       isNullTouchPoint = false;
       BundleRequest bundleRequestClone = SerializationUtils.clone(bundleRequest);
       bundleRequestClone.setTouchpoint(TouchpointType.IO.name());
       bundleRequestList.add(bundleRequestClone);
     }
-    if ((d.getPaymentMethod().equalsIgnoreCase(PaymentMethodType.CP.name())
+    if ((d.getPaymentType().equalsIgnoreCase(PaymentMethodType.CP.name())
         && d.getChannelCardsCart()
         && d.getChannelApp().equals(Boolean.FALSE))) {
       isNullTouchPoint = false;
