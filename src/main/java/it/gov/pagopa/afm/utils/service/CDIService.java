@@ -2,6 +2,7 @@ package it.gov.pagopa.afm.utils.service;
 
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import feign.FeignException;
+import it.gov.pagopa.afm.utils.entity.Bundle;
 import it.gov.pagopa.afm.utils.entity.CDI;
 import it.gov.pagopa.afm.utils.entity.Detail;
 import it.gov.pagopa.afm.utils.entity.ServiceAmount;
@@ -13,13 +14,16 @@ import it.gov.pagopa.afm.utils.model.bundle.BundleResponse;
 import it.gov.pagopa.afm.utils.model.bundle.BundleType;
 import it.gov.pagopa.afm.utils.model.bundle.PaymentMethodType;
 import it.gov.pagopa.afm.utils.model.bundle.TouchpointType;
+import it.gov.pagopa.afm.utils.repository.BundleRepository;
 import it.gov.pagopa.afm.utils.repository.CDICollectionRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -38,6 +42,8 @@ import org.springframework.util.CollectionUtils;
 public class CDIService {
   @Autowired private CDICollectionRepository cdisRepository;
 
+  @Autowired private BundleRepository bundleRepository;
+
   @Autowired private MarketPlaceClient marketPlaceClient;
 
   public CDI updateCDI(CDI cdiEntity) {
@@ -55,6 +61,20 @@ public class CDIService {
 
   public List<BundleResponse> syncCDI() {
     return this.turnCDIToBundles(cdisRepository.getWorkableCDIs());
+  }
+
+  public void deleteCDIs() {
+    List<Bundle> bundlesToBeDeleted = bundleRepository.findByIdCdiIsNotNull();
+    bundleRepository.deleteAll(bundlesToBeDeleted);
+    for(Bundle bundle : bundlesToBeDeleted) {
+      String idCdi = bundle.getIdCdi();
+      List<CDI> cdisToBeDeleted = cdisRepository.findByIdCdi(idCdi);
+      try {
+        cdisRepository.deleteAll(cdisToBeDeleted);
+      } catch (IllegalArgumentException e) {
+        log.info(String.format("CDI with ID %s was already deleted.", idCdi));
+      }
+    }
   }
 
   private List<BundleResponse> turnCDIToBundles(List<CDI> cdis) {
@@ -121,13 +141,15 @@ public class CDIService {
               ? LocalDate.parse(cdi.getValidityDateFrom(), dfDate)
               : null);
       bundleRequest.setValidityDateTo(null);
+      int bundleNumber = 1;
       for (Detail d : cdi.getDetails()) {
         bundleRequest.setIdChannel(d.getIdChannel());
         bundleRequest.setIdBrokerPsp(d.getIdBrokerPsp());
-        bundleRequest.setName(d.getName());
         bundleRequest.setDescription(d.getDescription());
         bundleRequest.setPaymentType(d.getPaymentType());
         for (ServiceAmount sa : d.getServiceAmount()) {
+          bundleRequest.setName(d.getName() + "_" + bundleNumber);
+          bundleNumber++;
           bundleRequest.setPaymentAmount(sa.getPaymentAmount());
           bundleRequest.setMinPaymentAmount(sa.getMinPaymentAmount());
           bundleRequest.setMaxPaymentAmount(sa.getMaxPaymentAmount());
@@ -147,6 +169,7 @@ public class CDIService {
       isNullTouchPoint = false;
       BundleRequest bundleRequestClone = SerializationUtils.clone(bundleRequest);
       bundleRequestClone.setTouchpoint(TouchpointType.PSP.name());
+      bundleRequestClone.setName(bundleRequestClone.getName() + "_" + TouchpointType.PSP.name());
       bundleRequestList.add(bundleRequestClone);
     }
     if ((d.getPaymentType().equalsIgnoreCase(PaymentMethodType.CP.name())
@@ -168,6 +191,7 @@ public class CDIService {
       isNullTouchPoint = false;
       BundleRequest bundleRequestClone = SerializationUtils.clone(bundleRequest);
       bundleRequestClone.setTouchpoint(TouchpointType.WISP.name());
+      bundleRequestClone.setName(bundleRequestClone.getName() + "_" + TouchpointType.WISP.name());
       bundleRequestList.add(bundleRequestClone);
     }
     if ((d.getPaymentType().equalsIgnoreCase(PaymentMethodType.CP.name())
@@ -177,6 +201,7 @@ public class CDIService {
             && d.getChannelApp())) {
       isNullTouchPoint = false;
       BundleRequest bundleRequestClone = SerializationUtils.clone(bundleRequest);
+      bundleRequestClone.setName(bundleRequestClone.getName() + "_" + TouchpointType.IO.name());
       bundleRequestClone.setTouchpoint(TouchpointType.IO.name());
       bundleRequestList.add(bundleRequestClone);
     }
@@ -186,6 +211,7 @@ public class CDIService {
       isNullTouchPoint = false;
       BundleRequest bundleRequestClone = SerializationUtils.clone(bundleRequest);
       bundleRequestClone.setTouchpoint(TouchpointType.CHECKOUT.name());
+      bundleRequestClone.setName(bundleRequestClone.getName() + "_" + TouchpointType.CHECKOUT.name());
       bundleRequestList.add(bundleRequestClone);
     }
     if (isNullTouchPoint) {
