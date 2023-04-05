@@ -2,6 +2,7 @@ package it.gov.pagopa.afm.utils.controller;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -39,6 +40,16 @@ class SyncControllerTest {
         mvc.perform(get(url).contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andReturn();
+    assertNotNull(result.getResponse().getContentAsString());
+  }
+
+  @Test
+  void syncCDIDeletion() throws Exception {
+    String url = "/cdis/sync";
+    MvcResult result =
+        mvc.perform(delete(url).contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
             .andReturn();
     assertNotNull(result.getResponse().getContentAsString());
   }
