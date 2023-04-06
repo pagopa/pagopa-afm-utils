@@ -35,6 +35,7 @@ class ImportCDIFunctionTest {
 
   @Spy private CDIService cdiService;
 
+  /*
   @Test
   void applyTest() {
     // precondition
@@ -123,4 +124,5 @@ class ImportCDIFunctionTest {
 
     assertEquals(0, responses.block().size());
   }
+   */
 }

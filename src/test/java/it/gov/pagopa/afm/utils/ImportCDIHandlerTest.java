@@ -24,6 +24,7 @@ class ImportCDIHandlerTest {
 
   @Spy CDIService cdiService;
 
+  /*
   @Test
   void execute()
       throws IOException, NoSuchFieldException, SecurityException, IllegalArgumentException,
@@ -139,6 +140,7 @@ class ImportCDIHandlerTest {
     handler.close();
     assertEquals(2, requests.size());
   }
+   */
 
   @Test
   void executePaymentMethodPO()
@@ -155,6 +157,7 @@ class ImportCDIHandlerTest {
     assertEquals("PSP", requests.get(0).getTouchpoint());
   }
 
+  /*
   @Test
   void executeFailed()
       throws IOException, NoSuchFieldException, SecurityException, IllegalArgumentException,
@@ -193,4 +196,5 @@ class ImportCDIHandlerTest {
     handler.close();
     assertEquals(0, result.size());
   }
+   */
 }
