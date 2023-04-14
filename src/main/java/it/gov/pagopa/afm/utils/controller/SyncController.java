@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -128,6 +129,51 @@ public class SyncController {
   @PostMapping(value = "/cdis/sync", produces = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<List<BundleResponse>> syncCDI(@RequestBody List<CDI> cdis) {
     cdiService.saveCDIs(cdis);
+    return ResponseEntity.status(200).build();
+  }
+
+  @Operation(
+      summary = "API to trigger the delete of the CDIs and its related bundles.",
+      security = {@SecurityRequirement(name = "ApiKey")},
+      operationId = "syncCDIDeletion",
+      tags = {"Delete CDI rest API"}
+  )
+  @ApiResponses(
+      value = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "Obtained bundle list.",
+              content = @Content(schema = @Schema())
+          ),
+          @ApiResponse(
+              responseCode = "401",
+              description = "Unauthorized",
+              content = @Content(schema = @Schema())
+          ),
+          @ApiResponse(
+              responseCode = "403",
+              description = "Forbidden",
+              content = @Content(schema = @Schema())
+          ),
+          @ApiResponse(
+              responseCode = "429",
+              description = "Too many requests",
+              content = @Content(schema = @Schema())
+          ),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Service unavailable.",
+              content =
+              @Content(
+                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                  schema = @Schema(implementation = ProblemJson.class)
+              )
+          )
+      }
+  )
+  @DeleteMapping(value = "/cdis/sync", produces = MediaType.APPLICATION_JSON_VALUE)
+  ResponseEntity<String> syncCDIDeletion() {
+    cdiService.deleteCDIs();
     return ResponseEntity.status(200).build();
   }
 }

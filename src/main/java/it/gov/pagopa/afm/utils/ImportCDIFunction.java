@@ -1,5 +1,6 @@
 package it.gov.pagopa.afm.utils;
 
+/*
 import it.gov.pagopa.afm.utils.model.bundle.BundleResponse;
 import it.gov.pagopa.afm.utils.model.bundle.CDIWrapper;
 import it.gov.pagopa.afm.utils.service.CDIService;
@@ -31,3 +32,4 @@ public class ImportCDIFunction implements Function<Mono<CDIWrapper>, Mono<List<B
                 .orElse(new ArrayList<>()));
   }
 }
+*/

@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface CDICollectionRepository extends CosmosRepository<CDI, String> {
   @Query("select * from Items r where r.cdiStatus = 'NEW' or r.cdiStatus = 'FAILED'")
   List<CDI> getWorkableCDIs();
+
+  List<CDI> findByIdCdi(String idCdi);
 }
