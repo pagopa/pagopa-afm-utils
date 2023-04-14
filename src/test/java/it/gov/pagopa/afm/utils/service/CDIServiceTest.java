@@ -1,6 +1,8 @@
 package it.gov.pagopa.afm.utils.service;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -18,6 +20,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -94,6 +97,17 @@ class CDIServiceTest {
     Bundle bundle = Bundle.builder().id(UUID.randomUUID().toString()).idCdi(MOCK_IDCDI).build();
     when(bundleRepository.findByIdCdiIsNotNull()).thenReturn(List.of(bundle));
     when(cdisRepository.findByIdCdi(MOCK_IDCDI)).thenReturn(List.of());
+    cdiService.deleteCDIs();
+    verify(bundleRepository, times(1)).deleteAll(anyCollection());
+    verify(cdisRepository, times(1)).deleteAll(List.of());
+  }
+
+  @Test
+  void deleteCDIBySync_OK_throwOnDeleteAll() {
+    Bundle bundle = Bundle.builder().id(UUID.randomUUID().toString()).idCdi(MOCK_IDCDI).build();
+    when(bundleRepository.findByIdCdiIsNotNull()).thenReturn(List.of(bundle));
+    when(cdisRepository.findByIdCdi(MOCK_IDCDI)).thenReturn(List.of());
+    doThrow(IllegalArgumentException.class).when(cdisRepository).deleteAll(anyCollection()); // very rare case, added for the sake of test coverage
     cdiService.deleteCDIs();
     verify(bundleRepository, times(1)).deleteAll(anyCollection());
     verify(cdisRepository, times(1)).deleteAll(List.of());
