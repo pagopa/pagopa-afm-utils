@@ -74,6 +74,26 @@ public class CDIService {
       }
     }
   }
+  
+  public void deleteBundlesByIdCDI(String idCdi, String pspCode) {
+    List<Bundle> bundlesToBeDeleted = bundleRepository.findByIdCdi(idCdi);
+    for(Bundle bundle : bundlesToBeDeleted) {
+      try {
+         Optional.ofNullable(marketPlaceClient)
+                .ifPresent(result -> marketPlaceClient.deleteCdi(bundle.getId(), pspCode));
+      } catch (FeignException.BadRequest e) {
+        throw new AppException(AppError.BUNDLE_REQUEST_DATA_ERROR, e.getMessage());
+      } catch (FeignException.NotFound e) {
+        throw new AppException(AppError.BUNDLE_NOT_FOUND_ERROR, e.getMessage());
+      } catch (FeignException.Conflict e) {
+        throw new AppException(AppError.BUNDLE_CONFLICT_ERROR, e.getMessage());
+      } catch (FeignException.InternalServerError e) {
+        throw new AppException(AppError.INTERNAL_SERVER_ERROR, e.getMessage());
+      } catch (Exception e) {
+        throw new AppException(AppError.UNKNOWN, e.getMessage());
+      }
+    }
+  }
 
   private List<BundleResponse> turnCDIToBundles(List<CDI> cdis) {
     log.info(
