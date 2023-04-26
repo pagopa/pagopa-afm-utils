@@ -1,6 +1,8 @@
 package it.gov.pagopa.afm.utils.service;
 
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.models.PartitionKey;
+
 import feign.FeignException;
 import it.gov.pagopa.afm.utils.entity.Bundle;
 import it.gov.pagopa.afm.utils.entity.CDI;
@@ -79,9 +81,9 @@ public class CDIService {
   
   public void deleteBundlesByIdCDI(String idCdi, String pspCode) {
     List<Bundle> bundlesToBeDeleted = 
-        Optional.of(bundleRepository.findByIdCdi(idCdi))
+        Optional.of(bundleRepository.findByIdCdi(idCdi, new PartitionKey(pspCode)))
         .filter(l -> !CollectionUtils.isEmpty(l))
-        .orElseThrow(() ->  new AppException(AppError.CDI_NOT_FOUND_ERROR, idCdi))
+        .orElseThrow(() ->  new AppException(AppError.CDI_NOT_FOUND_ERROR, idCdi, pspCode))
         .stream()
         .collect(Collectors.toList());
     
