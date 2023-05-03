@@ -48,7 +48,7 @@ class SyncControllerTest {
   
   @Test
   void syncDeleteBundlesByIdCDI() throws Exception {
-    String url = "/cdi/12345?pspCode=678901";
+    String url = "/psps/123456/cdis/7890";
     MvcResult result =
         mvc.perform(delete(url).contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())

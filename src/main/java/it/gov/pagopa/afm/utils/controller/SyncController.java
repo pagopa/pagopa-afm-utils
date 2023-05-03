@@ -1,17 +1,5 @@
 package it.gov.pagopa.afm.utils.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import it.gov.pagopa.afm.utils.entity.CDI;
-import it.gov.pagopa.afm.utils.model.ProblemJson;
-import it.gov.pagopa.afm.utils.model.bundle.BundleResponse;
-import it.gov.pagopa.afm.utils.service.CDIService;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
@@ -28,8 +16,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import it.gov.pagopa.afm.utils.entity.CDI;
+import it.gov.pagopa.afm.utils.model.ProblemJson;
+import it.gov.pagopa.afm.utils.model.bundle.BundleResponse;
+import it.gov.pagopa.afm.utils.service.CDIService;
 
 @RestController
 @Validated
@@ -231,7 +231,7 @@ public class SyncController {
           )
       }
   )
-  @DeleteMapping(value = "/cdi/{idCdi}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @DeleteMapping(value = "/psps/{pspCode}/cdis/{idCdi}", produces = MediaType.APPLICATION_JSON_VALUE)
   ResponseEntity<String> syncBundlesDeletionByIdCDI(
       @NotBlank
       @Size(max = 50)
@@ -240,8 +240,7 @@ public class SyncController {
       @NotBlank
       @Pattern(regexp = "[A-Z0-9_]{6,14}")
       @Parameter(description = "PSP code", required = true)
-      @RequestParam("pspCode")
-      String pspCode) {
+      @PathVariable("pspCode") String pspCode) {
     cdiService.deleteBundlesByIdCDI(idCdi, pspCode);
     return ResponseEntity.status(HttpStatus.OK).build();
   }

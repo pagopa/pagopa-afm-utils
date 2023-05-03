@@ -2,6 +2,7 @@ package it.gov.pagopa.afm.utils.service;
 
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -22,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+
+import com.azure.cosmos.models.PartitionKey;
 
 import feign.FeignException;
 import it.gov.pagopa.afm.utils.Application;
@@ -125,16 +128,16 @@ class CDIServiceTest {
   @Test
   void deleteBundlesByIdCDI_OK() {
     Bundle bundle = Bundle.builder().id(UUID.randomUUID().toString()).idCdi(MOCK_IDCDI).build();
-    when(bundleRepository.findByIdCdi(anyString())).thenReturn(List.of(bundle));
+    when(bundleRepository.findByIdCdi(anyString(), any(PartitionKey.class))).thenReturn(List.of(bundle));
     cdiService.deleteBundlesByIdCDI(MOCK_IDCDI, MOCK_PSPCODE);
-    verify(bundleRepository, times(1)).findByIdCdi(MOCK_IDCDI);
+    verify(bundleRepository, times(1)).findByIdCdi(MOCK_IDCDI, new PartitionKey(MOCK_PSPCODE));
     verify(marketPlaceClient, times(1)).removeBundle(eq(MOCK_PSPCODE), anyString());
   }
   
   @Test
   void deleteBundlesByIdCDI_KO_CDI_404() {
     // return empty list
-    when(bundleRepository.findByIdCdi(anyString())).thenReturn(new ArrayList<>());
+    when(bundleRepository.findByIdCdi(anyString(), any(PartitionKey.class))).thenReturn(new ArrayList<>());
     try {
       cdiService.deleteBundlesByIdCDI(MOCK_IDCDI, MOCK_PSPCODE);
       fail();
@@ -142,14 +145,14 @@ class CDIServiceTest {
     catch (AppException e) {
       assertEquals(HttpStatus.NOT_FOUND, e.getHttpStatus());
     }
-    verify(bundleRepository, times(1)).findByIdCdi(MOCK_IDCDI);
+    verify(bundleRepository, times(1)).findByIdCdi(MOCK_IDCDI, new PartitionKey(MOCK_PSPCODE));
     verify(marketPlaceClient, times(0)).removeBundle(eq(MOCK_PSPCODE), anyString());
   }
   
   @Test
   void deleteBundlesByIdCDI_KO_BUNDLE_404() {
     Bundle bundle = Bundle.builder().id(UUID.randomUUID().toString()).idCdi(MOCK_IDCDI).build();
-    when(bundleRepository.findByIdCdi(anyString())).thenReturn(List.of(bundle));
+    when(bundleRepository.findByIdCdi(anyString(), any(PartitionKey.class))).thenReturn(List.of(bundle));
     doThrow(FeignException.NotFound.class).when(marketPlaceClient).removeBundle(anyString(), anyString());
     try {
       cdiService.deleteBundlesByIdCDI(MOCK_IDCDI, MOCK_PSPCODE);
@@ -158,14 +161,14 @@ class CDIServiceTest {
     catch (AppException e) {
       assertEquals(HttpStatus.NOT_FOUND, e.getHttpStatus());
     }
-    verify(bundleRepository, times(1)).findByIdCdi(MOCK_IDCDI);
+    verify(bundleRepository, times(1)).findByIdCdi(MOCK_IDCDI, new PartitionKey(MOCK_PSPCODE));
     verify(marketPlaceClient, times(1)).removeBundle(eq(MOCK_PSPCODE), anyString());
   }
   
   @Test
   void deleteBundlesByIdCDI_KO_BUNDLE_400() {
     Bundle bundle = Bundle.builder().id(UUID.randomUUID().toString()).idCdi(MOCK_IDCDI).build();
-    when(bundleRepository.findByIdCdi(anyString())).thenReturn(List.of(bundle));
+    when(bundleRepository.findByIdCdi(anyString(), any(PartitionKey.class))).thenReturn(List.of(bundle));
     doThrow(FeignException.BadRequest.class).when(marketPlaceClient).removeBundle(anyString(), anyString());
     try {
       cdiService.deleteBundlesByIdCDI(MOCK_IDCDI, MOCK_PSPCODE);
@@ -174,14 +177,14 @@ class CDIServiceTest {
     catch (AppException e) {
       assertEquals(HttpStatus.BAD_REQUEST, e.getHttpStatus());
     }
-    verify(bundleRepository, times(1)).findByIdCdi(MOCK_IDCDI);
+    verify(bundleRepository, times(1)).findByIdCdi(MOCK_IDCDI, new PartitionKey(MOCK_PSPCODE));
     verify(marketPlaceClient, times(1)).removeBundle(eq(MOCK_PSPCODE), anyString());
   }
   
   @Test
   void deleteBundlesByIdCDI_KO_BUNDLE_409() {
     Bundle bundle = Bundle.builder().id(UUID.randomUUID().toString()).idCdi(MOCK_IDCDI).build();
-    when(bundleRepository.findByIdCdi(anyString())).thenReturn(List.of(bundle));
+    when(bundleRepository.findByIdCdi(anyString(), any(PartitionKey.class))).thenReturn(List.of(bundle));
     doThrow(FeignException.Conflict.class).when(marketPlaceClient).removeBundle(anyString(), anyString());
     try {
       cdiService.deleteBundlesByIdCDI(MOCK_IDCDI, MOCK_PSPCODE);
@@ -190,7 +193,7 @@ class CDIServiceTest {
     catch (AppException e) {
       assertEquals(HttpStatus.CONFLICT, e.getHttpStatus());
     }
-    verify(bundleRepository, times(1)).findByIdCdi(MOCK_IDCDI);
+    verify(bundleRepository, times(1)).findByIdCdi(MOCK_IDCDI, new PartitionKey(MOCK_PSPCODE));
     verify(marketPlaceClient, times(1)).removeBundle(eq(MOCK_PSPCODE), anyString());
   }
   
@@ -198,7 +201,7 @@ class CDIServiceTest {
   @Test
   void deleteBundlesByIdCDI_KO_BUNDLE_500() {
     Bundle bundle = Bundle.builder().id(UUID.randomUUID().toString()).idCdi(MOCK_IDCDI).build();
-    when(bundleRepository.findByIdCdi(anyString())).thenReturn(List.of(bundle));
+    when(bundleRepository.findByIdCdi(anyString(), any(PartitionKey.class))).thenReturn(List.of(bundle));
     doThrow(FeignException.InternalServerError.class).when(marketPlaceClient).removeBundle(anyString(), anyString());
     try {
       cdiService.deleteBundlesByIdCDI(MOCK_IDCDI, MOCK_PSPCODE);
@@ -207,7 +210,7 @@ class CDIServiceTest {
     catch (AppException e) {
       assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, e.getHttpStatus());
     }
-    verify(bundleRepository, times(1)).findByIdCdi(MOCK_IDCDI);
+    verify(bundleRepository, times(1)).findByIdCdi(MOCK_IDCDI, new PartitionKey(MOCK_PSPCODE));
     verify(marketPlaceClient, times(1)).removeBundle(eq(MOCK_PSPCODE), anyString());
   }
 }
