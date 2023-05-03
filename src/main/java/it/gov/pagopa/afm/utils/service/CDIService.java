@@ -1,6 +1,8 @@
 package it.gov.pagopa.afm.utils.service;
 
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.models.PartitionKey;
+
 import feign.FeignException;
 import it.gov.pagopa.afm.utils.entity.Bundle;
 import it.gov.pagopa.afm.utils.entity.CDI;
@@ -23,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -71,6 +75,33 @@ public class CDIService {
         cdisRepository.deleteAll(cdisToBeDeleted);
       } catch (IllegalArgumentException e) {
         log.info(String.format("CDI with ID %s was already deleted.", idCdi));
+      }
+    }
+  }
+  
+  public void deleteBundlesByIdCDI(String idCdi, String pspCode) {
+    List<Bundle> bundlesToBeDeleted = 
+        Optional.of(bundleRepository.findByIdCdi(idCdi, new PartitionKey(pspCode)))
+        .filter(l -> !CollectionUtils.isEmpty(l))
+        .orElseThrow(() ->  new AppException(AppError.CDI_NOT_FOUND_ERROR, idCdi, pspCode))
+        .stream()
+        .collect(Collectors.toList());
+    
+    for(Bundle bundle : bundlesToBeDeleted) {
+      try {
+         Optional.ofNullable(marketPlaceClient)
+                .ifPresent(result -> marketPlaceClient.removeBundle(pspCode, bundle.getId()));
+      } catch (FeignException.BadRequest e) {
+        throw new AppException(AppError.BUNDLE_REQUEST_DATA_ERROR, e.getMessage());
+      } catch (FeignException.NotFound e) {
+        throw new AppException(AppError.BUNDLE_NOT_FOUND_ERROR, e.getMessage());
+      } catch (FeignException.Conflict e) {
+        throw new AppException(AppError.BUNDLE_CONFLICT_ERROR, e.getMessage());
+      } catch (FeignException.InternalServerError e) {
+        throw new AppException(AppError.INTERNAL_SERVER_ERROR, e.getMessage());
+      } catch (Exception e) {
+        log.error("Unexpected Exception", e);
+        throw new AppException(AppError.UNKNOWN);
       }
     }
   }
