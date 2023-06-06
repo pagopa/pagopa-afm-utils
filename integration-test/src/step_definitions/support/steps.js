@@ -42,6 +42,7 @@ Given(/^the URL to delete bundles by idCDI$/, function() {
 
 When(/^the client call the (GET|POST|PUT|DELETE) API$/,
   async function(method) {
+    await sleep(1000);
     responseToCheck = await call(method, afm_utils_host + urlDeleteBundlesByIdCDI);
   });
 
