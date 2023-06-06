@@ -15,16 +15,20 @@ setDefaultTimeout(15000);
 let responseToCheck;
 let cdis = [];
 let urlDeleteBundlesByIdCDI;
-let idTouchPoint = "id-touchpoint-wisp";
 
 
 
 // Synchronous
-BeforeAll(async function() {
-  dataStoreClient.setup("touchpoints", idTouchPoint, "WISP", "WISP")
+BeforeAll(function() {
+  dataStoreClient.setupTestTouchPoints("touchpoints", "id-touchpoint-wisp", "WISP", "WISP");
+  dataStoreClient.setupTestTouchPoints("touchpoints", "id-touchpoint-io", "IO", "IO");
+  dataStoreClient.setupTestTouchPoints("touchpoints", "id-touchpoint-checkout", "CHECKOUT", "CHECKOUT");
+  // prior cancellation to avoid dirty cases --> the idPsp is the one in the test ./config/cdis.json file
+  dataStoreClient.deleteTestBundles("bundles", "IDPSPINTTEST01", "IDPSPINTTEST01");
 });
 
 Given('the configuration {string}', async function(filePath) {
+  await sleep(1000);
   let file = fs.readFileSync('./config/' + filePath);
   cdis = JSON.parse(file);
   let result = await post(afm_utils_host + '/cdis/sync',
@@ -50,7 +54,10 @@ Then(/^check statusCode is (\d+)$/, function(status) {
 // Asynchronous Promise
 AfterAll(async function() {
   await sleep(1000);
-  responseToCheck = await dataStoreClient.deleteDocument("touchpoints", idTouchPoint, "WISP");
-  assert.strictEqual(responseToCheck.status, 204);
+  dataStoreClient.deleteTestTouchPoints("touchpoints", "WISP", "WISP");
+  dataStoreClient.deleteTestTouchPoints("touchpoints", "IO", "IO");
+  dataStoreClient.deleteTestTouchPoints("touchpoints", "CHECKOUT", "CHECKOUT");
+  // the idPsp is the one in the test ./config/cdis.json file
+  dataStoreClient.deleteTestBundles("bundles", "IDPSPINTTEST01", "IDPSPINTTEST01");
   return Promise.resolve()
 });
