@@ -15,16 +15,19 @@ setDefaultTimeout(15000);
 let responseToCheck;
 let cdis = [];
 let urlDeleteBundlesByIdCDI;
-let idTouchPoint = "id-touchpoint-wisp";
-
 
 
 // Synchronous
-BeforeAll(async function() {
-  dataStoreClient.setup("touchpoints", idTouchPoint, "WISP", "WISP")
+BeforeAll(function() {
+  dataStoreClient.setupTestTouchPoints("touchpoints", "id-touchpoint-wisp", "WISP", "WISP");
+  dataStoreClient.setupTestTouchPoints("touchpoints", "id-touchpoint-io", "IO", "IO");
+  dataStoreClient.setupTestTouchPoints("touchpoints", "id-touchpoint-checkout", "CHECKOUT", "CHECKOUT");
 });
 
 Given('the configuration {string}', async function(filePath) {
+  // prior cancellation to avoid dirty cases --> the idPsp is the one in the test ./config/cdis.json file
+  dataStoreClient.deleteTestDataByIdPsp("bundles", "IDPSPINTTEST01", "IDPSPINTTEST01");
+  await sleep(1000);
   let file = fs.readFileSync('./config/' + filePath);
   cdis = JSON.parse(file);
   let result = await post(afm_utils_host + '/cdis/sync',
@@ -36,8 +39,13 @@ Given(/^the URL to delete bundles by idCDI$/, function() {
   urlDeleteBundlesByIdCDI = "/psps/" + cdis[0].idPsp + "/cdis/" + cdis[0].idCdi;
 });
 
+Given('the URL to delete bundles by the non-existent idCDI {string}', function(idCdi) {
+  urlDeleteBundlesByIdCDI = "/psps/" + cdis[0].idPsp + "/cdis/" + idCdi;
+});
+
 When(/^the client call the (GET|POST|PUT|DELETE) API$/,
   async function(method) {
+    await sleep(1500);
     responseToCheck = await call(method, afm_utils_host + urlDeleteBundlesByIdCDI);
   });
 
@@ -45,12 +53,14 @@ Then(/^check statusCode is (\d+)$/, function(status) {
   assert.strictEqual(responseToCheck.status, status);
 });
 
-
-
 // Asynchronous Promise
 AfterAll(async function() {
   await sleep(1000);
-  responseToCheck = await dataStoreClient.deleteDocument("touchpoints", idTouchPoint, "WISP");
-  assert.strictEqual(responseToCheck.status, 204);
+  dataStoreClient.deleteTestTouchPoints("touchpoints", "WISP", "WISP");
+  dataStoreClient.deleteTestTouchPoints("touchpoints", "IO", "IO");
+  dataStoreClient.deleteTestTouchPoints("touchpoints", "CHECKOUT", "CHECKOUT");
+  // the idPsp is the one in the test ./config/cdis.json file
+  dataStoreClient.deleteTestDataByIdPsp("bundles", "IDPSPINTTEST01", "IDPSPINTTEST01");
+  dataStoreClient.deleteTestDataByIdPsp("cdis", "IDPSPINTTEST01", "IDPSPINTTEST01");
   return Promise.resolve()
 });
