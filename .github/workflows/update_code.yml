@@ -102,11 +102,6 @@ jobs:
     needs: update
     if: ${{ always() }}
     steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: echo "$GITHUB_CONTEXT"
-
       - name: Delete Previous deployments
         uses: actions/github-script@v6
         env:
