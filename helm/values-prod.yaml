@@ -3,7 +3,7 @@ microservice-chart:
   nameOverride: ""
   fullnameOverride: ""
   image:
-    repository: ghcr.io/pagopa/pagopaafmutils
+    repository: ghcr.io/pagopa/pagopa-afm-utils
     tag: "0.6.0"
     pullPolicy: Always
   livenessProbe:
@@ -97,7 +97,7 @@ microservice-chart:
     deployment:
       create: true
       image:
-        repository: ghcr.io/pagopa/pagopaafmutils
+        repository: ghcr.io/pagopa/pagopa-afm-utils
         tag: "0.6.0"
         pullPolicy: Always
       envConfig: { }
