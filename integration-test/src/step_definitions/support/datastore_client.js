@@ -26,10 +26,9 @@ async function deleteTestTouchPoints(containerId, name, partitionKey) {
   }
 }
 
-async function deleteTestBundles(containerId, idPsp, partitionKey) {
+async function deleteTestDataByIdPsp(containerId, idPsp, partitionKey) {
   let responseToCheck = await getDocumentByIdPsp(containerId, idPsp);
   assert.strictEqual(responseToCheck.status, 200);
-  // prior cancellation to avoid dirty cases
   let documents = responseToCheck.data.Documents;
   for (const element of documents) {
     await deleteDocument(containerId, element.id, partitionKey);
@@ -181,5 +180,5 @@ function getTouchPoint(id, name) {
 }
 
 module.exports = {
-  createDocument, deleteDocument, setupTestTouchPoints, deleteTestBundles, deleteTestTouchPoints
+  createDocument, deleteDocument, setupTestTouchPoints, deleteTestTouchPoints, deleteTestDataByIdPsp
 }
