@@ -6,43 +6,43 @@ if (process.env.canary) {
 }
 
 function get(url, headers) {
-    return axios.get(url, {headers})
-        .then(res => {
-            return res;
-        })
-        .catch(error => {
-            return error.response;
-        });
+  return axios.get(url, { headers })
+    .then(res => {
+      return res;
+    })
+    .catch(error => {
+      return error.response;
+    });
 }
 
 function post(url, body, headers) {
-    return axios.post(url, body, {headers})
-        .then(res => {
-            return res;
-        })
-        .catch(error => {
-            return error.response;
-        });
+  return axios.post(url, body, { headers })
+    .then(res => {
+      return res;
+    })
+    .catch(error => {
+      return error.response;
+    });
 }
 
 function put(url, body, headers) {
-    return axios.put(url, body, {headers})
-        .then(res => {
-            return res;
-        })
-        .catch(error => {
-            return error.response;
-        });
+  return axios.put(url, body, { headers })
+    .then(res => {
+      return res;
+    })
+    .catch(error => {
+      return error.response;
+    });
 }
 
 function del(url, headers) {
-    return axios.delete(url, {headers})
-        .then(res => {
-            return res;
-        })
-        .catch(error => {
-            return error.response;
-        });
+  return axios.delete(url, { headers })
+    .then(res => {
+      return res;
+    })
+    .catch(error => {
+      return error.response;
+    });
 }
 
 function call(method, url, body) {
@@ -62,7 +62,7 @@ function call(method, url, body) {
 }
 
 function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-module.exports = {get, post, put, del, call, sleep}
+module.exports = { get, post, put, del, call, sleep }
