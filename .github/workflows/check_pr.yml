@@ -71,13 +71,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Formatting
+        id: format
+        continue-on-error: true
         uses: axel-op/googlejavaformat-action@v3
         with:
           args: "--set-exit-if-changed"
 
       - uses: actions/github-script@v6.3.3
-        if: always()
+        if: steps.format.outcome != 'success'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -104,23 +107,27 @@ jobs:
                 repo: context.repo.repo,
                 body: 'Comment this PR with *update_code* to update `openapi.json` and format the code. Consider to use pre-commit to format the code.'
             })
+            core.setFailed('Format your code.')
 
   check_size:
     runs-on: ubuntu-latest
     name: Check Size
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Check Size
         uses: actions/github-script@v6.3.3
         env:
-          IGNORED_FILES: openapi.json
+          IGNORED_FILES: openapi.json, openapi-node.json
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const additions = context.payload.pull_request.additions || 0
             const deletions = context.payload.pull_request.deletions || 0
             var changes = additions + deletions
+            console.log('additions: '+additions+' + deletions: '+deletions+ ' = total changes: ' + changes);
 
             const { IGNORED_FILES } = process.env
             const ignored_files = IGNORED_FILES.trim().split(',').filter(word => word.length > 0);
@@ -129,12 +136,20 @@ jobs:
               const execSync = require('child_process').execSync;
               for (const file of IGNORED_FILES.trim().split(',')) {
             
-                const ignored_additions = execSync('git --no-pager  diff --numstat | grep ' + file + ' | cut -f 1', { encoding: 'utf-8' })
-                const ignored_deletions = execSync('git --no-pager  diff --numstat | grep ' + file + ' | cut -f 2', { encoding: 'utf-8' })
+                const ignored_additions_str = execSync('git --no-pager  diff --numstat origin/main..origin/${{ github.head_ref}} | grep ' + file + ' | cut -f 1', { encoding: 'utf-8' })
+                const ignored_deletions_str = execSync('git --no-pager  diff --numstat origin/main..origin/${{ github.head_ref}} | grep ' + file + ' | cut -f 2', { encoding: 'utf-8' })
             
-                ignored += (parseInt(ignored_additions || 0) + parseInt(ignored_deletions || 0))
+                const ignored_additions = ignored_additions_str.split('\n').map(elem=> parseInt(elem || 0)).reduce(
+                (accumulator, currentValue) => accumulator + currentValue,
+                0);
+                const ignored_deletions = ignored_deletions_str.split('\n').map(elem=> parseInt(elem || 0)).reduce(
+                (accumulator, currentValue) => accumulator + currentValue,
+                0);
+            
+                ignored += ignored_additions + ignored_deletions;
               }
               changes -= ignored
+              console.log('ignored lines: ' + ignored + ' , consider changes: ' + changes);
             }
             
             if (changes < 200){
@@ -169,7 +184,7 @@ jobs:
                 repo: context.repo.repo,
                 labels: ['size/large']
               })
-              
+            
               var comments = await github.rest.issues.listComments({
                 issue_number: context.issue.number,
                 owner: context.repo.owner,
@@ -208,6 +223,5 @@ jobs:
                 })
               }
             
-              core.setFailed('PR is too large: ' + changes + ' changes.')
             }
 
