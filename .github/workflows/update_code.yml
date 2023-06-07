@@ -13,7 +13,7 @@ permissions:
 jobs:
   update:
     name: Update Openapi and Formatting
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     if: ${{ contains(github.event.comment.body, 'update_code') }}
     steps:
       - name: Checkout
@@ -47,7 +47,7 @@ jobs:
         uses: axel-op/googlejavaformat-action@v3
         with:
           args: "--replace"
-          commit-message: "Google Java format"
+          commit-message: "Google Java format [skip ci]"
 
   notify:
     needs: [ update ]
@@ -82,4 +82,3 @@ jobs:
               body: 'Update Code is failed. Please retry.'
             })
             core.setFailed('Update Code is failed. Please retry.')
-
