@@ -1,52 +1,41 @@
-name: Code Review
+name: Integration Tests
 
-# Controls when the workflow will run
 on:
-  pull_request:
-    branches:
-      - main
-    types:
-      - opened
-      - synchronize
-      - reopened
-  push:
-    branches:
-      - main
+  schedule:
+    - cron: '00 08 * * *'
 
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      environment:
+        required: true
+        type: choice
+        description: Select the Environment
+        options:
+          - dev
+          - uat
+          - prod
+      canary:
+        description: ''
+        required: false
+        type: boolean
+        default: false
+      deploy_uat:
+        required: false
+        type: boolean
+        description: deploy on UAT
+        default: false
 
-env:
-  PROJECT_KEY: pagopa_pagopa-afm-utils
 permissions:
   id-token: write
   contents: read
   deployments: write
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+
 jobs:
-  code-review:
-    name: Code Review
-    # The type of runner that the job will run on
+  integration_test:
+    name: Test
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      - name: Code Review
-        uses: pagopa/github-actions-template/maven-code-review@v1.4.2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          sonar_token: ${{ secrets.SONAR_TOKEN }}
-          project_key: ${{env.PROJECT_KEY}}
-          coverage_exclusions: "**/config/*,**/*Mock*,**/model/**,**/entity/*"
-          cpd_exclusions: "**/model/**,**/entity/*"
-
-  smoke-test:
-    name: Smoke Test
-    runs-on: ubuntu-latest
-    environment:
-      name: dev
+    environment: ${{ (github.event.inputs == null && 'dev') || inputs.environment }}
     steps:
       - name: Checkout
         id: checkout
@@ -61,17 +50,8 @@ jobs:
           tenant-id: ${{ secrets.TENANT_ID }}
           subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
 
-      - name: Run Service on Docker
-        shell: bash
-        id: run_service_docker
-        run: |
-          cd ./docker
-          chmod +x ./run_docker.sh
-          ./run_docker.sh local
-
       - name: Run Integration Tests
         shell: bash
-        id: run_integration_test
         run: |
           export SUBKEY=${{ secrets.SUBKEY }}      
           export CANARY=${{ inputs.canary }}      
@@ -79,12 +59,11 @@ jobs:
           
           cd ./integration-test
           chmod +x ./run_integration_test.sh
-          ./run_integration_test.sh local
-
+          ./run_integration_test.sh ${{( github.event.inputs == null && 'dev') || inputs.environment }}
 
   delete_github_deployments:
     runs-on: ubuntu-latest
-    needs: smoke-test
+    needs: integration_test
     if: ${{ always() }}
     steps:
       - name: Dump GitHub context
@@ -120,3 +99,34 @@ jobs:
                 });
               })
             );
+
+
+
+  deploy_aks:
+    name: Deploy on AKS
+    needs: [ integration_test ]
+    if: ${{ inputs.deploy_uat }}
+    uses: ./.github/workflows/deploy_with_github_runner.yml
+    with:
+      environment: uat
+      target: uat
+    secrets: inherit
+
+  notify:
+    needs: [ integration_test ]
+    runs-on: ubuntu-latest
+    name: Notify
+    if: always()
+    steps:
+      - name: Report Status
+        if: always()
+        uses: ravsamhq/notify-slack-action@v2
+        with:
+          status: ${{ needs.integration_test.result }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          notify_when: 'failure,skipped'
+          notification_title: '{workflow} has {status_message}'
+          message_format: '{emoji} <{workflow_url}|{workflow}> {status_message} in <{repo_url}|{repo}>'
+          footer: 'Linked to Repo <{repo_url}|{repo}>'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
