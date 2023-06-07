@@ -3,8 +3,8 @@ microservice-chart:
   nameOverride: ""
   fullnameOverride: ""
   image:
-    repository: pagopapcommonacr.azurecr.io/pagopaafmutils
-    tag: "0.6.0" #improve
+    repository: ghcr.io/pagopa/pagopa-afm-utils
+    tag: "0.6.0"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -82,4 +82,24 @@ microservice-chart:
               - key: node_type
                 operator: In
                 values:
-                  - "user"
+                  - user
+  canaryDelivery:
+    create: true
+    ingress:
+      create: true
+      canary:
+        type: header
+        headerName: X-Canary
+        headerValue: canary
+        weightPercent: 0
+    service:
+      create: true
+    deployment:
+      create: true
+      image:
+        repository: ghcr.io/pagopa/pagopa-afm-utils
+        tag: "0.6.0"
+        pullPolicy: Always
+      envConfig: { }
+      envSecret: { }
+
