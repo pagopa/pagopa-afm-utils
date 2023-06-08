@@ -50,13 +50,13 @@ resource "azurerm_role_assignment" "environment_terraform_resource_group_dashboa
 resource "azurerm_role_assignment" "environment_key_vault" {
   scope                = data.azurerm_key_vault.key_vault.id
   role_definition_name = "Reader"
-  principal_id         = module.github_runner_app.client_id
+  principal_id         = module.github_runner_app.object_id
 }
 
 resource "azurerm_role_assignment" "environment_key_vault_domain" {
   scope                = data.azurerm_key_vault.domain_key_vault.id
   role_definition_name = "Reader"
-  principal_id         = module.github_runner_app.client_id
+  principal_id         = module.github_runner_app.object_id
 }
 
 resource "azurerm_key_vault_access_policy" "ad_kv_group_policy" {
@@ -74,7 +74,7 @@ resource "azurerm_key_vault_access_policy" "ad_kv_group_policy" {
 resource "azurerm_key_vault_access_policy" "ad_domain_kv_group_policy" {
   key_vault_id = data.azurerm_key_vault.domain_key_vault.id
 
-  tenant_id = data.azurerm_client_config.current.tenant_id
+  tenant_id = data.azurerm_client_config.current.object_id
   object_id = module.github_runner_app.client_id
 
   key_permissions         = []
