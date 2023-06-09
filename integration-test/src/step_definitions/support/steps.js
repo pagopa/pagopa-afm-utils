@@ -26,8 +26,7 @@ BeforeAll(function() {
 
 Given('the configuration {string}', async function(filePath) {
   // prior cancellation to avoid dirty cases --> the idPsp is the one in the test ./config/cdis.json file
-  dataStoreClient.deleteTestDataByIdPsp("bundles", "IDPSPINTTEST01", "IDPSPINTTEST01");
-  await sleep(1000);
+  await dataStoreClient.deleteTestDataByIdPsp("bundles", "IDPSPINTTEST01", "IDPSPINTTEST01");
   let file = fs.readFileSync('./config/' + filePath);
   cdis = JSON.parse(file);
   let result = await post(afm_utils_host + '/cdis/sync',
@@ -45,7 +44,7 @@ Given('the URL to delete bundles by the non-existent idCDI {string}', function(i
 
 When(/^the client call the (GET|POST|PUT|DELETE) API$/,
   async function(method) {
-    await sleep(1500);
+    await sleep(2000);
     responseToCheck = await call(method, afm_utils_host + urlDeleteBundlesByIdCDI);
   });
 
@@ -55,12 +54,11 @@ Then(/^check statusCode is (\d+)$/, function(status) {
 
 // Asynchronous Promise
 AfterAll(async function() {
-  await sleep(1000);
-  dataStoreClient.deleteTestTouchPoints("touchpoints", "WISP", "WISP");
-  dataStoreClient.deleteTestTouchPoints("touchpoints", "IO", "IO");
-  dataStoreClient.deleteTestTouchPoints("touchpoints", "CHECKOUT", "CHECKOUT");
+  await dataStoreClient.deleteTestTouchPoints("touchpoints", "WISP", "WISP");
+  await dataStoreClient.deleteTestTouchPoints("touchpoints", "IO", "IO");
+  await dataStoreClient.deleteTestTouchPoints("touchpoints", "CHECKOUT", "CHECKOUT");
   // the idPsp is the one in the test ./config/cdis.json file
-  dataStoreClient.deleteTestDataByIdPsp("bundles", "IDPSPINTTEST01", "IDPSPINTTEST01");
-  dataStoreClient.deleteTestDataByIdPsp("cdis", "IDPSPINTTEST01", "IDPSPINTTEST01");
+  await dataStoreClient.deleteTestDataByIdPsp("bundles", "IDPSPINTTEST01", "IDPSPINTTEST01");
+  await dataStoreClient.deleteTestDataByIdPsp("cdis", "IDPSPINTTEST01", "IDPSPINTTEST01");
   return Promise.resolve()
 });
