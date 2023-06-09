@@ -9,7 +9,6 @@ const authorizationType = "master"
 const authorizationVersion = "1.0";
 const cosmosDBApiVersion = "2018-12-31";
 
-
 async function setupTestTouchPoints(containerId, id, name, partitionKey) {
   // prior cancellation to avoid dirty cases
   await deleteTestTouchPoints(containerId, name, partitionKey);
