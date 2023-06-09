@@ -25,6 +25,7 @@ locals {
     "TENANT_ID" : data.azurerm_client_config.current.tenant_id,
     "SUBSCRIPTION_ID" : data.azurerm_subscription.current.subscription_id,
     "ISSUER_RANGE_TABLE" : "${local.prefix}${var.env_short}${local.location_short}${local.domain}saissuerrangetable",
+    "COSMOS_KEY": data.azurerm_key_vault_secret.key_vault_cosmos_key.value
   }
   env_variables = {
     "CONTAINER_APP_ENVIRONMENT_NAME" : local.container_app_environment.name,
@@ -33,6 +34,8 @@ locals {
     "CLUSTER_RESOURCE_GROUP" : local.aks_cluster.resource_group_name,
     "DOMAIN" : local.domain,
     "NAMESPACE" : local.domain,
+    "COSMOS_URI": "https://${local.prefix}-${var.env_short}-${local.location_short}-${local.domain}-marketplace-cosmos-account.documents.azure.com:443/"
+    "COSMOS_DATABASE": 'db'
   }
   repo_secrets = {
     "SONAR_TOKEN" : data.azurerm_key_vault_secret.key_vault_sonar.value,
@@ -67,20 +70,6 @@ resource "github_actions_environment_variable" "github_environment_runner_variab
   value         = each.value
 }
 
-resource "github_actions_environment_variable" "github_environment_cosmos_database" {
-  repository    = local.github.repository
-  environment   = var.env
-  variable_name = "COSMOS_DATABASE"
-  value         = "db"
-}
-
-resource "github_actions_environment_variable" "github_environment_cosmos_uri" {
-  repository    = local.github.repository
-  environment   = var.env
-  variable_name = "COSMOS_URI"
-  value         = "https://${local.prefix}-${var.env_short}-${local.location_short}-${local.domain}-marketplace-cosmos-account.documents.azure.com:443/"
-}
-
 #############################
 # Secrets of the Repository #
 #############################
@@ -91,13 +80,4 @@ resource "github_actions_secret" "repo_secrets" {
   repository      = local.github.repository
   secret_name     = each.key
   plaintext_value = each.value
-}
-
-#tfsec:ignore:github-actions-no-plain-text-action-secrets # not real secret
-resource "github_actions_environment_secret" "secret_integration_test_cosmos_key" {
-  count           = var.env_short != "p" ? 1 : 0
-  repository      = local.github.repository
-  environment     = var.env
-  secret_name     = "COSMOS_KEY"
-  plaintext_value = data.azurerm_key_vault_secret.key_vault_cosmos_key[0].value
 }
