@@ -70,3 +70,15 @@ resource "azurerm_key_vault_access_policy" "ad_kv_group_policy" {
   storage_permissions     = []
   certificate_permissions = []
 }
+
+resource "azurerm_key_vault_access_policy" "ad_kv_domain_group_policy" {
+  key_vault_id = data.azurerm_key_vault.domain_key_vault.id
+
+  tenant_id = data.azurerm_client_config.current.tenant_id
+  object_id = module.github_runner_app.object_id
+
+  key_permissions         = []
+  secret_permissions      = ["Get", "List"]
+  storage_permissions     = []
+  certificate_permissions = []
+}
