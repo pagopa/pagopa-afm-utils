@@ -34,8 +34,8 @@ locals {
     "CLUSTER_RESOURCE_GROUP" : local.aks_cluster.resource_group_name,
     "DOMAIN" : local.domain,
     "NAMESPACE" : local.domain,
-    "COSMOS_URI": "https://${local.prefix}-${var.env_short}-${local.location_short}-${local.domain}-marketplace-cosmos-account.documents.azure.com:443/"
-    "COSMOS_DATABASE": 'db'
+    "COSMOS_URI": "https://${local.prefix}-${var.env_short}-${local.location_short}-${local.domain}-marketplace-cosmos-account.documents.azure.com:443/",
+    "COSMOS_DATABASE": "db"
   }
   repo_secrets = {
     "SONAR_TOKEN" : data.azurerm_key_vault_secret.key_vault_sonar.value,
