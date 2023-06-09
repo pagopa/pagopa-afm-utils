@@ -45,8 +45,7 @@ npx cucumber-js -r step_definitions features/<filename>.feature:46
 
 Please, before starting the tests, remember to:
 1. if you are in local environment then create the issuerrange table;
-2. if you are in local environment then import test data from `./config/ISSUER_RANGE_for_test.csv` file into the issuerrange table;
-3. configure the subkey environment variable (for the local environment it can take on any value);
+2. configure the subkey environment variable (for the local environment it can take on any value);
 4. start the Backend.
 
 You can configure the host in `./config/.env.*` file.
