@@ -45,7 +45,7 @@ function getDocumentById(containerId, id) {
   const authorizationToken = getCosmosDBAuthorizationToken(verb, authorizationType, authorizationVersion, authorizationSignature, resourceType, resourceLink, date);
 
   let partitionKeyArray = [];
-  const headers = getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, 'application/query+json');
+  const headers = getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, 'application/query+json', true);
 
   const body = {
     "query": "SELECT * FROM c where c.id=@id",
@@ -70,7 +70,7 @@ function getDocumentByName(containerId, name) {
   const authorizationToken = getCosmosDBAuthorizationToken(verb, authorizationType, authorizationVersion, authorizationSignature, resourceType, resourceLink, date);
 
   let partitionKeyArray = [];
-  const headers = getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, 'application/query+json');
+  const headers = getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, 'application/query+json', true);
 
   const body = {
     "query": "SELECT * FROM c where c.name=@name",
@@ -95,7 +95,7 @@ function getDocumentByIdPsp(containerId, idPsp) {
   const authorizationToken = getCosmosDBAuthorizationToken(verb, authorizationType, authorizationVersion, authorizationSignature, resourceType, resourceLink, date);
 
   let partitionKeyArray = [];
-  const headers = getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, 'application/query+json');
+  const headers = getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, 'application/query+json', true);
 
   const body = {
     "query": "SELECT * FROM c where c.idPsp=@idPsp",
@@ -120,7 +120,7 @@ function createDocument(containerId, id, name, partitionKey) {
   let authorizationToken = getCosmosDBAuthorizationToken(verb, authorizationType, authorizationVersion, authorizationSignature, resourceType, resourceLink, date);
 
   let partitionKeyArray = "[\"" + partitionKey + "\"]";
-  let headers = getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, 'application/json');
+  let headers = getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, 'application/json', false);
 
   const body = getTouchPoint(id, name);
   return post(cosmos_db_uri + path, body, headers)
@@ -137,12 +137,12 @@ function deleteDocument(containerId, id, partitionKey) {
   let authorizationToken = getCosmosDBAuthorizationToken(verb, authorizationType, authorizationVersion, authorizationSignature, resourceType, resourceLink, date);
 
   let partitionKeyArray = "[\"" + partitionKey + "\"]";
-  let headers = getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, 'application/json');
+  let headers = getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, 'application/json', false);
 
   return del(cosmos_db_uri + path, headers);
 }
 
-function getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, contentType) {
+function getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, contentType, isQuery) {
 
   return {
     'Accept': 'application/json',
@@ -150,7 +150,7 @@ function getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, cont
     'Authorization': authorizationToken,
     'x-ms-version': cosmosDBApiVersion,
     'x-ms-date': date,
-    'x-ms-documentdb-isquery': 'true',
+    'x-ms-documentdb-isquery': isQuery,
     'x-ms-documentdb-query-enablecrosspartition': 'true',
     'x-ms-documentdb-partitionkey': partitionKeyArray,
   };
