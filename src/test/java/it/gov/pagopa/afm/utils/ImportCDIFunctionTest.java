@@ -1,30 +1,13 @@
 package it.gov.pagopa.afm.utils;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.lenient;
 
-import feign.FeignException;
-import it.gov.pagopa.afm.utils.entity.CDI;
-import it.gov.pagopa.afm.utils.entity.StatusType;
-import it.gov.pagopa.afm.utils.model.bundle.BundleResponse;
-import it.gov.pagopa.afm.utils.model.bundle.CDIWrapper;
 import it.gov.pagopa.afm.utils.repository.CDICollectionRepository;
 import it.gov.pagopa.afm.utils.service.CDIService;
 import it.gov.pagopa.afm.utils.service.MarketPlaceClient;
-import java.util.Arrays;
-import java.util.List;
-import org.jeasy.random.EasyRandom;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Mono;
 
 @ExtendWith(MockitoExtension.class)
 class ImportCDIFunctionTest {
