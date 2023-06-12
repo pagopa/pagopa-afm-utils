@@ -2,7 +2,6 @@ package it.gov.pagopa.afm.utils.service;
 
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.models.PartitionKey;
-
 import feign.FeignException;
 import it.gov.pagopa.afm.utils.entity.Bundle;
 import it.gov.pagopa.afm.utils.entity.CDI;
@@ -26,7 +25,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -68,7 +66,7 @@ public class CDIService {
   public void deleteCDIs() {
     List<Bundle> bundlesToBeDeleted = bundleRepository.findByIdCdiIsNotNull();
     bundleRepository.deleteAll(bundlesToBeDeleted);
-    for(Bundle bundle : bundlesToBeDeleted) {
+    for (Bundle bundle : bundlesToBeDeleted) {
       String idCdi = bundle.getIdCdi();
       List<CDI> cdisToBeDeleted = cdisRepository.findByIdCdi(idCdi);
       try {
@@ -78,19 +76,19 @@ public class CDIService {
       }
     }
   }
-  
+
   public void deleteBundlesByIdCDI(String idCdi, String pspCode) {
-    List<Bundle> bundlesToBeDeleted = 
+    List<Bundle> bundlesToBeDeleted =
         Optional.of(bundleRepository.findByIdCdi(idCdi, new PartitionKey(pspCode)))
-        .filter(l -> !CollectionUtils.isEmpty(l))
-        .orElseThrow(() ->  new AppException(AppError.CDI_NOT_FOUND_ERROR, idCdi, pspCode))
-        .stream()
-        .collect(Collectors.toList());
-    
-    for(Bundle bundle : bundlesToBeDeleted) {
+            .filter(l -> !CollectionUtils.isEmpty(l))
+            .orElseThrow(() -> new AppException(AppError.CDI_NOT_FOUND_ERROR, idCdi, pspCode))
+            .stream()
+            .collect(Collectors.toList());
+
+    for (Bundle bundle : bundlesToBeDeleted) {
       try {
-         Optional.ofNullable(marketPlaceClient)
-                .ifPresent(result -> marketPlaceClient.removeBundle(pspCode, bundle.getId()));
+        Optional.ofNullable(marketPlaceClient)
+            .ifPresent(result -> marketPlaceClient.removeBundle(pspCode, bundle.getId()));
       } catch (FeignException.BadRequest e) {
         throw new AppException(AppError.BUNDLE_REQUEST_DATA_ERROR, e.getMessage());
       } catch (FeignException.NotFound e) {
@@ -240,7 +238,8 @@ public class CDIService {
       isNullTouchPoint = false;
       BundleRequest bundleRequestClone = SerializationUtils.clone(bundleRequest);
       bundleRequestClone.setTouchpoint(TouchpointType.CHECKOUT.name());
-      bundleRequestClone.setName(bundleRequestClone.getName() + "_" + TouchpointType.CHECKOUT.name());
+      bundleRequestClone.setName(
+          bundleRequestClone.getName() + "_" + TouchpointType.CHECKOUT.name());
       bundleRequestList.add(bundleRequestClone);
     }
     if (isNullTouchPoint) {
