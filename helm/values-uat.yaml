@@ -98,8 +98,7 @@ microservice-chart:
       create: true
       image:
         repository: ghcr.io/pagopa/pagopa-afm-utils
-        tag: "0.6.0"
+        tag: "0.6.0-1-PAGOPA-860-delete-bundles-by-cdi-int-test"
         pullPolicy: Always
-      envConfig: { }
-      envSecret: { }
-
+      envConfig: {}
+      envSecret: {}
