@@ -24,8 +24,9 @@ locals {
     "CLIENT_ID" : module.github_runner_app.application_id,
     "TENANT_ID" : data.azurerm_client_config.current.tenant_id,
     "SUBSCRIPTION_ID" : data.azurerm_subscription.current.subscription_id,
-    "ISSUER_RANGE_TABLE" : "${local.prefix}${var.env_short}${local.location_short}${local.domain}saissuerrangetable",
     "SUBKEY" : data.azurerm_key_vault_secret.key_vault_integration_test_subkey.value,
+    "ISSUER_RANGE_TABLE" : "${local.prefix}${var.env_short}${local.location_short}${local.domain}saissuerrangetable",
+    "COSMOS_KEY": data.azurerm_key_vault_secret.key_vault_cosmos_key.value
   }
   env_variables = {
     "CONTAINER_APP_ENVIRONMENT_NAME" : local.container_app_environment.name,
@@ -34,6 +35,8 @@ locals {
     "CLUSTER_RESOURCE_GROUP" : local.aks_cluster.resource_group_name,
     "DOMAIN" : local.domain,
     "NAMESPACE" : local.domain,
+    "COSMOS_URI": "https://${local.prefix}-${var.env_short}-${local.location_short}-${local.domain}-marketplace-cosmos-account.documents.azure.com:443/",
+    "COSMOS_DATABASE": "db"
   }
   repo_secrets = {
     "SONAR_TOKEN" : data.azurerm_key_vault_secret.key_vault_sonar.value,
@@ -78,4 +81,3 @@ resource "github_actions_secret" "repo_secrets" {
   secret_name     = each.key
   plaintext_value = each.value
 }
-
