@@ -4,12 +4,12 @@
     "description": "Utility microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
     "title": "afm-utils",
-    "version": "0.6.0"
+    "version": "0.6.0-1-PAGOPA-860-delete-bundles-by-cdi-int-test"
   },
   "servers": [
     {
       "description": "Generated server url",
-      "url": "http://localhost:8586"
+      "url": "http://localhost:8080"
     }
   ],
   "paths": {

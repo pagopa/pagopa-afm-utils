@@ -3,15 +3,15 @@ package it.gov.pagopa.afm.utils.entity;
 import com.azure.spring.data.cosmos.core.mapping.Container;
 import com.azure.spring.data.cosmos.core.mapping.GeneratedValue;
 import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Container(containerName = "bundles")
 @Getter
@@ -21,54 +21,46 @@ import java.util.List;
 @Builder(toBuilder = true)
 public class Bundle {
 
-    @Id
-    @GeneratedValue
-    private String id;
+  @Id @GeneratedValue private String id;
 
-    @PartitionKey
-    @NotNull
-    @Size(max = 35)
-    private String idPsp;
+  @PartitionKey
+  @NotNull
+  @Size(max = 35)
+  private String idPsp;
 
-    @NotNull
-    private String idChannel;
+  @NotNull private String idChannel;
 
-    @NotNull
-    private String idBrokerPsp;
-    
-    private String idCdi;
+  @NotNull private String idBrokerPsp;
 
-    @NotNull
-    private String abi;
+  private String idCdi;
 
-    private Boolean digitalStamp;
+  @NotNull private String abi;
 
-    // true if bundle must be used only for digital stamp
-    private Boolean digitalStampRestriction;
+  private Boolean digitalStamp;
 
-    private String name;
-    private String description;
+  // true if bundle must be used only for digital stamp
+  private Boolean digitalStampRestriction;
 
-    private Long paymentAmount;
-    private Long minPaymentAmount;
-    private Long maxPaymentAmount;
+  private String name;
+  private String description;
 
-    private String paymentType;
+  private Long paymentAmount;
+  private Long minPaymentAmount;
+  private Long maxPaymentAmount;
 
-    private String touchpoint;
+  private String paymentType;
 
-    private String type;
+  private String touchpoint;
 
-    private List<String> transferCategoryList;
+  private String type;
 
-    private LocalDate validityDateFrom;
+  private List<String> transferCategoryList;
 
-    private LocalDate validityDateTo;
+  private LocalDate validityDateFrom;
 
-    @CreatedDate
-    private LocalDateTime insertedDate;
+  private LocalDate validityDateTo;
 
-    @LastModifiedDate
-    private LocalDateTime lastUpdatedDate;
+  @CreatedDate private LocalDateTime insertedDate;
 
+  @LastModifiedDate private LocalDateTime lastUpdatedDate;
 }

@@ -1,0 +1,30 @@
+[
+  {
+    "id": "idIntTest",
+    "idPsp": "IDPSPINTTEST01",
+    "idCdi": "idCdiIntTest",
+    "abi": "string",
+    "digitalStamp": true,
+    "validityDateFrom": "2022-12-14",
+    "cdiErrorDesc": "string",
+    "details": [
+      {
+        "idBrokerPsp": "string",
+        "idChannel": "string",
+        "name": "nameIntTest",
+        "description": "string",
+        "paymentType": "CP",
+        "channelApp": false,
+        "channelCardsCart": true,
+        "serviceAmount": [
+          {
+            "paymentAmount": 1000,
+            "minPaymentAmount": 500,
+            "maxPaymentAmount": 1500
+          }
+        ]
+      }
+    ],
+    "cdiStatus": "NEW"
+  }
+]

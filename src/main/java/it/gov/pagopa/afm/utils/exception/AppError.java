@@ -9,7 +9,9 @@ public enum AppError {
   BUNDLE_NOT_FOUND_ERROR(
       HttpStatus.NOT_FOUND, "Not found error in the bundle configuration data", "%s"),
   CDI_NOT_FOUND_ERROR(
-      HttpStatus.NOT_FOUND, "CDI not found", "A cdi was not found for the provided identifier [idCdi = %s; pspCode = %s]"),
+      HttpStatus.NOT_FOUND,
+      "CDI not found",
+      "A cdi was not found for the provided identifier [idCdi = %s; pspCode = %s]"),
   BUNDLE_CONFLICT_ERROR(
       HttpStatus.CONFLICT, "A bundle with the same configuration already exists", "%s"),
   INTERNAL_SERVER_ERROR(
