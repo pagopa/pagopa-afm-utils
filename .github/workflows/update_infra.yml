@@ -37,5 +37,4 @@ jobs:
           user_name: 'pagopa-github-bot'
           allow_force_push: 'true'
 
-      # TODO terraform apply to update the new openapi.json
 
