@@ -24,6 +24,7 @@ locals {
     "CLIENT_ID" : module.github_runner_app.application_id,
     "TENANT_ID" : data.azurerm_client_config.current.tenant_id,
     "SUBSCRIPTION_ID" : data.azurerm_subscription.current.subscription_id,
+    "SUBKEY" : data.azurerm_key_vault_secret.key_vault_integration_test_subkey.value,
     "ISSUER_RANGE_TABLE" : "${local.prefix}${var.env_short}${local.location_short}${local.domain}saissuerrangetable",
     "COSMOS_KEY": data.azurerm_key_vault_secret.key_vault_cosmos_key.value
   }
@@ -41,7 +42,6 @@ locals {
     "SONAR_TOKEN" : data.azurerm_key_vault_secret.key_vault_sonar.value,
     "BOT_TOKEN_GITHUB" : data.azurerm_key_vault_secret.key_vault_bot_token.value,
     "CUCUMBER_PUBLISH_TOKEN" : data.azurerm_key_vault_secret.key_vault_cucumber_token.value,
-    "SUBKEY" : data.azurerm_key_vault_secret.key_vault_integration_test_subkey.value,
   }
 }
 

@@ -19,6 +19,7 @@ on:
 
 env:
   PROJECT_KEY: pagopa_pagopa-afm-utils
+
 permissions:
   id-token: write
   contents: read
