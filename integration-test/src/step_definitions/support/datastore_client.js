@@ -9,11 +9,15 @@ const authorizationType = "master"
 const authorizationVersion = "1.0";
 const cosmosDBApiVersion = "2018-12-31";
 
+
+
 async function setupTestTouchPoints(containerId, id, name, partitionKey) {
+  console.log("***** start setup:", containerId, id, name, partitionKey)	
   // prior cancellation to avoid dirty cases
   await deleteTestTouchPoints(containerId, name, partitionKey);
   let responseToCheck = await createDocument(containerId, id, name, partitionKey);
   assert.strictEqual(responseToCheck.status, 201);
+  console.log("***** end setup")	
 }
 
 async function deleteTestTouchPoints(containerId, name, partitionKey) {
@@ -123,6 +127,7 @@ function createDocument(containerId, id, name, partitionKey) {
   let headers = getCosmosDBAPIHeaders(authorizationToken, date, partitionKeyArray, 'application/json', false);
 
   const body = getTouchPoint(id, name);
+  console.log("***** createDocument", cosmos_db_uri + path, body, headers)
   return post(cosmos_db_uri + path, body, headers)
 }
 

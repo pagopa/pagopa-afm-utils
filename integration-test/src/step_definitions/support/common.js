@@ -31,6 +31,7 @@ function put(url, body, headers) {
       return res;
     })
     .catch(error => {
+	console.log("***** error", error)
       return error.response;
     });
 }
