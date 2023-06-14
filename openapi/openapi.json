@@ -4,7 +4,7 @@
     "description": "Utility microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
     "title": "afm-utils",
-    "version": "0.6.0-1-PAGOPA-860-delete-bundles-by-cdi-int-test"
+    "version": "0.6.1"
   },
   "servers": [
     {
