@@ -17,11 +17,12 @@ let cdis = [];
 let urlDeleteBundlesByIdCDI;
 
 
-// Synchronous
-BeforeAll(function() {
-  dataStoreClient.setupTestTouchPoints("touchpoints", "id-touchpoint-wisp", "WISP", "WISP");
-  dataStoreClient.setupTestTouchPoints("touchpoints", "id-touchpoint-io", "IO", "IO");
-  dataStoreClient.setupTestTouchPoints("touchpoints", "id-touchpoint-checkout", "CHECKOUT", "CHECKOUT");
+// Asynchronous Promise
+BeforeAll(async function() {
+  await dataStoreClient.setupTestTouchPoints("touchpoints", "id-touchpoint-wisp", "WISP", "WISP");
+  await dataStoreClient.setupTestTouchPoints("touchpoints", "id-touchpoint-io", "IO", "IO");
+  await dataStoreClient.setupTestTouchPoints("touchpoints", "id-touchpoint-checkout", "CHECKOUT", "CHECKOUT");
+  await sleep(2000);
 });
 
 Given('the configuration {string}', async function(filePath) {
