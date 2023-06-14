@@ -47,6 +47,7 @@ When(/^the client call the (GET|POST|PUT|DELETE) API$/,
   async function(method) {
     await sleep(2000);
     responseToCheck = await call(method, afm_utils_host + urlDeleteBundlesByIdCDI);
+    console.log("****** responseToCheck", responseToCheck)
   });
 
 Then(/^check statusCode is (\d+)$/, function(status) {
