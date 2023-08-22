@@ -24,6 +24,7 @@ public class CDI {
   private String abi;
   private Boolean digitalStamp;
   private String validityDateFrom;
+  private String pspBusinessName;
   private List<Detail> details;
 
   // internal management field

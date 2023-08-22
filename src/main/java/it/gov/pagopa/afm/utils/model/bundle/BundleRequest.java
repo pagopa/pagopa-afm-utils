@@ -36,4 +36,5 @@ public class BundleRequest implements Serializable {
   private List<String> transferCategoryList;
   private LocalDate validityDateFrom;
   private LocalDate validityDateTo;
+  private String pspBusinessName;
 }
