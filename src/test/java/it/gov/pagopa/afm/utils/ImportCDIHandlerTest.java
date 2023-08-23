@@ -155,6 +155,20 @@ class ImportCDIHandlerTest {
     assertEquals("PSP", requests.get(0).getTouchpoint());
   }
 
+  @Test
+  void verifyPSPBusinessName()
+      throws IOException,
+      SecurityException,
+      IllegalArgumentException {
+    // precondition
+    CDI cdi = TestUtil.readModelFromFile("cdi/cdi_ragione_sociale.json", CDI.class);
+
+    List<BundleRequest> requests = cdiService.createBundlesByCDI(cdi);
+
+    assertEquals(1, requests.size());
+    assertEquals("PSP_RAGIONE_SOCIALE", requests.get(0).getPspBusinessName());
+  }
+
   /*
   @Test
   void executeFailed()

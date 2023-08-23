@@ -1,0 +1,27 @@
+{
+	"idPsp": "string",
+	"idCdi": "string",
+	"abi": "string",
+	"digitalStamp": true,
+	"validityDateFrom": "2022-12-14",
+  "pspBusinessName": "PSP_RAGIONE_SOCIALE",
+	"details": [
+		{
+			"idBrokerPsp": "string",
+			"idChannel": "string",
+			"name": "string",
+			"description": "string",
+			"paymentType": "PO",
+			"channelApp": false,
+			"channelCardsCart": false,
+			"serviceAmount": [
+				{
+					"paymentAmount": 1000,
+					"minPaymentAmount": 500,
+					"maxPaymentAmount": 1500
+				}
+			]
+		}
+	],
+	"cdiStatus": "NEW"
+}
