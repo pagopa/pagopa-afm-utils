@@ -65,7 +65,7 @@ microservice-chart:
     COSMOS_DATABASE: 'db'
     COSMOS_QUERY_METRICS: 'false'
     CDI_CONTAINER_NAME: 'cdis'
-    OTEL_SERVICE_NAME: "pagopa-afm-calculator"
+    OTEL_SERVICE_NAME: "pagopa-afm-utils"
     OTEL_RESOURCE_ATTRIBUTES: "deployment.environment=dev"
     OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector.elastic-system.svc:4317"
     OTEL_LOGS_EXPORTER: none
