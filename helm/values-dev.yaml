@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-utils
-    tag: "0.6.2-5-PAGOPA-1215-afm-calculator-creare-dashboard-elk"
+    tag: "0.6.3"
     pullPolicy: Always
   livenessProbe:
     httpGet:
