@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController()
 public class BaseController {
-  @Value("${info.application.name}")
+  @Value("${info.application.artifactId}")
   private String name;
 
   @Value("${info.application.version}")
