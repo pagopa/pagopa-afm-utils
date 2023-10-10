@@ -4,7 +4,7 @@ microservice-chart:
   fullnameOverride: ""
   image:
     repository: ghcr.io/pagopa/pagopa-afm-utils
-    tag: "0.6.2"
+    tag: "0.6.2-5-PAGOPA-1215-afm-calculator-creare-dashboard-elk"
     pullPolicy: Always
   livenessProbe:
     httpGet:
@@ -65,10 +65,16 @@ microservice-chart:
     COSMOS_DATABASE: 'db'
     COSMOS_QUERY_METRICS: 'false'
     CDI_CONTAINER_NAME: 'cdis'
+    OTEL_SERVICE_NAME: "pagopa-afm-utils"
+    OTEL_RESOURCE_ATTRIBUTES: "deployment.environment=uat"
+    OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector.elastic-system.svc:4317"
+    OTEL_LOGS_EXPORTER: none
+    OTEL_TRACES_SAMPLER: "always_on"
   envSecret:
     APPLICATIONINSIGHTS_CONNECTION_STRING: ai-u-connection-string
     AFM_MARKETPLACE_SUBSCRIPTION_KEY: afm-marketplace-subscription-key
     COSMOS_KEY: afm-marketplace-u-cosmos-pkey
+    OTEL_EXPORTER_OTLP_HEADERS: elastic-apm-secret-token
   keyvault:
     name: "pagopa-u-afm-kv"
     tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
@@ -84,7 +90,7 @@ microservice-chart:
                 values:
                   - user
   canaryDelivery:
-    create: true
+    create: false
     ingress:
       create: true
       canary:
