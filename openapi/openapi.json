@@ -4,7 +4,7 @@
     "title": "afm-utils",
     "description": "Utility microservice for pagoPA AFM",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "0.7.0-1-PAGOPA-1305-invalidare-i-bundle-settando-la-data-di-fine-validita-per-psp"
+    "version": "0.7.0-3-PAGOPA-1305-invalidare-i-bundle-settando-la-data-di-fine-validita-per-psp"
   },
   "servers": [
     {
