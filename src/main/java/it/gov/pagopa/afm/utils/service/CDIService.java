@@ -60,11 +60,10 @@ public class CDIService {
     }
 
     public void saveCDIs(List<CDI> cdis) {
-        for (CDI cdi : cdis) {
-            List<Bundle> bundlesToRemove = bundleRepository.findAllByIdPsp(cdi.getIdPsp());
-            bundlesToRemove.forEach(elem -> elem.setValidityDateTo(LocalDate.now()));
-            bundleRepository.saveAll(bundlesToRemove);
-        }
+        // first of all we logically remove the old bundles of the PSP
+        removeOldBundles(cdis);
+
+        // then we save the new bundles
         cdisRepository.saveAll(cdis);
         CompletableFuture.runAsync(() -> turnCDIToBundles(cdis));
     }
@@ -291,6 +290,20 @@ public class CDIService {
                             "CDI status updated [idCdi=%s, status=%s]",
                             Optional.ofNullable(updated).map(result -> updated.getIdCdi()),
                             Optional.ofNullable(updated).map(result -> updated.getCdiStatus())));
+        }
+    }
+
+    /**
+     * Remove logically all the PSP's bundles:
+     * validityDateTo is set to now()
+     *
+     * @param cdis the list with the new CDI elements
+     */
+    private void removeOldBundles(List<CDI> cdis) {
+        for (CDI cdi : cdis) {
+            List<Bundle> oldBundlesToRemove = bundleRepository.findAllByIdPsp(cdi.getIdPsp());
+            oldBundlesToRemove.forEach(elem -> elem.setValidityDateTo(LocalDate.now()));
+            bundleRepository.saveAll(oldBundlesToRemove);
         }
     }
 }
