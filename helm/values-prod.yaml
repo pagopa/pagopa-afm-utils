@@ -90,7 +90,7 @@ microservice-chart:
                 values:
                   - user
   canaryDelivery:
-    create: false
+    create: true
     ingress:
       create: true
       canary:
@@ -104,7 +104,7 @@ microservice-chart:
       create: true
       image:
         repository: ghcr.io/pagopa/pagopa-afm-utils
-        tag: "0.6.2"
+        tag: "0.7.0-1-PAGOPA-1305-invalidare-i-bundle-settando-la-data-di-fine-validita-per-psp"
         pullPolicy: Always
       envConfig: {}
       envSecret: {}
