@@ -12,4 +12,5 @@ public interface BundleRepository extends CosmosRepository<Bundle, String> {
   List<Bundle> findByIdCdiIsNotNull();
 
   List<Bundle> findByIdCdi(String idCdi, PartitionKey pspCode);
+  List<Bundle> findAllByIdPsp(PartitionKey pspCode);
 }
