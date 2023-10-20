@@ -2,8 +2,8 @@ apiVersion: v2
 name: pagopa-afm-utils
 description: Utility microservice for pagoPA AFM
 type: application
-version: 0.15.1
-appVersion: 0.7.0-1-PAGOPA-1305-invalidare-i-bundle-settando-la-data-di-fine-validita-per-psp
+version: 0.16.0
+appVersion: 0.7.0-2-PAGOPA-1305-invalidare-i-bundle-settando-la-data-di-fine-validita-per-psp
 dependencies:
   - name: microservice-chart
     version: 1.21.0
