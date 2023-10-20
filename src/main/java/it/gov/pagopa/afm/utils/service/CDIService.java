@@ -61,7 +61,7 @@ public class CDIService {
 
     public void saveCDIs(List<CDI> cdis) {
         for (CDI cdi : cdis) {
-            List<Bundle> bundlesToRemove = bundleRepository.findAllByIdPsp(new PartitionKey(cdi.getIdPsp()));
+            List<Bundle> bundlesToRemove = bundleRepository.findAllByIdPsp(cdi.getIdPsp());
             bundlesToRemove.forEach(elem -> elem.setValidityDateTo(LocalDate.now()));
             bundleRepository.saveAll(bundlesToRemove);
         }

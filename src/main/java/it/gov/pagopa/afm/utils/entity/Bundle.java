@@ -19,6 +19,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
+@ToString
 public class Bundle {
 
   @Id @GeneratedValue private String id;

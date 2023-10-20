@@ -3,9 +3,11 @@ package it.gov.pagopa.afm.utils.model.bundle;
 import it.gov.pagopa.afm.utils.exception.AppException;
 import java.util.Arrays;
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.http.HttpStatus;
 
 @Getter
+@ToString
 public enum BundleType {
   GLOBAL("GLOBAL"),
   PUBLIC("PUBLIC"),

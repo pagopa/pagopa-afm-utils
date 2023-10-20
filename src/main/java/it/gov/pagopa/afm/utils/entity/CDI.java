@@ -2,11 +2,8 @@ package it.gov.pagopa.afm.utils.entity;
 
 import com.azure.spring.data.cosmos.core.mapping.Container;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 
 @Container(
     containerName = "${azure.cosmos.cdi-container-name}",
@@ -17,6 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class CDI {
   private String id;
   private String idPsp;
