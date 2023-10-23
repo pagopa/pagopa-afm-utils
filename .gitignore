@@ -4,3 +4,7 @@ target/**/*
 .iml
 /utilities/emulatorcert.crt
 .cache
+/docker/.env
+/afm-utils.iml
+/helm/charts/
+/.identity/.terraform.lock.hcl
