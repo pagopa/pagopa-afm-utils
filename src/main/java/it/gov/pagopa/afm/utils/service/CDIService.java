@@ -3,20 +3,20 @@ package it.gov.pagopa.afm.utils.service;
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.models.PartitionKey;
 import feign.FeignException;
-import it.gov.pagopa.afm.utils.entity.Bundle;
-import it.gov.pagopa.afm.utils.entity.CDI;
-import it.gov.pagopa.afm.utils.entity.Detail;
-import it.gov.pagopa.afm.utils.entity.ServiceAmount;
-import it.gov.pagopa.afm.utils.entity.StatusType;
+import it.gov.pagopa.afm.utils.entity.*;
 import it.gov.pagopa.afm.utils.exception.AppError;
 import it.gov.pagopa.afm.utils.exception.AppException;
-import it.gov.pagopa.afm.utils.model.bundle.BundleRequest;
-import it.gov.pagopa.afm.utils.model.bundle.BundleResponse;
-import it.gov.pagopa.afm.utils.model.bundle.BundleType;
-import it.gov.pagopa.afm.utils.model.bundle.PaymentMethodType;
-import it.gov.pagopa.afm.utils.model.bundle.TouchpointType;
+import it.gov.pagopa.afm.utils.model.bundle.*;
 import it.gov.pagopa.afm.utils.repository.BundleRepository;
 import it.gov.pagopa.afm.utils.repository.CDICollectionRepository;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.SerializationUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,15 +26,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.SerializationUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 @Service
 @AllArgsConstructor
@@ -300,9 +291,15 @@ public class CDIService {
      * @param cdis the list with the new CDI elements
      */
     private void removeOldBundles(List<CDI> cdis) {
+        DateTimeFormatter dfDate = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         for (CDI cdi : cdis) {
-            List<Bundle> oldBundlesToRemove = bundleRepository.findAllByIdPsp(cdi.getIdPsp());
-            oldBundlesToRemove.forEach(elem -> elem.setValidityDateTo(LocalDate.now()));
+            List<Bundle> oldBundlesToRemove = bundleRepository.findAllByIdPspAndType(cdi.getIdPsp(), "GLOBAL");
+            oldBundlesToRemove.forEach(elem -> {
+                LocalDate dateFrom = LocalDate.parse(cdi.getValidityDateFrom(), dfDate);
+                if(elem.getValidityDateTo() == null || elem.getValidityDateTo().isAfter(dateFrom)) {
+                    elem.setValidityDateTo(dateFrom.minusDays(1));
+                }
+            });
             bundleRepository.saveAll(oldBundlesToRemove);
         }
     }
