@@ -13,7 +13,7 @@
 
     <groupId>it.gov.pagopa</groupId>
     <artifactId>afm-utils</artifactId>
-    <version>0.7.0-5-PAGOPA-1305-invalidare-i-bundle-settando-la-data-di-fine-validita-per-psp</version>
+    <version>0.7.0-6-PAGOPA-1305-invalidare-i-bundle-settando-la-data-di-fine-validita-per-psp</version>
     <name>afm-utils</name>
     <description>Utility microservice for pagoPA AFM</description>
     <packaging>jar</packaging>
