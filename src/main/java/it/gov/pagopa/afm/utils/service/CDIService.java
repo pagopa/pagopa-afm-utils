@@ -90,7 +90,10 @@ public class CDIService {
                 Optional.ofNullable(marketPlaceClient)
                         .ifPresent(result -> marketPlaceClient.removeBundle(pspCode, bundle.getId()));
             } catch (FeignException.BadRequest e) {
-                throw new AppException(AppError.BUNDLE_REQUEST_DATA_ERROR, e.getMessage());
+                // ignore bundle already deleted
+                if (!e.getMessage().contains("Bundle has been already deleted")){
+                    throw new AppException(AppError.BUNDLE_REQUEST_DATA_ERROR, e.getMessage());
+                }
             } catch (FeignException.NotFound e) {
                 throw new AppException(AppError.BUNDLE_NOT_FOUND_ERROR, e.getMessage());
             } catch (FeignException.Conflict e) {
@@ -245,7 +248,8 @@ public class CDIService {
         }
         if(isNullTouchPoint) {
             // default bundle with null touchpoint value
-            bundleRequestList.add(bundleRequest);
+            BundleRequest bundleRequestClone = SerializationUtils.clone(bundleRequest);
+            bundleRequestList.add(bundleRequestClone);
         }
     }
 
