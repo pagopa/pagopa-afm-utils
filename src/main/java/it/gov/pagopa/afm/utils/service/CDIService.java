@@ -90,8 +90,8 @@ public class CDIService {
                 Optional.ofNullable(marketPlaceClient)
                         .ifPresent(result -> marketPlaceClient.removeBundle(pspCode, bundle.getId()));
             } catch (FeignException.BadRequest e) {
-                // ignore bundle already deleted
-                if (!e.getMessage().contains("Bundle has been already deleted")){
+                // we ignore the bundles already (logically) deleted
+                if(e.getMessage() == null || !e.getMessage().contains("Bundle has been already deleted")) {
                     throw new AppException(AppError.BUNDLE_REQUEST_DATA_ERROR, e.getMessage());
                 }
             } catch (FeignException.NotFound e) {
