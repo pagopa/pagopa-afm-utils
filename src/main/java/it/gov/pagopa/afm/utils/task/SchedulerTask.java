@@ -2,12 +2,15 @@ package it.gov.pagopa.afm.utils.task;
 
 import it.gov.pagopa.afm.utils.service.MarketPlaceClient;
 import javax.annotation.PostConstruct;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class SchedulerTask {
 
   @Autowired private ThreadPoolTaskScheduler taskScheduler;
@@ -18,6 +21,7 @@ public class SchedulerTask {
 
   @PostConstruct
   public void scheduleRunnableWithCronTrigger() {
+    log.info("schedule task started: refresh configuration");
     MarketPlaceTrigger marketPlaceTrigger = new MarketPlaceTrigger(marketPlaceClient);
 
     taskScheduler.schedule(marketPlaceTrigger, cronTrigger);

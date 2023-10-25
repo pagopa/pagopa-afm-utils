@@ -4,17 +4,15 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import javax.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
+@ToString
 public class BundleRequest implements Serializable {
   /** generated serialVersionUID */
   private static final long serialVersionUID = -3848735995119820291L;
