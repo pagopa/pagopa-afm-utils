@@ -60,8 +60,8 @@ microservice-chart:
       cpu: "1"
   autoscaling:
     enable: false
-    minReplica: 1
-    maxReplica: 1
+    minReplica: 2
+    maxReplica: 3
   envConfig:
     WEBSITE_SITE_NAME: 'pagopaafmutils' # required to show cloud role name in application insights
     ENV: 'prod'
