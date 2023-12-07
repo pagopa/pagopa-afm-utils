@@ -59,7 +59,7 @@ microservice-chart:
       memory: "1.5Gi"
       cpu: "1"
   autoscaling:
-    enable: false
+    enable: true
     minReplica: 2
     maxReplica: 3
   envConfig:
