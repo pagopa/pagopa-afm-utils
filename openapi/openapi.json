@@ -4,7 +4,7 @@
     "title": "afm-utils",
     "description": "@project.description@",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "0.9.2"
+    "version": "0.9.2-1-PAGOPA-1481-sviluppo-upgrade-ai-with-java-17"
   },
   "servers": [
     {
