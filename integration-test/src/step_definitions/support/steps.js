@@ -56,9 +56,6 @@ Then(/^check statusCode is (\d+)$/, function(status) {
 
 // Asynchronous Promise
 AfterAll(async function() {
-  await dataStoreClient.deleteTestTouchPoints("touchpoints", "WISP", "WISP");
-  await dataStoreClient.deleteTestTouchPoints("touchpoints", "IO", "IO");
-  await dataStoreClient.deleteTestTouchPoints("touchpoints", "CHECKOUT", "CHECKOUT");
   // the idPsp is the one in the test ./config/cdis.json file
   await dataStoreClient.deleteTestDataByIdPsp("bundles", "IDPSPINTTEST01", "IDPSPINTTEST01");
   await dataStoreClient.deleteTestDataByIdPsp("cdis", "IDPSPINTTEST01", "IDPSPINTTEST01");

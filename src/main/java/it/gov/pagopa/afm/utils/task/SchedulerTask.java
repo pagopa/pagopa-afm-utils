@@ -10,7 +10,6 @@ import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 
 @Component
-@Slf4j
 public class SchedulerTask {
 
   @Autowired private ThreadPoolTaskScheduler taskScheduler;
@@ -21,7 +20,6 @@ public class SchedulerTask {
 
   @PostConstruct
   public void scheduleRunnableWithCronTrigger() {
-    log.info("schedule task started: refresh configuration");
     MarketPlaceTrigger marketPlaceTrigger = new MarketPlaceTrigger(marketPlaceClient);
 
     taskScheduler.schedule(marketPlaceTrigger, cronTrigger);
