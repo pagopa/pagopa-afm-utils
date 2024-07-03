@@ -68,7 +68,7 @@ microservice-chart:
     APP_LOGGING_LEVEL: "INFO"
     CACHE_SIZE: '10000'
     CACHE_EXPIRATION_TIME: '5m'
-    CONFIGURATION_TRIGGER: "1 0 0 * * ?"
+    CONFIGURATION_TRIGGER: "0 5 0 * * ?"
     AFM_MARKETPLACE_HOST: https://api.platform.pagopa.it/afm/marketplace-service/v1
     AFM_MARKETPLACE_RETRY_MAX_ATTEMPTS: "1"
     AFM_MARKETPLACE_RETRY_MAX_DELAY: "2000"
