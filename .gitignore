@@ -8,3 +8,4 @@ target/**/*
 /afm-utils.iml
 /helm/charts/
 /.identity/.terraform.lock.hcl
+**/.terraform/*

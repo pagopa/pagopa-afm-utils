@@ -3,7 +3,6 @@ package it.gov.pagopa.afm.utils.task;
 import it.gov.pagopa.afm.utils.service.MarketPlaceClient;
 import javax.annotation.PostConstruct;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
