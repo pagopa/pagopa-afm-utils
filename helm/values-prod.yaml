@@ -62,6 +62,12 @@ microservice-chart:
     enable: true
     minReplica: 2
     maxReplica: 3
+    triggers:
+      - type: cpu
+        metadata:
+          # Required
+          type: Utilization # Allowed types are 'Utilization' or 'AverageValue'
+          value: "75"
   envConfig:
     WEBSITE_SITE_NAME: 'pagopaafmutils' # required to show cloud role name in application insights
     ENV: 'prod'
