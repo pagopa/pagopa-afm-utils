@@ -2,8 +2,8 @@ apiVersion: v2
 name: pagopa-afm-utils
 description: Utility microservice for pagoPA AFM
 type: application
-version: 0.32.0
-appVersion: 0.9.12
+version: 0.33.0
+appVersion: 0.9.13
 dependencies:
   - name: microservice-chart
     version: 7.5.0
