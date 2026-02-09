@@ -5,6 +5,8 @@ import java.util.List;
 
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
+
 @Container(
     containerName = "${azure.cosmos.cdi-container-name}",
     autoCreateContainer = false,
@@ -22,6 +24,7 @@ public class CDI {
   private String abi;
   private Boolean digitalStamp;
   private String validityDateFrom;
+  @NotNull
   private String pspBusinessName;
   private List<Detail> details;
 
