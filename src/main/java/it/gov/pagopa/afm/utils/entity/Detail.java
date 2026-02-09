@@ -19,5 +19,6 @@ public class Detail {
   private String paymentType;
   private Boolean channelApp;
   private Boolean channelCardsCart;
+  private Boolean onUs;
   private List<ServiceAmount> serviceAmount;
 }
