@@ -163,7 +163,10 @@ public class CDIService {
             bundleRequest.setIdCdi(cdi.getIdCdi());
             bundleRequest.setAbi(cdi.getAbi());
             bundleRequest.setDigitalStamp(cdi.getDigitalStamp());
-            bundleRequest.setPspBusinessName(cdi.getPspBusinessName());
+            bundleRequest.setPspBusinessName(
+                    !StringUtils.isEmpty(cdi.getPspBusinessName())
+                            ? cdi.getPspBusinessName()
+                            : "Default PSP");
             bundleRequest.setDigitalStampRestriction(Boolean.FALSE);
             bundleRequest.setOnUs(Boolean.FALSE);
             bundleRequest.setType(BundleType.GLOBAL);

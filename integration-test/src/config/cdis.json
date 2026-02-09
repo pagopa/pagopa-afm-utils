@@ -6,6 +6,7 @@
     "abi": "string",
     "digitalStamp": true,
     "validityDateFrom": "2022-12-14",
+    "pspBusinessName": "PSP Test Business",
     "cdiErrorDesc": "string",
     "details": [
       {
@@ -15,6 +16,7 @@
         "description": "string",
         "paymentType": "CP",
         "channelApp": false,
+        "onUs": false,
         "channelCardsCart": true,
         "serviceAmount": [
           {
