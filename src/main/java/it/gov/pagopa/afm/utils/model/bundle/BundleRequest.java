@@ -5,6 +5,9 @@ import java.time.LocalDate;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 @Getter
@@ -12,16 +15,24 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-@ToString
 public class BundleRequest implements Serializable {
-  /** generated serialVersionUID */
-  private static final long serialVersionUID = -3848735995119820291L;
+  @NotNull
+  private String idChannel;
+  @NotNull
+  private String idBrokerPsp;
 
-  @NotNull private String idChannel;
-  @NotNull private String idBrokerPsp;
-  @NotNull private String idCdi;
+  @Schema(description = "is the bundle valid for cart payments?",
+          defaultValue = "true")
+  @JsonSetter(nulls = Nulls.SKIP)
+  private Boolean cart = true;
+
+  private String idCdi;
+  @NotNull
   private String abi;
   private String name;
+  @NotNull
+  private String pspBusinessName;
+  private String urlPolicyPsp;
   private String description;
   private Long paymentAmount;
   private Long minPaymentAmount;
@@ -34,5 +45,6 @@ public class BundleRequest implements Serializable {
   private List<String> transferCategoryList;
   private LocalDate validityDateFrom;
   private LocalDate validityDateTo;
-  private String pspBusinessName;
+  @NotNull
+  private Boolean onUs;
 }

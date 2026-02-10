@@ -165,6 +165,7 @@ public class CDIService {
             bundleRequest.setDigitalStamp(cdi.getDigitalStamp());
             bundleRequest.setPspBusinessName(cdi.getPspBusinessName());
             bundleRequest.setDigitalStampRestriction(Boolean.FALSE);
+            bundleRequest.setOnUs(Boolean.FALSE);
             bundleRequest.setType(BundleType.GLOBAL);
             bundleRequest.setTransferCategoryList(null);
             bundleRequest.setValidityDateFrom(
