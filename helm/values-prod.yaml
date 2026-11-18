@@ -70,9 +70,8 @@ microservice-chart:
     maxReplica: 3
     triggers:
       - type: cpu
+        metricType: Utilization # Allowed types are 'Utilization' or 'AverageValue'
         metadata:
-          # Required
-          type: Utilization # Allowed types are 'Utilization' or 'AverageValue'
           value: "75"
   envConfig:
     JAVA_TOOL_OPTIONS: "-XX:-UseBASE64Intrinsics -XX:UseAVX=2"
