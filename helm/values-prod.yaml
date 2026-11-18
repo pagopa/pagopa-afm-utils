@@ -70,9 +70,8 @@ microservice-chart:
     maxReplica: 3
     triggers:
       - type: cpu
+        metricType: Utilization # Allowed types are 'Utilization' or 'AverageValue'
         metadata:
-          # Required
-          type: Utilization # Allowed types are 'Utilization' or 'AverageValue'
           value: "75"
   envConfig:
     WEBSITE_SITE_NAME: 'pagopaafmutils' # required to show cloud role name in application insights
